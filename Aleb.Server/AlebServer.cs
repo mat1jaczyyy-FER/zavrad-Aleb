@@ -36,7 +36,15 @@ namespace Aleb.Server {
         }
 
         static void Main(string[] args) {
-            server = new TcpListener(Protocol.Localhost, 11252);
+            string bind = Protocol.Localhost;
+
+            if (args.Length == 2 && args[0] == "--bind") bind = args[1];
+            else if (args.Length != 0) {
+                Console.Error.WriteLine("Invalid arguments.");
+                return;
+            }
+
+            server = new TcpListener(Dns.GetHostEntry(bind).AddressList[0], Protocol.Port);
             server.Start();
 
             Console.WriteLine($"Aleb Server started at {server.LocalEndpoint}");
