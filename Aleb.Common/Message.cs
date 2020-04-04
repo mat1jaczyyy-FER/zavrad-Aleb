@@ -19,7 +19,7 @@ namespace Aleb.Common {
 
         protected Message(string raw) {
             IEnumerable<string> args = raw?.Split(' ').Select(i => i.Trim(' ', '\n'));
-            if (args?.Any() == false) return;
+            if (args?.Any() != true) return;
 
             Command = args.First();
             Args = args.Skip(1).ToArray();
