@@ -11,28 +11,33 @@ namespace Aleb.Server {
         static TcpListener server;
 
         static async void Handshake(TcpClient client) {
-            NetworkStream stream = client.GetStream();
+            AlebClient entity = new AlebClient(client);
 
-            Console.WriteLine($"Connection from {client.Client.RemoteEndPoint}");
+            Console.WriteLine($"Connection from {entity.EndPoint}");
 
-            StreamReader reader = new StreamReader(client.GetStream());
-            StreamWriter writer = new StreamWriter(client.GetStream());
-
-            writer.Write($"Version {Protocol.Version}\n");
-            writer.Flush();
-
-            string response;
+            entity.Send("Version", Protocol.Version);
+            
+            User user = null;
 
             try {
-                response = await reader.ReadLineAsync();
+                bool success = false;
+
+                do {
+                    Message response = await entity.ReadMessage("Login");
+                    string name = response == null? "" : response.Args[0];
+                    user = User.Create(name, entity);
+
+                    entity.Send("LoginResult", success = (user != null));
+
+                } while (!success);
 
             } catch {
-                Console.WriteLine($"{client.Client.RemoteEndPoint} disconnected without logging in");
-                client.Close();
+                Console.WriteLine($"{entity.EndPoint} disconnected without logging in");
+                entity.Disconnect();
                 return;
             }
 
-            // TODO Login
+            Console.WriteLine($"{user.Name} logged in from {entity.EndPoint}");
         }
 
         static void Main(string[] args) {
@@ -45,7 +50,14 @@ namespace Aleb.Server {
             }
 
             server = new TcpListener(Dns.GetHostEntry(bind).AddressList[0], Protocol.Port);
-            server.Start();
+
+            try {
+                server.Start();
+
+            } catch {
+                Console.Error.WriteLine("Failed to start server! Is the port already in use?");
+                return;
+            }
 
             Console.WriteLine($"Aleb Server started at {server.LocalEndpoint}");
 

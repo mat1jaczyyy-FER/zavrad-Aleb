@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Aleb.Client\Aleb.Client.csproj" />
+    <ProjectReference Include="..\Aleb.Common\Aleb.Common.csproj" />
   </ItemGroup>
 
 </Project>

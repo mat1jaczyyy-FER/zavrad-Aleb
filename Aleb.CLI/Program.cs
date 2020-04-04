@@ -3,23 +3,26 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using Aleb.Client;
+using Aleb.Common;
 
 namespace Aleb.CLI {
     class Program {
-        static async Task<bool> StartConnecting(string host) {
-            AlebClient.ConnectStatus result = await AlebClient.Connect(host);
+        static AlebClient Server;
 
-            if (result == AlebClient.ConnectStatus.Success) {
-                Console.WriteLine($"Connected to {AlebClient.EndPoint}");
+        static async Task<bool> StartConnecting(string host) {
+            ConnectStatus result;
+            (result, Server) = await ClientExtensions.ConnectToServer(host);
+
+            if (result == ConnectStatus.Success) {
+                Console.WriteLine($"Connected to {Server.EndPoint}");
                 return true;
 
-            } else if (result == AlebClient.ConnectStatus.VersionMismatch)
+            } else if (result == ConnectStatus.VersionMismatch)
                 Console.Error.WriteLine($"Server version mismatching, can't connect!");
 
-            else if (result == AlebClient.ConnectStatus.Failed)
+            else if (result == ConnectStatus.Failed)
                 Console.Error.WriteLine($"Failed to connect!");
-            
-            AlebClient.Disconnect();
+
             return false;
         }
 
@@ -39,7 +42,20 @@ namespace Aleb.CLI {
                 return;
             }
             
-            Console.WriteLine("TODO Login");
+            string name = "";
+
+            do {
+                Console.Write("\nUsername: ");
+
+                if (!await Server.Login(name = Console.ReadLine())) {
+                    Console.Error.WriteLine("Login failed!");
+                    name = "";
+                }
+
+            } while (name == "");
+
+            Console.WriteLine("TODO Expect RoomList");
+
             Console.ReadKey();
         }
     }
