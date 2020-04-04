@@ -65,7 +65,7 @@ namespace Aleb.Server {
                 Client.Send("RoomList", Room.Rooms.Select(i => i.ToString()).ToArray());
 
             if (msg.Command == "CreateRoom") {
-                Room room = Room.Create(msg.Args[0], this);
+                Room room = (msg.Args.Length == 1)? Room.Create(msg.Args[0], this) : null;
 
                 if (room != null) Client.Send("RoomCreated", room.ToString());
                 else Client.Send("RoomFailed");
