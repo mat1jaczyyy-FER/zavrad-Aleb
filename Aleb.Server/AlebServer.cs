@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -49,7 +50,10 @@ namespace Aleb.Server {
                 return;
             }
 
-            server = new TcpListener(Dns.GetHostEntry(bind).AddressList[0], Protocol.Port);
+            server = new TcpListener(
+                Dns.GetHostEntry(bind).AddressList.First(i => i.AddressFamily == AddressFamily.InterNetwork),
+                Protocol.Port
+            );
 
             try {
                 server.Start();
