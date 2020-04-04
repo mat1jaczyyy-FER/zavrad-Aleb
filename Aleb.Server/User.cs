@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -15,7 +16,7 @@ namespace Aleb.Server {
 
         public static User Create(string name, AlebClient client) {
             if (!Validation.ValidateUserName(name)) return null;
-            if (Pool.Any(i => i.Name == name)) return null;
+            if (Pool.Any(i => i?.Name == name)) return null;
 
             User user = new User(name, client);
             Pool.Add(user);
@@ -24,10 +25,12 @@ namespace Aleb.Server {
         }
 
         public static void Destroy(User user) {
-            int index = Pool.IndexOf(user);
+            if (!Pool.Contains(user)) return;
 
-            Pool[index].Dispose();
-            Pool[index] = null;
+            Console.WriteLine($"{user.Client.Address} disconnected");
+
+            user.Dispose();
+            Pool.Remove(user);
         }
 
         public static User GetUser(int id)
@@ -43,9 +46,20 @@ namespace Aleb.Server {
         public event MessageReceivedEventHandler MessageReceived;
 
         public async void ClientLoop() {
-            Message msg = await Client.ReadMessage();
+            Message msg;
 
-            if (Client?.Connected != true) return;
+            try {
+                msg = await Client.ReadMessage();
+
+            } catch (IOException) {
+                Destroy(this);
+                return;
+            }
+
+            if (Client?.Connected != true) {
+                Destroy(this);
+                return;
+            }
 
             if (msg.Command == "GetRoomList")
                 Client.Send("RoomList", Room.Rooms.Select(i => i.ToString()).ToArray());
