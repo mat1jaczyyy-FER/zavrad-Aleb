@@ -1,8 +1,24 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
+using Aleb.Common;
+
 namespace Aleb.Server {
     class Room {
+        public static List<Room> Rooms { get; private set; } = new List<Room>();
+
+        public static Room Create(string name, User creator) {
+            if (!Validation.ValidateRoomName(name)) return null;
+            if (Rooms.Any(i => i.Name == name || i.Users.Contains(creator))) return null;
+
+            Room room = new Room(name, creator);
+            Rooms.Add(room);
+
+            return room;
+        }
+
+        public static void Destroy(Room room) => Rooms.Remove(room);
+
         class Person {
             public readonly User User;
             public bool Ready = false;
@@ -31,7 +47,7 @@ namespace Aleb.Server {
 
             People.Remove(People.First(i => i.User == leaving));
 
-            if (Count == 0) Manager.DestroyRoom(this);
+            if (Count == 0) Destroy(this);
 
             return true;
         }
@@ -70,6 +86,13 @@ namespace Aleb.Server {
             return true;
         }
 
-        public Room(User owner) => Join(owner);
+        public readonly string Name;
+
+        Room(string name, User owner) {
+            Name = name;
+            Join(owner);
+        }
+
+        public override string ToString() => $"{Name},{Count}";
     }
 }

@@ -18,7 +18,7 @@ namespace Aleb.Common {
         }
 
         protected Message(string raw) {
-            IEnumerable<string> args = raw?.Split(' ').Select(i => i.Trim());
+            IEnumerable<string> args = raw?.Split(' ').Select(i => i.Trim(' ', '\n'));
             if (args?.Any() == false) return;
 
             Command = args.First();
@@ -33,9 +33,6 @@ namespace Aleb.Common {
         }
 
         public override string ToString()
-            => new StringBuilder(Command)
-                .Append(' ')
-                .Append(string.Join(' ', Args))
-                .Append('\n').ToString();
+            => $"{Command}{string.Join("", Args.Select(i => ' ' + i).ToArray())}\n";
     }
 }

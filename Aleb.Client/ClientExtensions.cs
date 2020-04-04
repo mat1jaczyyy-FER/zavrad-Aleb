@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
@@ -32,7 +33,7 @@ namespace Aleb.Client {
             int serverVersion = init == null? -1 : Convert.ToInt32(init.Args[0]);  // todo generalize?
 
             if (serverVersion != Protocol.Version) {
-                entity.Disconnect();
+                entity.Dispose();
                 return (ConnectStatus.VersionMismatch, null);
             }
             
@@ -44,6 +45,15 @@ namespace Aleb.Client {
 
             Message response = await entity.ReadMessage("LoginResult");
             bool result = response == null? false : Convert.ToBoolean(response.Args[0]);
+
+            return result;
+        }
+
+        public static async Task<List<Room>> GetRoomList(this AlebClient entity) {
+            entity.Send("GetRoomList");
+
+            Message response = await entity.ReadMessage("RoomList");
+            List<Room> result = response == null? new List<Room>() : response.Args.Select(i => new Room(i)).ToList();
 
             return result;
         }

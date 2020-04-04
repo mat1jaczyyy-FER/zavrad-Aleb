@@ -8,6 +8,13 @@ using System.Text;
 
 namespace Aleb.Common {
     public class AlebClient: IDisposable {
+        public static bool LogCommunication = false;
+
+        void Log(bool received, string raw) {
+            if (LogCommunication)
+                Console.WriteLine($"[NETW-{(received? "RECV" : "SEND")}] {Address} > {raw.Trim(' ', '\n')}");
+        }
+
         TcpClient _client;
         TcpClient Client {
             get => _client;
@@ -25,7 +32,15 @@ namespace Aleb.Common {
             }
         }
 
-        public EndPoint EndPoint => Client?.Client.RemoteEndPoint;
+        public string Address {
+            get {
+                IPAddress IP = ((IPEndPoint)Client?.Client.RemoteEndPoint).Address;
+                IPHostEntry entry = Dns.GetHostEntry(IP);
+
+                return entry?.HostName?? IP.MapToIPv4().ToString();
+            }
+        }
+
         public bool Connected => Client != null;
 
         StreamReader Reader;
@@ -34,7 +49,10 @@ namespace Aleb.Common {
         public async Task<Message> ReadMessage(params string[] expected) {
             if (!Connected) return null;
 
-            return Message.Parse(await Reader.ReadLineAsync(), expected);
+            string raw = await Reader.ReadLineAsync();
+            Log(true, raw);
+
+            return Message.Parse(raw, expected);
         }
 
         public void Send(string command, params dynamic[] args)
@@ -43,19 +61,19 @@ namespace Aleb.Common {
         public void SendMessage(Message msg) {
             if (!Connected) return;
 
+            Log(false, msg.ToString());
+
             Writer.Write(msg);
             Writer.Flush();
         }
 
         public AlebClient(TcpClient client) => Client = client;
 
-        public void Disconnect() {
+        public void Dispose() {
             if (!Connected) return;
 
             Client.Dispose();
             Client = null;
         }
-
-        public void Dispose() => Disconnect();
     }
 }

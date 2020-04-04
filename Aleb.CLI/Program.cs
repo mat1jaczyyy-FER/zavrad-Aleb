@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -7,25 +8,6 @@ using Aleb.Common;
 
 namespace Aleb.CLI {
     class Program {
-        static AlebClient Server;
-
-        static async Task<bool> StartConnecting(string host) {
-            ConnectStatus result;
-            (result, Server) = await ClientExtensions.ConnectToServer(host);
-
-            if (result == ConnectStatus.Success) {
-                Console.WriteLine($"Connected to {Server.EndPoint}");
-                return true;
-
-            } else if (result == ConnectStatus.VersionMismatch)
-                Console.Error.WriteLine($"Server version mismatching, can't connect!");
-
-            else if (result == ConnectStatus.Failed)
-                Console.Error.WriteLine($"Failed to connect!");
-
-            return false;
-        }
-
         static async Task Main(string[] args) {
             string host = null;
 
@@ -37,7 +19,7 @@ namespace Aleb.CLI {
 
             Console.WriteLine("Connecting...");
 
-            if (!await StartConnecting(host)) {
+            if (!await Network.Connect(host)) {
                 Console.ReadKey();
                 return;
             }
@@ -47,14 +29,23 @@ namespace Aleb.CLI {
             do {
                 Console.Write("\nUsername: ");
 
-                if (!await Server.Login(name = Console.ReadLine())) {
+                if (!await Network.Server.Login(name = Console.ReadLine())) {
                     Console.Error.WriteLine("Login failed!");
                     name = "";
                 }
 
             } while (name == "");
 
-            Console.WriteLine("TODO Expect RoomList");
+            List<Room> RoomList = await Network.Server.GetRoomList();
+
+            Console.WriteLine("\nAvailable Rooms:");
+
+            if (!RoomList.Any()) Console.WriteLine("None");
+
+            for (int i = 0; i < RoomList.Count; i++)
+                Console.WriteLine($"{i}. {RoomList[i].Display()}");
+
+            Console.WriteLine("\n(R)efresh / (int) Join Room / (D)isconnect");
 
             Console.ReadKey();
         }

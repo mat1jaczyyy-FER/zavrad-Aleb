@@ -14,7 +14,7 @@ namespace Aleb.Server {
         static async void Handshake(TcpClient client) {
             AlebClient entity = new AlebClient(client);
 
-            Console.WriteLine($"Connection from {entity.EndPoint}");
+            Console.WriteLine($"Connection from {entity.Address}");
 
             entity.Send("Version", Protocol.Version);
             
@@ -33,15 +33,17 @@ namespace Aleb.Server {
                 } while (!success);
 
             } catch {
-                Console.WriteLine($"{entity.EndPoint} disconnected without logging in");
-                entity.Disconnect();
+                Console.WriteLine($"{entity.Address} disconnected without logging in");
+                entity.Dispose();
                 return;
             }
 
-            Console.WriteLine($"{user.Name} logged in from {entity.EndPoint}");
+            Console.WriteLine($"{user.Name} logged in from {entity.Address}");
         }
 
         static void Main(string[] args) {
+            AlebClient.LogCommunication = true;
+
             string bind = Protocol.Localhost;
 
             if (args.Length == 2 && args[0] == "--bind") bind = args[1];
