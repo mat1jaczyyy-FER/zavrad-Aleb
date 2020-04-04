@@ -11,7 +11,7 @@ namespace Aleb.Common {
         public static bool LogCommunication = false;
 
         void Log(bool received, string raw) {
-            if (LogCommunication)
+            if (LogCommunication && Connected && raw != null)
                 Console.WriteLine($"[NETW-{(received? "RECV" : "SEND")}] {Address} > {raw.Trim(' ', '\n')}");
         }
 
@@ -24,20 +24,14 @@ namespace Aleb.Common {
                 if (Client == null) {
                     Reader = null;
                     Writer = null;
+                    Address = "";
 
                 } else {
                     Reader = new StreamReader(Client.GetStream());
                     Writer = new StreamWriter(Client.GetStream());
+
+                    Address = ((IPEndPoint)Client?.Client.RemoteEndPoint).Address.MapToIPv4().ToString();
                 }
-            }
-        }
-
-        public string Address {
-            get {
-                IPAddress IP = ((IPEndPoint)Client?.Client.RemoteEndPoint).Address;
-                IPHostEntry entry = Dns.GetHostEntry(IP);
-
-                return entry?.HostName?? IP.MapToIPv4().ToString();
             }
         }
 
@@ -45,6 +39,7 @@ namespace Aleb.Common {
 
         StreamReader Reader;
         StreamWriter Writer;
+        public string Address { get; private set; } = "";
 
         public async Task<Message> ReadMessage(params string[] expected) {
             if (!Connected) return null;
