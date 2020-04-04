@@ -41,6 +41,7 @@ namespace Aleb.Client {
         }
 
         public static async Task<bool> Login(this AlebClient entity, string name) {
+            if (!Validation.ValidateUserName(name)) return false;
             entity.Send("Login", name);
 
             Message response = await entity.ReadMessage("LoginResult");
@@ -54,6 +55,16 @@ namespace Aleb.Client {
 
             Message response = await entity.ReadMessage("RoomList");
             List<Room> result = response == null? new List<Room>() : response.Args.Select(i => new Room(i)).ToList();
+
+            return result;
+        }
+
+        public static async Task<Room> CreateRoom(this AlebClient entity, string name) {
+            if (!Validation.ValidateRoomName(name)) return null;
+            entity.Send("CreateRoom", name);
+
+            Message response = await entity.ReadMessage("RoomCreated", "RoomFailed");
+            Room result = response == null? null : (response.Command == "RoomCreated"? new Room(response.Args[0]) : null);
 
             return result;
         }

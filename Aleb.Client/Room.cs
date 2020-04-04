@@ -1,7 +1,8 @@
-﻿using Aleb.Common;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
+
+using Aleb.Common;
 
 namespace Aleb.Client {
     public class Room {
