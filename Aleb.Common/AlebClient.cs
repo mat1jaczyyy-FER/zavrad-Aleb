@@ -50,6 +50,11 @@ namespace Aleb.Common {
             return Message.Parse(raw, expected);
         }
 
+        public async Task<T> ReadMessage<T>(Func<Message, T> success, T fail, params string[] expected) {
+            Message msg = await ReadMessage(expected);
+            return msg == null? fail : success.Invoke(msg);
+        }
+
         public void Send(string command, params dynamic[] args)
             => SendMessage(new Message(command, args));
 

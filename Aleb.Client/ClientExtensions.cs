@@ -16,57 +16,48 @@ namespace Aleb.Client {
 
     public static class ClientExtensions {
         public static async Task<(ConnectStatus, AlebClient)> ConnectToServer(string host) {
-            TcpClient client = null;
+            TcpClient tcp = null;
 
             try {
-                client = new TcpClient();
-                await client.ConnectAsync(host?? Protocol.Localhost, Protocol.Port);
+                tcp = new TcpClient();
+                await tcp.ConnectAsync(host?? Protocol.Localhost, Protocol.Port);
 
             } catch {
-                client?.Dispose();
+                tcp?.Dispose();
                 return (ConnectStatus.Failed, null);
             }
 
-            AlebClient entity = new AlebClient(client);
+            AlebClient client = new AlebClient(tcp);
 
-            Message init = await entity.ReadMessage("Version");
-            int serverVersion = init == null? -1 : Convert.ToInt32(init.Args[0]);  // todo generalize?
-
-            if (serverVersion != Protocol.Version) {
-                entity.Dispose();
+            if (await client.ReadMessage(i => Convert.ToInt32(i.Args[0]), -1, "Version") != Protocol.Version) {
+                client.Dispose();
                 return (ConnectStatus.VersionMismatch, null);
             }
             
-            return (ConnectStatus.Success, entity);
+            return (ConnectStatus.Success, client);
         }
 
-        public static async Task<bool> Login(this AlebClient entity, string name) {
-            if (!Validation.ValidateUserName(name)) return false;
-            entity.Send("Login", name);
+        public static async Task<bool> Login(this AlebClient client, string name, string password) {
+            if (!Validation.ValidateUsername(name)) return false;
+            if (!Validation.ValidatePassword(password)) return false;
 
-            Message response = await entity.ReadMessage("LoginResult");
-            bool result = response == null? false : Convert.ToBoolean(response.Args[0]);
+            client.Send("Login", name, password);
 
-            return result;
+            return await client.ReadMessage(i => Convert.ToBoolean(i.Args[0]), false, "LoginResult");
         }
 
-        public static async Task<List<Room>> GetRoomList(this AlebClient entity) {
-            entity.Send("GetRoomList");
+        public static async Task<List<Room>> GetRoomList(this AlebClient client) {
+            client.Send("GetRoomList");
 
-            Message response = await entity.ReadMessage("RoomList");
-            List<Room> result = response == null? new List<Room>() : response.Args.Select(i => new Room(i)).ToList();
-
-            return result;
+            return await client.ReadMessage(i => i.Args.Select(i => new Room(i)).ToList(), new List<Room>(), "RoomList");
         }
 
-        public static async Task<Room> CreateRoom(this AlebClient entity, string name) {
+        public static async Task<Room> CreateRoom(this AlebClient client, string name) {
             if (!Validation.ValidateRoomName(name)) return null;
-            entity.Send("CreateRoom", name);
 
-            Message response = await entity.ReadMessage("RoomCreated", "RoomFailed");
-            Room result = response == null? null : (response.Command == "RoomCreated"? new Room(response.Args[0]) : null);
+            client.Send("CreateRoom", name);
 
-            return result;
+            return await client.ReadMessage(i => i.Command == "RoomCreated"? new Room(i.Args[0]) : null, null, "RoomCreated", "RoomFailed");
         }
     }
 }

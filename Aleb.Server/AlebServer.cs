@@ -11,12 +11,12 @@ namespace Aleb.Server {
     class AlebServer {
         static TcpListener server;
 
-        static async void Handshake(TcpClient client) {
-            AlebClient entity = new AlebClient(client);
+        static async void Handshake(TcpClient tcp) {
+            AlebClient client = new AlebClient(tcp);
 
-            Console.WriteLine($"Connection from {entity.Address}");
+            Console.WriteLine($"Connection from {client.Address}");
 
-            entity.Send("Version", Protocol.Version);
+            client.Send("Version", Protocol.Version);
             
             User user = null;
 
@@ -24,21 +24,21 @@ namespace Aleb.Server {
                 bool success = false;
 
                 do {
-                    Message response = await entity.ReadMessage("Login");
-                    string name = response == null? "" : response.Args[0];
-                    user = User.Create(name, entity);
+                    Message response = await client.ReadMessage("Login");
+                    (string name, string password) = response == null? ("", "") : (response.Args[0], response.Args[1]);
+                    user = User.Connect(name, password, client);
 
-                    entity.Send("LoginResult", success = (user != null));
+                    client.Send("LoginResult", success = (user != null));
 
                 } while (!success);
 
             } catch {
-                Console.WriteLine($"{entity.Address} disconnected without logging in");
-                entity.Dispose();
+                Console.WriteLine($"{client.Address} disconnected without logging in");
+                client.Dispose();
                 return;
             }
 
-            Console.WriteLine($"{user.Name} logged in from {entity.Address}");
+            Console.WriteLine($"{user.Name} logged in from {client.Address}");
         }
 
         static void Main(string[] args) {
