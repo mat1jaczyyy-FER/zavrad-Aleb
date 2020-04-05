@@ -12,9 +12,7 @@ namespace Aleb.Common {
         public static Message Parse(string raw, params string[] expected) {
             Message ret = new Message(raw);
 
-            return ret.Valid && (!expected.Any() || expected.Contains(ret.Command))
-                ? ret
-                : null;
+            return ret.Valid? ret : null;
         }
 
         protected Message(string raw) {

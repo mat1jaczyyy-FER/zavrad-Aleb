@@ -5,21 +5,21 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Aleb.Client;
-using Aleb.Common;
 
 namespace Aleb.CLI {
     static class RoomMenus {
         public static Room Room;
+        public static List<Room> Rooms = new List<Room>();
 
         public static async Task RoomList() {
-            List<Room> RoomList = await Network.Server.GetRoomList();
-
             Console.WriteLine("\nAvailable Rooms:");
 
-            if (!RoomList.Any()) Console.WriteLine("None");
+            List<Room> rooms = Rooms.ToList();
 
-            for (int i = 0; i < RoomList.Count; i++)
-                Console.WriteLine($"{i}. {RoomList[i].Display()}");
+            if (!rooms.Any()) Console.WriteLine("None");
+
+            for (int i = 0; i < rooms.Count; i++)
+                Console.WriteLine($"{i}. {rooms[i].Display()}");
 
             bool success;
 
@@ -57,7 +57,7 @@ namespace Aleb.CLI {
                     return;
                 }
             
-                if ((Room = await Network.Server.CreateRoom(name)) == null) {
+                if ((Room = await Requests.CreateRoom(name)) == null) {
                     Console.Error.WriteLine("Couldn't create a room with this name.");
                     success = false;
                 }

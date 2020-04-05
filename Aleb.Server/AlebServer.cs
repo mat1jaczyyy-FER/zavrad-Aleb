@@ -9,33 +9,26 @@ using Aleb.Common;
 
 namespace Aleb.Server {
     static class AlebServer {
-        static TcpListener server;
+        static void Login(AlebClient sender, Message msg) {
+            if (msg.Command != "Login") return;
 
-        static async void Handshake(TcpClient tcp) {
-            AlebClient client = new AlebClient(tcp);
+            User user;
 
-            Console.WriteLine($"Connection from {client.Address}");
+            sender.Send("LoginResult", (user = User.Connect(msg.Args[0], msg.Args[1], sender)) != null);
 
-            client.Send("Version", Protocol.Version);
-            
-            User user = null;
+            if (user != null) {
+                sender.MessageReceived -= Login;
+                sender.Disconnected -= Disconnect;
 
-            try {
-                bool success = false;
-
-                do {
-                    (string name, string password) = await client.ReadMessage(i => (i.Args[0], i.Args[1]), ("", ""), "Login");
-                    client.Send("LoginResult", success = (user = User.Connect(name, password, client)) != null);
-
-                } while (!success);
-
-            } catch {
-                Console.WriteLine($"{client.Address} disconnected without logging in");
-                client.Dispose();
-                return;
+                Console.WriteLine($"{user.Name} logged in from {sender.Address}");
             }
+            
+            sender.Flush();
+        }
 
-            Console.WriteLine($"{user.Name} logged in from {client.Address}");
+        static void Disconnect(AlebClient sender) {
+            Console.WriteLine($"{sender.Address} disconnected without logging in");
+            sender.Dispose();
         }
 
         static void Main(string[] args) {
@@ -49,7 +42,7 @@ namespace Aleb.Server {
                 return;
             }
 
-            server = new TcpListener(
+            TcpListener server = new TcpListener(
                 Dns.GetHostEntry(bind).AddressList.First(i => i.AddressFamily == AddressFamily.InterNetwork),
                 Protocol.Port
             );
@@ -64,7 +57,19 @@ namespace Aleb.Server {
 
             Console.WriteLine($"Aleb Server started at {server.LocalEndpoint}");
 
-            while (true) Handshake(server.AcceptTcpClient());
+            while (true) {
+                AlebClient client = new AlebClient(server.AcceptTcpClient());
+
+                Console.WriteLine($"Connection from {client.Address}");
+
+                client.MessageReceived += Login;
+                client.Disconnected += Disconnect;
+
+                client.Run();
+
+                client.Send("Version", Protocol.Version);
+                client.Flush();
+            }
         }
     }
 }

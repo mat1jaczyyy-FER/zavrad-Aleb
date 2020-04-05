@@ -36,7 +36,7 @@ namespace Aleb.Server {
             if (Users.Contains(joining)) return false;
 
             People.Add(new Person(joining));
-            joining.State = User.UserState.InRoom;
+            joining.State = UserState.InRoom;
             return true;
         }
 

@@ -20,6 +20,9 @@ namespace Aleb.CLI {
         }
 
         static async Task Login() {
+            Task<UserState> stateTask = Requests.ExpectingUserState();
+            Task<List<Room>> roomListTask = Requests.ExpectingRoomList();
+
             do {
                 Console.Write("\nUsername: ");
                 Username = Console.ReadLine();
@@ -32,7 +35,7 @@ namespace Aleb.CLI {
                 Console.Write("Password: ");
                 string password = Security.ReadPassword();
 
-                if (!await Network.Server.Login(Username, password)) {
+                if (!await Requests.Login(Username, password)) {
                     Console.Error.WriteLine("\nLogin failed!");
                     Username = "";
                 }
@@ -40,7 +43,16 @@ namespace Aleb.CLI {
             } while (Username == "");
 
             Console.WriteLine("\nLogged in!");
-            Menu = RoomMenus.RoomList;
+
+            UserState state = await stateTask;
+
+            if (state == UserState.Idle) //{
+                RoomMenus.Rooms = await roomListTask;
+                Menu = RoomMenus.RoomList;
+
+            //} else if (state == UserState.InGame) {
+
+            //}
         }
 
         static async Task Main(string[] args) {
@@ -52,12 +64,23 @@ namespace Aleb.CLI {
                 return;
             }
 
-            if (await Network.Connect(host))
+            Console.WriteLine("Connecting...");
+            ConnectStatus result = await Network.Connect(host);
+
+            if (result == ConnectStatus.Success) {
+                Console.WriteLine($"Connected to {Network.Server.Address}");
+
                 while (!Disconnecting)
                     await Menu.Invoke();
 
-            Network.Server.Dispose();
-            Console.WriteLine("\nDisconnected.");
+                Network.Server.Dispose();
+                Console.WriteLine("\nDisconnected.");
+
+            } else if (result == ConnectStatus.VersionMismatch)
+                Console.Error.WriteLine($"Server version mismatching, can't connect!");
+
+            else if (result == ConnectStatus.Failed)
+                Console.Error.WriteLine($"Failed to connect!");
 
             Console.ReadKey();
         }

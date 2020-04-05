@@ -2,16 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 using Aleb.Common;
 
 namespace Aleb.Server {
     class User {
-        public enum UserState {
-            Idle, InRoom, InGame   
-        }
-
         static List<User> Pool = new List<User>();
 
         public static User Connect(string name, string password, AlebClient client) {
@@ -31,14 +27,19 @@ namespace Aleb.Server {
             return user;
         }
 
-        public static void Disconnect(User user) {
-            Console.WriteLine($"{user.Client.Address} disconnected");
-
-            user.Client = null;
-        }
-
         public static User GetUser(int id)
             => (0 <= id && id < Pool.Count)? Pool[id] : null;
+
+        static void Broadcast(Func<User, bool> filter, string command, params dynamic[] args) {
+            Message msg = new Message(command, args);
+
+            foreach (User user in Pool.Where(filter)) {
+                user.Client.SendMessage(msg);
+                user.Client.Flush();
+            }
+        }
+
+        static void Broadcast(string command, params dynamic[] args) => Broadcast(i => true, command, args);
 
         public UserState State = UserState.Idle;
 
@@ -50,53 +51,51 @@ namespace Aleb.Server {
             private set {
                 if (_client == value) return;
 
-                if (_client != null) {
+                if (_client != null)
                     _client.Dispose();
-                    MessageReceived = null;
-                }
 
                 _client = value;
 
-                if (_client != null) ClientLoop();
+                if (_client != null) {
+                    _client.MessageReceived += Received;
+                    _client.Disconnected += Disconnect;
+                    JustConnected();
+                }
             }
         }
 
-        public delegate void MessageReceivedEventHandler(User sender, Message msg);
-        public event MessageReceivedEventHandler MessageReceived;
+        void JustConnected() {
+            if (State == UserState.Idle) 
+                Client.Send("RoomList", Room.Rooms.Select(i => i.ToString()).ToArray());
 
-        public async void ClientLoop() {
-            Message msg;
+            else if (State == UserState.InGame) {};
 
-            try {
-                msg = await Client.ReadMessage(); // todo softlock on reconnect
+            Client.Send("UserState", State.ToString());
+        }
 
-            } catch (IOException) {
-                Disconnect(this);
-                return;
-            }
-
-            if (Client?.Connected != true || msg == null) {
-                Disconnect(this);
-                return;
-            }
-
+        void Received(AlebClient sender, Message msg) {
             if (State == UserState.Idle) {
-                if (msg.Command == "GetRoomList")
-                    Client.Send("RoomList", Room.Rooms.Select(i => i.ToString()).ToArray());
-
                 if (msg.Command == "CreateRoom") {
                     Room room = (msg.Args.Length == 1)? Room.Create(msg.Args[0], this) : null;
 
-                    if (room != null) Client.Send("RoomCreated", room.ToString());
-                    else Client.Send("RoomFailed");
+                    if (room != null) {
+                        Client.Send("RoomCreated", room.ToString());
+                        Broadcast(i => i.State == UserState.Idle, "RoomAdded", room.ToString());
+                        
+                    } else Client.Send("RoomFailed");
+
+                    Client.Flush();
                 }
 
             } else if (State == UserState.InRoom) {
 
             }
+        }
 
-            MessageReceived?.Invoke(this, msg);
-            ClientLoop();
+        void Disconnect(AlebClient sender) {
+            Console.WriteLine($"{Client.Address} disconnected");
+
+            Client = null;
         }
 
         User(string name, string password) {

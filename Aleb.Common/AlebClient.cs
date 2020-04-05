@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using System.Text;
+using System.Threading;
 
 namespace Aleb.Common {
     public class AlebClient: IDisposable {
@@ -22,14 +23,17 @@ namespace Aleb.Common {
                 _client = value;
 
                 if (Client == null) {
+                    Disconnected?.Invoke(this);
+                    Disconnected = null;
+
                     Reader = null;
                     Writer = null;
                     Address = "";
+                    MessageReceived = null;
 
                 } else {
                     Reader = new StreamReader(Client.GetStream());
                     Writer = new StreamWriter(Client.GetStream());
-
                     Address = ((IPEndPoint)Client?.Client.RemoteEndPoint).Address.MapToIPv4().ToString();
                 }
             }
@@ -41,29 +45,56 @@ namespace Aleb.Common {
         StreamWriter Writer;
         public string Address { get; private set; } = "";
 
-        public async Task<Message> ReadMessage(params string[] expected) {
-            if (!Connected) return null;
+        public delegate void MessageReceivedEventHandler(AlebClient sender, Message msg);
+        public event MessageReceivedEventHandler MessageReceived;
 
-            string raw = await Reader.ReadLineAsync();
-            Log(true, raw);
+        public delegate void DisconnectedEventHandler(AlebClient sender);
+        public event DisconnectedEventHandler Disconnected;
 
-            return Message.Parse(raw, expected);
+        bool Running = false;
+
+        public async void Run() {
+            if (Running) return;
+            Running = true;
+
+            while (true) {
+                string raw;
+                Message msg;
+
+                try {
+                    raw = await Reader.ReadLineAsync(); // todo softlock on reconnect?
+                    msg = Message.Parse(raw);
+
+                } catch (IOException) {
+                    Client = null;
+                    return;
+                }
+
+                if (msg == null) {
+                    Client = null;
+                    return;
+                }
+
+                Log(true, raw);
+                MessageReceived?.Invoke(this, msg);
+            }
         }
 
-        public async Task<T> ReadMessage<T>(Func<Message, T> success, T fail, params string[] expected) {
-            Message msg = await ReadMessage(expected);
-            return msg == null? fail : success.Invoke(msg);
-        }
+        Stack<Message> SendBuffer = new Stack<Message>();
+
+        public void SendMessage(Message msg) => SendBuffer.Push(msg);
 
         public void Send(string command, params dynamic[] args)
             => SendMessage(new Message(command, args));
 
-        public void SendMessage(Message msg) {
+        public void Flush() {
             if (!Connected) return;
 
-            Log(false, msg.ToString());
+            while (SendBuffer.TryPop(out Message msg)) { 
+                Log(false, msg.ToString());
+                Writer.Write(msg);
+            }
 
-            Writer.Write(msg);
             Writer.Flush();
         }
 
