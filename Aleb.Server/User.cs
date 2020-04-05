@@ -7,40 +7,59 @@ using System.Text.RegularExpressions;
 using Aleb.Common;
 
 namespace Aleb.Server {
-    class User: IDisposable {
-        enum UserState {
+    class User {
+        public enum UserState {
             Idle, InRoom, InGame   
         }
 
         static List<User> Pool = new List<User>();
 
-        public static User Create(string name, AlebClient client) {
-            if (!Validation.ValidateUserName(name)) return null;
-            if (Pool.Any(i => i?.Name == name)) return null;
+        public static User Connect(string name, string password, AlebClient client) {
+            if (!Validation.ValidateUsername(name)) return null;
+            if (!Validation.ValidatePassword(password)) return null;
 
-            User user = new User(name, client);
-            Pool.Add(user);
+            User user = Pool.FirstOrDefault(i => i?.Name == name);
+
+            if (user == null) {
+                user = new User(name, password);
+                Pool.Add(user);
+
+            } else if (user.Password != password) user = null;
+            
+            if (user != null) user.Client = client;
 
             return user;
         }
 
-        public static void Destroy(User user) {
-            if (!Pool.Contains(user)) return;
-
+        public static void Disconnect(User user) {
             Console.WriteLine($"{user.Client.Address} disconnected");
 
-            user.Dispose();
-            Pool.Remove(user);
+            user.Client = null;
         }
 
         public static User GetUser(int id)
             => (0 <= id && id < Pool.Count)? Pool[id] : null;
 
-        UserState State = UserState.Idle;
+        public UserState State = UserState.Idle;
 
-        public readonly string Name;
+        public readonly string Name, Password;
 
-        public AlebClient Client { get; private set; }
+        AlebClient _client;
+        public AlebClient Client {
+            get => _client;
+            private set {
+                if (_client == value) return;
+
+                if (_client != null) {
+                    _client.Dispose();
+                    MessageReceived = null;
+                }
+
+                _client = value;
+
+                if (_client != null) ClientLoop();
+            }
+        }
 
         public delegate void MessageReceivedEventHandler(User sender, Message msg);
         public event MessageReceivedEventHandler MessageReceived;
@@ -49,44 +68,40 @@ namespace Aleb.Server {
             Message msg;
 
             try {
-                msg = await Client.ReadMessage();
+                msg = await Client.ReadMessage(); // todo softlock on reconnect
 
             } catch (IOException) {
-                Destroy(this);
+                Disconnect(this);
                 return;
             }
 
-            if (Client?.Connected != true) {
-                Destroy(this);
+            if (Client?.Connected != true || msg == null) {
+                Disconnect(this);
                 return;
             }
 
-            if (msg.Command == "GetRoomList")
-                Client.Send("RoomList", Room.Rooms.Select(i => i.ToString()).ToArray());
+            if (State == UserState.Idle) {
+                if (msg.Command == "GetRoomList")
+                    Client.Send("RoomList", Room.Rooms.Select(i => i.ToString()).ToArray());
 
-            if (msg.Command == "CreateRoom") {
-                Room room = (msg.Args.Length == 1)? Room.Create(msg.Args[0], this) : null;
+                if (msg.Command == "CreateRoom") {
+                    Room room = (msg.Args.Length == 1)? Room.Create(msg.Args[0], this) : null;
 
-                if (room != null) Client.Send("RoomCreated", room.ToString());
-                else Client.Send("RoomFailed");
+                    if (room != null) Client.Send("RoomCreated", room.ToString());
+                    else Client.Send("RoomFailed");
+                }
+
+            } else if (State == UserState.InRoom) {
+
             }
 
             MessageReceived?.Invoke(this, msg);
             ClientLoop();
         }
 
-        User(string name, AlebClient client) {
+        User(string name, string password) {
             Name = name;
-            Client = client;
-
-            ClientLoop();
-        }
-
-        public void Dispose() {
-            MessageReceived = null;
-
-            Client?.Dispose();
-            Client = null;
+            Password = password;
         }
 
         public Player ToPlayer() => new Player(this);

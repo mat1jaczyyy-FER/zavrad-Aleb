@@ -8,7 +8,7 @@ using System.Threading;
 using Aleb.Common;
 
 namespace Aleb.Server {
-    class AlebServer {
+    static class AlebServer {
         static TcpListener server;
 
         static async void Handshake(TcpClient tcp) {
@@ -24,11 +24,8 @@ namespace Aleb.Server {
                 bool success = false;
 
                 do {
-                    Message response = await client.ReadMessage("Login");
-                    (string name, string password) = response == null? ("", "") : (response.Args[0], response.Args[1]);
-                    user = User.Connect(name, password, client);
-
-                    client.Send("LoginResult", success = (user != null));
+                    (string name, string password) = await client.ReadMessage(i => (i.Args[0], i.Args[1]), ("", ""), "Login");
+                    client.Send("LoginResult", success = (user = User.Connect(name, password, client)) != null);
 
                 } while (!success);
 
