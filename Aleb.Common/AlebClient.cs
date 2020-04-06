@@ -53,31 +53,34 @@ namespace Aleb.Common {
 
         bool Running = false;
 
-        public async void Run() {
+        public void Run() {
             if (Running) return;
             Running = true;
 
-            while (true) {
-                string raw;
-                Message msg;
+            Task.Run(() => {
+                while (true) {
+                    string raw;
+                    Message msg;
 
-                try {
-                    raw = await Reader.ReadLineAsync(); // todo softlock on reconnect?
-                    msg = Message.Parse(raw);
+                    try {
+                        raw = Reader.ReadLine(); // todo softlock on reconnect?
+                        msg = Message.Parse(raw);
 
-                } catch (IOException) {
-                    Client = null;
-                    return;
+                    } catch (IOException) {
+                        Client = null;
+                        return;
+                    }
+
+                    if (msg == null) {
+                        Client = null;
+                        return;
+                    }
+
+                    Log(true, raw);
+                    
+                    MessageReceived?.Invoke(this, msg);
                 }
-
-                if (msg == null) {
-                    Client = null;
-                    return;
-                }
-
-                Log(true, raw);
-                MessageReceived?.Invoke(this, msg);
-            }
+            });
         }
 
         Stack<Message> SendBuffer = new Stack<Message>();

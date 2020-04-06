@@ -46,13 +46,13 @@ namespace Aleb.CLI {
 
             UserState state = await stateTask;
 
-            if (state == UserState.Idle) //{
+            if (state == UserState.Idle) {
                 RoomMenus.Rooms = await roomListTask;
                 Menu = RoomMenus.RoomList;
 
-            //} else if (state == UserState.InGame) {
+            } else if (state == UserState.InGame) {
 
-            //}
+            }
         }
 
         static async Task Main(string[] args) {
@@ -70,10 +70,12 @@ namespace Aleb.CLI {
             if (result == ConnectStatus.Success) {
                 Console.WriteLine($"Connected to {Network.Server.Address}");
 
+                Network.RoomAdded += Events.RoomAdded;
+
                 while (!Disconnecting)
                     await Menu.Invoke();
 
-                Network.Server.Dispose();
+                Network.Dispose();
                 Console.WriteLine("\nDisconnected.");
 
             } else if (result == ConnectStatus.VersionMismatch)
