@@ -52,7 +52,7 @@ namespace Aleb.Client {
         static void MessageReceived(AlebClient sender, Message msg) {
             foreach (var i in Waiting.ToHashSet()) {
                 if (i.Expected.Contains(msg.Command)) {
-                    i.TCS.TrySetResult(msg);
+                    Task.Run(() => i.TCS.TrySetResult(msg));
                     Waiting.Remove(i);
                 }
             }
