@@ -12,9 +12,9 @@ namespace Aleb.Server {
         static void Login(AlebClient sender, Message msg) {
             if (msg.Command != "Login") return;
 
-            User user;
+            User user = User.Connect(msg.Args[0], msg.Args[1], sender);
 
-            sender.Send("LoginResult", (user = User.Connect(msg.Args[0], msg.Args[1], sender)) != null);
+            sender.Send("LoginResult", user?.State.ToString());
 
             if (user != null) {
                 sender.MessageReceived -= Login;

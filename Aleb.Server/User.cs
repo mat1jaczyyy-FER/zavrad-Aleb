@@ -61,23 +61,16 @@ namespace Aleb.Server {
                 if (_client != null) {
                     _client.MessageReceived += Received;
                     _client.Disconnected += Disconnect;
-                    JustConnected();
                 }
             }
         }
 
-        void JustConnected() {
-            if (State == UserState.Idle) 
-                Client.Send("RoomList", Room.Rooms.Select(i => i.ToString()).ToArray());
-
-            else if (State == UserState.InGame) {};
-
-            Client.Send("UserState", State.ToString());
-        }
-
         void Received(AlebClient sender, Message msg) {
             if (State == UserState.Idle) {
-                if (msg.Command == "CreateRoom") {
+                if (msg.Command == "GetRoomList") {
+                    Client.Send("RoomList", Room.Rooms.Select(i => i.ToString()).ToArray());
+
+                } else if (msg.Command == "CreateRoom") {
                     Room room = (msg.Args.Length == 1)? Room.Create(msg.Args[0], this) : null;
 
                     if (room != null) {

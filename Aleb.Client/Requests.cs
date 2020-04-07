@@ -9,18 +9,18 @@ using Aleb.Common;
 
 namespace Aleb.Client {
     public static class Requests {
-        public static async Task<bool> Login(string name, string password) {
-            if (!Validation.ValidateUsername(name)) return false;
-            if (!Validation.ValidatePassword(password)) return false;
+        public static async Task<User> Login(string name, string password) {
+            if (!Validation.ValidateUsername(name)) return null;
+            if (!Validation.ValidatePassword(password)) return null;
 
-            return Convert.ToBoolean((await Network.Ask(new Message("Login", name, password), "LoginResult")).Args[0]);
+            if (Enum.TryParse((await Network.Ask(new Message("Login", name, password), "LoginResult")).Args[0], false, out UserState state))
+                return new User(name) { State = state };
+
+            return null;
         }
-
-        public static async Task<UserState> ExpectingUserState()                       // generalize for all enums?
-            => Enum.Parse<UserState>((await Network.Register("UserState")).Args[0]);
         
-        public static async Task<List<Room>> ExpectingRoomList()
-            => (await Network.Register("RoomList")).Args.Select(i => new Room(i)).ToList();
+        public static async Task<List<Room>> GetRoomList()
+            => (await Network.Ask(new Message("GetRoomList"), "RoomList"))?.Args.Select(i => new Room(i)).ToList()?? new List<Room>();
 
         public static async Task<Room> CreateRoom(string name) {
             if (!Validation.ValidateRoomName(name)) return null;

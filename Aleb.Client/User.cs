@@ -9,6 +9,8 @@ namespace Aleb.Client {
         public readonly string Name;
         public bool Ready;
 
+        public UserState State;
+
         public User(string raw) => Name = raw;
 
         public override bool Equals(object obj) {

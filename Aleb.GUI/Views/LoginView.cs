@@ -60,11 +60,10 @@ namespace Aleb.GUI.Views {
         async void Login(object sender, RoutedEventArgs e) {
             Username.IsEnabled = Password.IsEnabled = LoginButton.IsEnabled = false;
             Status.Text = "";
+            
+            Game.User = await Requests.Login(Username.Text, Password.Text);
 
-            Task<UserState> stateTask = Requests.ExpectingUserState();
-            Task<List<Room>> roomListTask = Requests.ExpectingRoomList();
-
-            if (!await Requests.Login(Username.Text, Password.Text)) {
+            if (Game.User == null) {
                 Username.IsEnabled = Password.IsEnabled = true;
                 LoginButton.IsEnabled = false;
 
@@ -72,17 +71,15 @@ namespace Aleb.GUI.Views {
                 return;
             }
 
-            Game.User = new User(Username.Text);
-
-            UserState state = await stateTask;
+            /*UserState state = await stateTask;
 
             if (state == UserState.Idle) {
-                Game.Rooms = await roomListTask;
+                Game.Rooms = await roomListTask;*/
                 App.MainWindow.View = new RoomListView();
-
+            /*
             } else if (state == UserState.InGame) {
 
-            }
+            }*/
         }
     }
 }
