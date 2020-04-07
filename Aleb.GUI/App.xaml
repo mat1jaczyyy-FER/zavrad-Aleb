@@ -14,16 +14,23 @@
       <Setter Property="HasSystemDecorations" Value="false" />
     </Style>
 
-    <Style Selector=":is(Control)">
-      <Setter Property="Focusable" Value="false"/>
-    </Style>
-
     <Style Selector="TextBlock">
       <Setter Property="FontFamily" Value="{DynamicResource Font}" />
     </Style>
 
     <Style Selector="TextBox">
       <Setter Property="FontFamily" Value="{DynamicResource Font}" />
+      <Setter Property="BorderThickness" Value="0 0 0 1" />
+      <Setter Property="BorderBrush" Value="{DynamicResource ThemeForegroundLowBrush}" />
+      <Setter Property="CaretBrush" Value="{DynamicResource ThemeForegroundBrush}" />
+    </Style>
+    
+    <Style Selector="TextBox:pointerover /template/ Border#border">
+      <Setter Property="BorderBrush" Value="{DynamicResource ThemeControlHighlightMidBrush}"/>
+    </Style>
+    
+    <Style Selector="TextBox:focus /template/ Border#border">
+      <Setter Property="BorderBrush" Value="{DynamicResource ThemeForegroundBrush}"/>
     </Style>
 
     <Style Selector="ContextMenu">
@@ -33,6 +40,7 @@
     <Style Selector="Button">
       <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderMidBrush}" />
       <Setter Property="Background" Value="{DynamicResource ThemeControlHighBrush}" />
+      <Setter Property="Padding" Value="20 7" />
     </Style>
 
     <Style Selector="Button:pointerover /template/ ContentPresenter">

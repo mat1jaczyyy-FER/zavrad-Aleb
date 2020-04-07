@@ -10,6 +10,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Aleb.Client\Aleb.Client.csproj" />
+    <ProjectReference Include="..\Aleb.Common\Aleb.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.9.999-cibuild*" />
     <PackageReference Include="Avalonia.Desktop" Version="0.9.999-cibuild*" />
     <PackageReference Include="Avalonia.Diagnostics" Version="0.9.999-cibuild*" />
@@ -26,24 +31,6 @@
       <SubType>Designer</SubType>
     </AvaloniaResource>
     <AvaloniaResource Include="Resources/*" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Components\Close.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </None>
-    <None Update="Components\Expand.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </None>
-    <None Update="Components\Minimize.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </None>
-    <None Update="Components\PreferencesButton.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </None>
-    <None Update="Dark.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </None>
   </ItemGroup>
   
 </Project>

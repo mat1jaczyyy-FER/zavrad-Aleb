@@ -9,20 +9,29 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 
+using Aleb.GUI.Views;
+
 namespace Aleb.GUI {
     class AlebWindow: Window {
         void InitializeComponent() {
             AvaloniaXamlLoader.Load(this);
 
             TitleText = this.Get<TextBlock>("Title");
-            TitleCenter = this.Get<TextBlock>("TitleCenter");
             
-            CenteringLeft = this.Get<StackPanel>("CenteringLeft");
-            CenteringRight = this.Get<StackPanel>("CenteringRight");
+            LeftHand = this.Get<StackPanel>("LeftHand");
+            RightHand = this.Get<StackPanel>("RightHand");
+
+            view = this.Get<Border>("View");
         }
 
-        TextBlock TitleText, TitleCenter;
-        StackPanel CenteringLeft, CenteringRight;
+        public TextBlock TitleText;
+        public StackPanel LeftHand, RightHand;
+        Border view;
+
+        public IControl View {
+            get => view.Child;
+            set => view.Child = value;
+        }
 
         public AlebWindow() {
             InitializeComponent();
@@ -34,7 +43,7 @@ namespace Aleb.GUI {
         void Loaded(object sender, EventArgs e) {
             Position = new PixelPoint(Position.X, Math.Max(0, Position.Y));
 
-
+            View = new ConnectingView();
         }
 
         void Unloaded(object sender, CancelEventArgs e) {
@@ -42,12 +51,7 @@ namespace Aleb.GUI {
         }
 
         void Window_KeyDown(object sender, KeyEventArgs e) {
-            List<Window> windows = App.Windows.ToList();
-            
 
-            
-            if (windows.SequenceEqual(App.Windows) && FocusManager.Instance.Current?.GetType() != typeof(TextBox))
-                this.Focus();
         }
 
         void BringToTop() {
@@ -55,8 +59,6 @@ namespace Aleb.GUI {
             Topmost = true;
             Activate();
         }
-
-        void Window_Focus(object sender, PointerPressedEventArgs e) => Focus();
 
         void MoveWindow(object sender, PointerPressedEventArgs e) {
             if (e.ClickCount == 2) Maximize(null);

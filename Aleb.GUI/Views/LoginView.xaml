@@ -1,0 +1,24 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Aleb.GUI.Views.LoginView"
+             xmlns:Components="clr-namespace:Aleb.GUI.Components"
+             AttachedToVisualTree="Loaded" DetachedFromVisualTree="Unloaded">
+
+  <Grid RowDefinitions="2*,*" ColumnDefinitions="3*,2*,3*">
+    <StackPanel Grid.Row="1" Grid.Column="1" Spacing="10">
+      <Grid HorizontalAlignment="Stretch" RowDefinitions="*,5,*" ColumnDefinitions="2*,3*">
+        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="Korisničko ime:  " />
+        <Components:ValidationTextBox Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch"
+                                      x:Name="Username" Validated="Username_Validated" Return="Return" />
+        
+        <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="Lozinka:  " />
+        <Components:ValidationTextBox Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" PasswordChar="•"
+                                      x:Name="Password" Validated="Password_Validated" Return="Return" />
+      </Grid>
+      
+      <Button Margin="0 10 0 0" HorizontalAlignment="Center" Content="Prijava" IsEnabled="False" x:Name="LoginButton" Click="Login" />
+
+      <TextBlock HorizontalAlignment="Center" x:Name="Status" />
+    </StackPanel>
+  </Grid>
+</UserControl>

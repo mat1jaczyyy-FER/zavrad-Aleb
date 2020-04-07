@@ -1,0 +1,14 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Aleb.GUI.Views.ConnectingView"
+             xmlns:Components="clr-namespace:Aleb.GUI.Components"
+             AttachedToVisualTree="Loaded" DetachedFromVisualTree="Unloaded">
+
+  <Grid RowDefinitions="2*,*">
+    <StackPanel Grid.Row="1" Spacing="20">
+      <TextBlock HorizontalAlignment="Center" x:Name="Status" />
+      
+      <Button HorizontalAlignment="Center" IsVisible="False" Content="Pokušaj ponovno" x:Name="Retry" Click="Connect" />
+    </StackPanel>
+  </Grid>
+</UserControl>

@@ -13,7 +13,7 @@ namespace Aleb.GUI {
     class App: Application {
         static App instance;
 
-        public static Window MainWindow => ((ClassicDesktopStyleApplicationLifetime)instance.ApplicationLifetime).MainWindow;
+        public static AlebWindow MainWindow => (AlebWindow)((ClassicDesktopStyleApplicationLifetime)instance.ApplicationLifetime).MainWindow;
         public static IReadOnlyList<Window> Windows => ((ClassicDesktopStyleApplicationLifetime)instance.ApplicationLifetime).Windows;
         public static void Shutdown() => ((ClassicDesktopStyleApplicationLifetime)instance.ApplicationLifetime).Shutdown();
         

@@ -3,23 +3,21 @@
         x:Class="Aleb.GUI.AlebWindow"
         xmlns:Components="clr-namespace:Aleb.GUI.Components"
         WindowStartupLocation="CenterScreen"
-        Width="1280" MinWidth="960"
-        Height="720" MinHeight="540"
+        Width="960" MinWidth="960" MaxWidth="960"
+        Height="540" MinHeight="540" MaxHeight="540"
         Opened="Loaded" Closing="Unloaded"
-        KeyDown="Window_KeyDown" PointerPressed="Window_Focus">
+        KeyDown="Window_KeyDown">
 
   <Grid>
     <Grid RowDefinitions="Auto,*">
       <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Background="{DynamicResource ThemeBorderMidBrush}">
-        <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="5 5" Spacing="5" x:Name="CenteringLeft">
+        <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="5 5" Spacing="5" x:Name="LeftHand">
           <Components:PreferencesButton />
         </StackPanel>
 
-        <Grid Grid.Column="1" Background="Transparent" PointerPressed="MoveWindow">
-          <TextBlock Margin="0 7" HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="Title" />
-        </Grid>
+        <Grid Grid.Column="1" Background="Transparent" PointerPressed="MoveWindow" />
 
-        <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="5 5" Spacing="5" x:Name="CenteringRight">
+        <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="5 5" Spacing="5" x:Name="RightHand">
           <Components:Minimize Clicked="Minimize" />
           <Components:Maximize Clicked="Maximize" />
           <Components:Close Clicked="Close" />
@@ -27,12 +25,10 @@
       </Grid>
 
       <Grid Grid.Row="0">
-        <TextBlock Margin="0 7" IsHitTestVisible="false" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Aleb" x:Name="TitleCenter" />
+        <TextBlock Margin="0 7" IsHitTestVisible="false" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Aleb" x:Name="Title" />
       </Grid>
 
-      <Border Grid.Row="1" BorderBrush="{DynamicResource ThemeBorderMidBrush}" BorderThickness="1 0 1 1">
-        <Grid />
-      </Border>
+      <Border Grid.Row="1" BorderBrush="{DynamicResource ThemeBorderMidBrush}" BorderThickness="1 0 1 1" x:Name="View" />
     </Grid>
 
     <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="Auto,*,Auto">

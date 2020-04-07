@@ -41,7 +41,7 @@ namespace Aleb.GUI {
                         using (Stream log = archive.CreateEntry("exception.log").Open())
                             using (StreamWriter writer = new StreamWriter(log)) {
                                 writer.Write(
-                                    $"Apollo Version: {Version}\r\n" +
+                                    $"Aleb Version: {Version}\r\n" +
                                     $"Operating System: {RuntimeInformation.OSDescription}\r\n\r\n" +
                                     e.ExceptionObject.ToString() +
                                     additional
