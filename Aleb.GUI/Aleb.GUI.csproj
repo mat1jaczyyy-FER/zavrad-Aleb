@@ -1,0 +1,49 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <RuntimeHostConfigurationOption Include="System.Globalization.Invariant" Value="true" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="0.9.999-cibuild*" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.9.999-cibuild*" />
+    <PackageReference Include="Avalonia.Diagnostics" Version="0.9.999-cibuild*" />
+    <PackageReference Include="DiscordRichPresence" Version="1.0.150">
+      <NoWarn>NU1701</NoWarn>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="**/*.cs">
+      <DependentUpon>%(Filename).xaml</DependentUpon>
+    </Compile>
+    <AvaloniaResource Include="**/*.xaml">
+      <SubType>Designer</SubType>
+    </AvaloniaResource>
+    <AvaloniaResource Include="Resources/*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Components\Close.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="Components\Expand.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="Components\Minimize.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="Components\PreferencesButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="Dark.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+  </ItemGroup>
+  
+</Project>
