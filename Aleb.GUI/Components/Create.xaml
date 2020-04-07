@@ -1,0 +1,13 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Aleb.GUI.Components.Create"
+             DetachedFromVisualTree="Unloaded">
+
+  <Canvas HorizontalAlignment="Center" Width="50" Height="50" x:Name="Icon">
+    <Ellipse Width="50" Height="50" x:Name="Ellipse"
+             PointerEnter="MouseEnter" PointerLeave="MouseLeave" PointerPressed="MouseDown" PointerReleased="MouseUp" />
+    
+    <Path Stroke="{DynamicResource ThemeForegroundBrush}" StrokeThickness="4" IsHitTestVisible="False"
+          Data="M 16,25 L 34,25 M 25,16 L 25,34" />
+  </Canvas>
+</UserControl>

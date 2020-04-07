@@ -11,13 +11,11 @@
   <Grid>
     <Grid RowDefinitions="Auto,*">
       <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Background="{DynamicResource ThemeBorderMidBrush}">
-        <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="5 5" Spacing="5" x:Name="LeftHand">
-          <Components:PreferencesButton />
-        </StackPanel>
+        <Components:PreferencesButton Grid.Column="0" Margin="5 5" x:Name="PreferencesButton" />
 
         <Grid Grid.Column="1" Background="Transparent" PointerPressed="MoveWindow" />
 
-        <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="5 5" Spacing="5" x:Name="RightHand">
+        <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="5 5" Spacing="5">
           <Components:Minimize Clicked="Minimize" />
           <Components:Maximize Clicked="Maximize" />
           <Components:Close Clicked="Close" />
@@ -28,7 +26,25 @@
         <TextBlock Margin="0 7" IsHitTestVisible="false" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Aleb" x:Name="Title" />
       </Grid>
 
-      <Border Grid.Row="1" BorderBrush="{DynamicResource ThemeBorderMidBrush}" BorderThickness="1 0 1 1" x:Name="View" />
+      <Border Grid.Row="1" BorderBrush="{DynamicResource ThemeBorderMidBrush}" BorderThickness="1 0 1 1">
+        <Grid>
+          <Border BorderThickness="0" x:Name="View" />
+
+          <Grid RowDefinitions="*,Auto,Auto,*" ColumnDefinitions="*,2*,*" x:Name="PopupContainer" IsVisible="False" Background="Transparent">
+            <Grid Grid.Row="1" Grid.Column="1" ColumnDefinitions="*,Auto" Background="{DynamicResource ThemeBorderMidBrush}">
+              <Grid Grid.Column="1" Background="Transparent" />
+
+              <Components:Close Grid.Column="2" Margin="5 5" Clicked="ClosePopup" />
+            </Grid>
+
+            <Grid Grid.Row="1" Grid.Column="1">
+              <TextBlock Margin="0 7" IsHitTestVisible="false" HorizontalAlignment="Center" VerticalAlignment="Center" Text=" " x:Name="PopupTitle" />
+            </Grid>
+
+            <Border Grid.Row="2" Grid.Column="1" Background="{DynamicResource ThemeControlMidBrush}" BorderBrush="{DynamicResource ThemeBorderMidBrush}" BorderThickness="1 0 1 1" x:Name="Popup" />
+          </Grid>
+        </Grid>
+      </Border>
     </Grid>
 
     <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="Auto,*,Auto">

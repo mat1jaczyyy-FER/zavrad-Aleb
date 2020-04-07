@@ -34,7 +34,11 @@ namespace Aleb.Common {
                 } else {
                     Reader = new StreamReader(Client.GetStream());
                     Writer = new StreamWriter(Client.GetStream());
-                    Address = ((IPEndPoint)Client?.Client.RemoteEndPoint).Address.MapToIPv4().ToString();
+
+                    IPEndPoint Remote = (IPEndPoint)Client.Client.RemoteEndPoint;
+                    
+                    if (Remote == null) Address = "";
+                    else Address = $"{Remote.Address.MapToIPv4()}:{Remote.Port}";
                 }
             }
         }

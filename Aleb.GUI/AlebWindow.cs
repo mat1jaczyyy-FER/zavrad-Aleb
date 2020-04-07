@@ -7,8 +7,11 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Layout;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
 
+using Aleb.GUI.Components;
 using Aleb.GUI.Views;
 
 namespace Aleb.GUI {
@@ -17,20 +20,41 @@ namespace Aleb.GUI {
             AvaloniaXamlLoader.Load(this);
 
             TitleText = this.Get<TextBlock>("Title");
+            PopupTitle = this.Get<TextBlock>("PopupTitle");
             
-            LeftHand = this.Get<StackPanel>("LeftHand");
-            RightHand = this.Get<StackPanel>("RightHand");
+            PreferencesButton = this.Get<PreferencesButton>("PreferencesButton");
 
             view = this.Get<Border>("View");
+            popup = this.Get<Border>("Popup");
+            
+            PopupContainer = this.Get<Grid>("PopupContainer");
         }
 
-        public TextBlock TitleText;
-        public StackPanel LeftHand, RightHand;
-        Border view;
+        public TextBlock TitleText, PopupTitle;
+        PreferencesButton PreferencesButton;
+        Border view, popup;
+        Grid PopupContainer;
 
-        public IControl View {
-            get => view.Child;
+        public Control View {
+            get => (Control)view.Child;
             set => view.Child = value;
+        }
+
+        public Control Popup {
+            get => (Control)popup.Child;
+            set {
+                popup.Child = value;
+
+                PreferencesButton.Enabled = Popup == null;
+                PopupContainer.IsVisible = Popup != null;
+                view.Opacity = Popup != null? 0.2 : 1;
+                view.Background = Popup != null? (IBrush)Application.Current.Styles.FindResource("ThemeBorderHighBrush") : null;
+
+                if (Popup != null) {
+                    //Popup.HorizontalAlignment = HorizontalAlignment.Center;
+                    Popup.Margin = Thickness.Parse("0 10");
+                }
+            }
         }
 
         public AlebWindow() {
@@ -83,5 +107,7 @@ namespace Aleb.GUI {
         void ResizeSouthWest(object sender, PointerPressedEventArgs e) => BeginResizeDrag(WindowEdge.SouthWest, e);
         void ResizeSouth(object sender, PointerPressedEventArgs e) => BeginResizeDrag(WindowEdge.South, e);
         void ResizeSouthEast(object sender, PointerPressedEventArgs e) => BeginResizeDrag(WindowEdge.SouthEast, e);
+
+        void ClosePopup() => Popup = null;
     }
 }

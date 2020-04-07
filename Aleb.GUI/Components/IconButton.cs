@@ -13,7 +13,7 @@ namespace Aleb.GUI.Components {
         protected bool AllowRightClick = false;
 
         bool _enabled = true;
-        protected bool Enabled {
+        public bool Enabled {
             get => _enabled;
             set {
                 _enabled = value;

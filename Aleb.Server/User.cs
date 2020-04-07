@@ -69,7 +69,7 @@ namespace Aleb.Server {
             if (State == UserState.Idle) {
                 if (msg.Command == "GetRoomList") {
                     Client.Send("RoomList", Room.Rooms.Select(i => i.ToString()).ToArray());
-
+                    
                 } else if (msg.Command == "CreateRoom") {
                     Room room = (msg.Args.Length == 1)? Room.Create(msg.Args[0], this) : null;
 

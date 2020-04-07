@@ -6,7 +6,7 @@
 
   <Grid RowDefinitions="2*,*" ColumnDefinitions="3*,2*,3*">
     <StackPanel Grid.Row="1" Grid.Column="1" Spacing="10">
-      <Grid HorizontalAlignment="Stretch" RowDefinitions="*,5,*" ColumnDefinitions="2*,3*">
+      <Grid HorizontalAlignment="Stretch" RowDefinitions="*,5,*" ColumnDefinitions="Auto,*">
         <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="Korisničko ime:  " />
         <Components:ValidationTextBox Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch"
                                       x:Name="Username" Validated="Username_Validated" Return="Return" />
