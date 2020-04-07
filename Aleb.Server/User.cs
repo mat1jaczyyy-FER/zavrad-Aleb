@@ -28,16 +28,20 @@ namespace Aleb.Server {
             return user;
         }
 
-        static void Broadcast(Func<User, bool> filter, string command, params dynamic[] args) {
+        void Broadcast(IEnumerable<User> users, string command, params dynamic[] args) {
             Message msg = new Message(command, args);
 
-            foreach (User user in Connected.Where(filter)) {
+            foreach (User user in users.Where(i => i != this)) {
                 user.Client.SendMessage(msg);
                 user.Client.Flush();
             }
         }
 
-        static void Broadcast(string command, params dynamic[] args) => Broadcast(i => true, command, args);
+        void BroadcastIdle(string command, params dynamic[] args)
+            => Broadcast(Pool.Where(i => i.State == UserState.Idle), command, args);
+
+        void Broadcast(string command, params dynamic[] args)
+            => Broadcast(Pool, command, args);
 
         public UserState State = UserState.Idle;
 
@@ -78,16 +82,49 @@ namespace Aleb.Server {
 
                     if (room != null) {
                         Client.Send("RoomCreated", room.ToString());
-                        Broadcast(i => i.State == UserState.Idle, "RoomAdded", room.ToString());
+
+                        BroadcastIdle("RoomAdded", room.ToString());
                         
                     } else Client.Send("RoomFailed");
+                
+                } else if (msg.Command == "JoinRoom") {
+                    Room room = (msg.Args.Length == 1)? Room.Rooms.FirstOrDefault(i => i.Name == msg.Args[0]) : null;
 
-                    Client.Flush();
+                    if (room?.Join(this) == true) {
+                        Client.Send("RoomJoined", room.Name, room.PeopleString());
+
+                        BroadcastIdle("RoomUpdated", room.ToString());
+                        Broadcast(room.Users, "UserJoined", Name);
+
+                    } else Client.Send("RoomJoinFailed");
                 }
 
             } else if (State == UserState.InRoom) {
+                if (msg.Command == "LeaveRoom") {
+                    Room room = Room.Rooms.FirstOrDefault(i => i.Users.Contains(this));
+                    
+                    if (room?.Leave(this) == true) {
+                        Client.Send("UserLeft", room.Name, room.PeopleString());
 
+                        if (Room.Rooms.Contains(room)) {
+                            BroadcastIdle("RoomUpdated", room.ToString());
+                            Broadcast(room.Users, "UserLeft", Name);
+
+                        } else BroadcastIdle("RoomDestroyed", room.Name);
+                    }
+
+                } else if (msg.Command == "SetReady") {
+                    Room room = (msg.Args.Length == 1)? Room.Rooms.FirstOrDefault(i => i.Users.Contains(this)) : null;
+                    bool value = Convert.ToBoolean(msg.Args[0]);
+
+                    if (room?.SetReady(this, value) == true) {
+                        Client.Send("UserReady", Name, value);
+                        Broadcast(room.Users, "UserReady", Name, value);
+                    }
+                }
             }
+
+            Client.Flush();
         }
 
         void Disconnect(AlebClient sender) {

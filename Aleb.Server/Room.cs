@@ -47,10 +47,22 @@ namespace Aleb.Server {
                 DestroyGame(Users.IndexOf(leaving) >> 1);
 
             People.Remove(People.First(i => i.User == leaving));
+            leaving.State = UserState.Idle;
 
             if (Count == 0) Destroy(this);
 
             return true;
+        }
+
+        public bool SetReady(User user, bool state) {
+            Person person = People.FirstOrDefault(i => i.User == user);
+
+            if (person != null) {
+                person.Ready = state;
+                return true;
+            }
+            
+            return false;
         }
 
         public Game Game { get; private set; }
@@ -95,5 +107,7 @@ namespace Aleb.Server {
         }
 
         public override string ToString() => $"{Name},{Count}";
+
+        public string PeopleString() => string.Join(' ', People.Select(i => i.User.Name));
     }
 }
