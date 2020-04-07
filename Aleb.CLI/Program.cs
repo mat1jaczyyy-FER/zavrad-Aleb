@@ -10,12 +10,12 @@ namespace Aleb.CLI {
     class Program {
         public static Func<Task> Menu = Login;
 
-        public static string Username = "";
+        public static User User = null;
 
         public static bool Disconnecting = false;
 
         public static string ReadLine() {
-            Console.Write($"{Username} > ");
+            Console.Write($"{User.Name} > ");
             return Console.ReadLine();
         }
 
@@ -23,11 +23,13 @@ namespace Aleb.CLI {
             Task<UserState> stateTask = Requests.ExpectingUserState();
             Task<List<Room>> roomListTask = Requests.ExpectingRoomList();
 
+            string name = "";
+
             do {
                 Console.Write("\nUsername: ");
-                Username = Console.ReadLine();
+                name = Console.ReadLine();
 
-                if (Username == "") {
+                if (name == "") {
                     Disconnecting = true;
                     return;
                 }
@@ -35,20 +37,22 @@ namespace Aleb.CLI {
                 Console.Write("Password: ");
                 string password = Security.ReadPassword();
 
-                if (!await Requests.Login(Username, password)) {
+                if (!await Requests.Login(name, password)) {
                     Console.Error.WriteLine("\nLogin failed!");
-                    Username = "";
+                    name = "";
                 }
 
-            } while (Username == "");
+            } while (name == "");
+
+            User = new User(name);
 
             Console.WriteLine("\nLogged in!");
 
             UserState state = await stateTask;
 
             if (state == UserState.Idle) {
-                RoomMenus.Rooms = await roomListTask;
-                Menu = RoomMenus.RoomList;
+                IdleMenus.Rooms = await roomListTask;
+                Menu = IdleMenus.RoomList;
 
             } else if (state == UserState.InGame) {
 

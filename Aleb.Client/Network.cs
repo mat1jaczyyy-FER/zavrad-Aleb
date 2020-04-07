@@ -52,7 +52,13 @@ namespace Aleb.Client {
         static HashSet<(string[] Expected, TaskCompletionSource<Message> TCS)> Waiting = new HashSet<(string[], TaskCompletionSource<Message>)>();
         
         public delegate void RoomUpdatedEventHandler(Room room);
-        public static event RoomUpdatedEventHandler RoomAdded;
+        public static event RoomUpdatedEventHandler RoomAdded, RoomUpdated;
+
+        public delegate void RoomDestroyedEventHandler(string roomName);
+        public static event RoomDestroyedEventHandler RoomDestroyed;
+
+        public delegate void UserEventHandler(User user);
+        public static event UserEventHandler UserJoined, UserLeft, UserReady;
 
         static void Received(AlebClient sender, Message msg) {
             foreach (var i in Waiting.ToHashSet()) {
@@ -63,6 +69,12 @@ namespace Aleb.Client {
             }
 
             if (msg.Command == "RoomAdded") RoomAdded?.Invoke(new Room(msg.Args[0]));
+            else if (msg.Command == "RoomUpdated") RoomUpdated?.Invoke(new Room(msg.Args[0]));
+            else if (msg.Command == "RoomDestroyed") RoomDestroyed?.Invoke(msg.Args[0]);
+
+            if (msg.Command == "UserJoined") UserJoined?.Invoke(new User(msg.Args[0]));
+            else if (msg.Command == "UserLeft") UserLeft?.Invoke(new User(msg.Args[0]));
+            else if (msg.Command == "UserReady") UserReady?.Invoke(new User(msg.Args[0]) { Ready = Convert.ToBoolean(msg.Args[1]) });
         }
 
         public static Task<Message> Register(params string[] expected) {
