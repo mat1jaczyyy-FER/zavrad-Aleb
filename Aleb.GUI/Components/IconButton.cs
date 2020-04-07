@@ -22,11 +22,20 @@ namespace Aleb.GUI.Components {
 
                 Fill = (IBrush)Application.Current.Styles.FindResource(Enabled
                     ? (mouseOver
-                        ? "ThemeButtonOverBrush"
-                        : "ThemeButtonEnabledBrush"
-                    ) : "ThemeButtonDisabledBrush"
+                        ? OverBrush
+                        : EnabledBrush
+                    ) : DisabledBrush
                 );
             }
+        }
+
+        string EnabledBrush, DisabledBrush, OverBrush, DownBrush;
+
+        protected IconButton(string enabled = "ThemeButtonEnabledBrush", string disabled = "ThemeButtonDisabledBrush", string over = "ThemeButtonOverBrush", string down = "ThemeButtonDownBrush") {
+            EnabledBrush = enabled;
+            DisabledBrush = disabled;
+            OverBrush = over;
+            DownBrush = down;
         }
 
         protected virtual void Unloaded(object sender, VisualTreeAttachmentEventArgs e) => Clicked = null;
@@ -35,12 +44,12 @@ namespace Aleb.GUI.Components {
         bool mouseOver = false;
 
         protected void MouseEnter(object sender, PointerEventArgs e) {
-            if (Enabled) Fill = (IBrush)Application.Current.Styles.FindResource(mouseHeld? "ThemeButtonDownBrush" : "ThemeButtonOverBrush");
+            if (Enabled) Fill = (IBrush)Application.Current.Styles.FindResource(mouseHeld? DownBrush : OverBrush);
             mouseOver = true;
         }
 
         protected void MouseLeave(object sender, PointerEventArgs e) {
-            if (Enabled) Fill = (IBrush)Application.Current.Styles.FindResource("ThemeButtonEnabledBrush");
+            if (Enabled) Fill = (IBrush)Application.Current.Styles.FindResource(EnabledBrush);
             mouseHeld = mouseOver = false;
         }
 
@@ -50,7 +59,7 @@ namespace Aleb.GUI.Components {
             if (MouseButton == PointerUpdateKind.LeftButtonPressed || (AllowRightClick && MouseButton == PointerUpdateKind.RightButtonPressed)) {
                 mouseHeld = true;
 
-                if (Enabled) Fill = (IBrush)Application.Current.Styles.FindResource("ThemeButtonDownBrush");
+                if (Enabled) Fill = (IBrush)Application.Current.Styles.FindResource(DownBrush);
             }
         }
 

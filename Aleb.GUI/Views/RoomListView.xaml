@@ -4,7 +4,7 @@
              xmlns:Components="clr-namespace:Aleb.GUI.Components"
              AttachedToVisualTree="Loaded" DetachedFromVisualTree="Unloaded">
 
-  <Grid>
-    
-  </Grid>
+  <ScrollViewer>
+    <UniformGrid VerticalAlignment="Top" Columns="4" x:Name="RoomList" />
+  </ScrollViewer>
 </UserControl>

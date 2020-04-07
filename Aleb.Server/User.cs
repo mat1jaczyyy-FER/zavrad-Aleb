@@ -84,7 +84,7 @@ namespace Aleb.Server {
                     Room room = (msg.Args.Length == 1)? Room.Rooms.FirstOrDefault(i => i.Name == msg.Args[0]) : null;
 
                     if (room?.Join(this) == true) {
-                        Client.Send("RoomJoined", room.Name, room.PeopleString());
+                        Client.Send("RoomJoined", room.ToString());
 
                         BroadcastIdle("RoomUpdated", room.ToString());
                         Broadcast(room.Users, "UserJoined", Name);
@@ -97,7 +97,7 @@ namespace Aleb.Server {
                     Room room = Room.Rooms.FirstOrDefault(i => i.Users.Contains(this));
                     
                     if (room?.Leave(this) == true) {
-                        Client.Send("UserLeft", room.Name, room.PeopleString());
+                        Client.Send("UserLeft", room.ToString());
 
                         if (Room.Rooms.Contains(room)) {
                             BroadcastIdle("RoomUpdated", room.ToString());
@@ -124,6 +124,18 @@ namespace Aleb.Server {
             Console.WriteLine($"{Client.Address} disconnected");
 
             Client = null;
+
+            if (State == UserState.InRoom) {
+                Room room = Room.Rooms.FirstOrDefault(i => i.Users.Contains(this));
+                    
+                if (room?.Leave(this) == true) {
+                    if (Room.Rooms.Contains(room)) {
+                        BroadcastIdle("RoomUpdated", room.ToString());
+                        Broadcast(room.Users, "UserLeft", Name);
+
+                    } else BroadcastIdle("RoomDestroyed", room.Name);
+                }
+            }
         }
 
         User(string name, string password) {

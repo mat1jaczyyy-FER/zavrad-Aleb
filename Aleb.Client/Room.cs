@@ -9,12 +9,15 @@ namespace Aleb.Client {
         public readonly string Name;
         public int Count;
 
-        public User[] Users = null;
+        public User[] Users = new User[4];
 
         public Room(string raw) {
             string[] args = raw.Split(',');
             Name = args[0];
             Count = Convert.ToInt32(args[1]);
+
+            for (int i = 2; i < args.Length; i++)
+                Users[i - 2] = new User(args[i]);
         }
 
         public override bool Equals(object obj) {

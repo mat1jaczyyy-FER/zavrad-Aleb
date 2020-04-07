@@ -1,0 +1,19 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Aleb.GUI.Components.RoomEntry"
+             xmlns:Components="clr-namespace:Aleb.GUI.Components"
+             DetachedFromVisualTree="Unloaded">
+
+  <Grid Margin="10" RowDefinitions="*,15,*" Background="Transparent"
+        PointerEnter="MouseEnter" PointerLeave="MouseLeave" PointerPressed="MouseDown" PointerReleased="MouseUp">
+    
+    <TextBlock Grid.Row="0" HorizontalAlignment="Center" FontWeight="Bold" x:Name="NameText" />
+
+    <StackPanel Grid.Row="2" HorizontalAlignment="Center" Spacing="5" x:Name="Users">
+      <Components:UserInRoom />
+      <Components:UserInRoom />
+      <Components:UserInRoom />
+      <Components:UserInRoom />
+    </StackPanel>
+  </Grid>
+</UserControl>

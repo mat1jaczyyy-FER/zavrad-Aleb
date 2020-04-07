@@ -10,6 +10,9 @@ using Aleb.Common;
 namespace Aleb.Client {
     public static class Requests {
         public static async Task<User> Login(string name, string password) {
+            name = name?? "";
+            password = password?? "";
+
             if (!Validation.ValidateUsername(name)) return null;
             if (!Validation.ValidatePassword(password)) return null;
 
@@ -23,6 +26,8 @@ namespace Aleb.Client {
             => (await Network.Ask(new Message("GetRoomList"), "RoomList"))?.Args.Select(i => new Room(i)).ToList()?? new List<Room>();
 
         public static async Task<Room> CreateRoom(string name) {
+            name = name?? "";
+
             if (!Validation.ValidateRoomName(name)) return null;
 
             Message response = await Network.Ask(new Message("CreateRoom", name), "RoomCreated", "RoomFailed");
@@ -30,6 +35,8 @@ namespace Aleb.Client {
         }
 
         public static async Task<Room> JoinRoom(string name) {
+            name = name?? "";
+
             if (!Validation.ValidateRoomName(name)) return null;
 
             Message response = await Network.Ask(new Message("JoinRoom", name), "RoomJoined", "RoomJoinFailed");

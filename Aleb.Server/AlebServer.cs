@@ -14,7 +14,7 @@ namespace Aleb.Server {
 
             User user = User.Connect(msg.Args[0], msg.Args[1], sender);
 
-            sender.Send("LoginResult", user?.State.ToString());
+            sender.Send("LoginResult", user?.State.ToString()?? "null");
 
             if (user != null) {
                 sender.MessageReceived -= Login;

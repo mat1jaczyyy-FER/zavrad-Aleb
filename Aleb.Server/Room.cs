@@ -106,8 +106,6 @@ namespace Aleb.Server {
             Join(owner);
         }
 
-        public override string ToString() => $"{Name},{Count}";
-
-        public string PeopleString() => string.Join(' ', People.Select(i => i.User.Name));
+        public override string ToString() => $"{Name},{Count},{string.Join(',', People.Select(i => i.User.Name))}";
     }
 }
