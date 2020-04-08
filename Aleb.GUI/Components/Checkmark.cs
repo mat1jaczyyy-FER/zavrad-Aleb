@@ -14,9 +14,15 @@ namespace Aleb.GUI.Components {
 
         Path Path;
 
-        public void Set(bool? value) {
-            Path.IsVisible = value != null;
-            Path.Stroke = (IBrush)Application.Current.Styles.FindResource(value?? false? "ThemeAccentBrush" : "ThemeForegroundLowBrush");
+        bool? _state = null;
+        public bool? State {
+            get => _state;
+            set {
+                _state = value;
+
+                Path.IsVisible = State != null;
+                Path.Stroke = (IBrush)Application.Current.Styles.FindResource((State?? false)? "ThemeAccentBrush" : "ThemeForegroundLowBrush");
+            }
         }
 
         public Checkmark() {

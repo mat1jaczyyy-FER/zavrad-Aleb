@@ -97,8 +97,6 @@ namespace Aleb.Server {
                     Room room = Room.Rooms.FirstOrDefault(i => i.Users.Contains(this));
                     
                     if (room?.Leave(this) == true) {
-                        Client.Send("UserLeft", room.ToString());
-
                         if (Room.Rooms.Contains(room)) {
                             BroadcastIdle("RoomUpdated", room.ToString());
                             Broadcast(room.Users, "UserLeft", Name);

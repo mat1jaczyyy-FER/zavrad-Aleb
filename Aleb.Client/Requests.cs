@@ -42,5 +42,11 @@ namespace Aleb.Client {
             Message response = await Network.Ask(new Message("JoinRoom", name), "RoomJoined", "RoomJoinFailed");
             return response.Command == "RoomJoined"? new Room(response.Args[0]) : null;
         }
+
+        public static void LeaveRoom()
+            => Network.Send(new Message("LeaveRoom"));
+
+        public static void SetReady(bool state)
+            => Network.Send(new Message("SetReady", state));
     }
 }

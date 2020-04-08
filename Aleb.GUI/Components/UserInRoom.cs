@@ -23,7 +23,7 @@ namespace Aleb.GUI.Components {
         public string Text {
             get => User.Text;
             set {
-                if (value.Length > 0) {
+                if (value.Length > 0 && value != " ") {
                     User.Text = value;
                     Opacity = 1;
 

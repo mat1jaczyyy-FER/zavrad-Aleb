@@ -14,7 +14,7 @@ namespace Aleb.Client {
     }
 
     public static class Network {
-        public static AlebClient Server { get; private set; } = null;
+        static AlebClient Server;
 
         public static async Task<ConnectStatus> Connect(string host) {
             TcpClient tcp = null;
@@ -83,11 +83,14 @@ namespace Aleb.Client {
             return ret.Task;
         }
 
-        public static Task<Message> Ask(Message sending, params string[] expected) {
-            Task<Message> VersionTask = Register(expected);
-
+        public static void Send(Message sending) {
             Server.SendMessage(sending);
             Server.Flush();
+        } 
+
+        public static Task<Message> Ask(Message sending, params string[] expected) {
+            Task<Message> VersionTask = Register(expected);
+            Send(sending);
 
             return VersionTask;
         }
