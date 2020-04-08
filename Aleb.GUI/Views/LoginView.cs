@@ -68,7 +68,7 @@ namespace Aleb.GUI.Views {
                 Username.IsEnabled = Password.IsEnabled = true;
                 LoginButton.IsEnabled = false;
 
-                Status.Text = "Prijava neuspjela!";
+                Status.Text = "Prijava nije uspjela!";
                 return;
             }
 

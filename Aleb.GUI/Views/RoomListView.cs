@@ -24,9 +24,11 @@ namespace Aleb.GUI.Views {
             AvaloniaXamlLoader.Load(this);
 
             RoomList = this.Get<UniformGrid>("RoomList");
+            Create = this.Get<Create>("Create");
         }
 
         UniformGrid RoomList;
+        Create Create;
 
         public RoomListView() {
             InitializeComponent();
@@ -53,7 +55,9 @@ namespace Aleb.GUI.Views {
                 return;
             }
 
-            RoomList.Children.Add(new RoomEntry() { Room = room });
+            RoomEntry entry = new RoomEntry() { Room = room };
+            entry.RoomJoined += JoinRoom;
+            RoomList.Children.Add(entry);
         }
 
         void RoomUpdated(Room room) {
@@ -72,12 +76,27 @@ namespace Aleb.GUI.Views {
                 return;
             }
 
-            RoomList.Children.RemoveAll(Rooms.Where(i => i.Room.Name == name));
+            RoomList.Children.RemoveAll(Rooms.Where(i => i.Room.Name == name).ToList());
         }
         
         void CreateRoom() {
             App.MainWindow.Popup = new CreateRoomPopup();
             App.MainWindow.PopupTitle.Text = "Stvori sobu";
+        }
+
+        async void JoinRoom(Room room) {
+            RoomList.IsEnabled = Create.Enabled = false;
+            Focus();
+            
+            room = await Requests.JoinRoom(room.Name);
+
+            if (room == null) {
+                RoomList.IsEnabled = Create.Enabled = true;
+                return;
+            }
+
+            App.MainWindow.Popup = null;
+            App.MainWindow.View = new InRoomView(room);
         }
     }
 }

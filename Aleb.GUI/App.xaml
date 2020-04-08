@@ -12,6 +12,7 @@
 
     <Style Selector="Window">
       <Setter Property="HasSystemDecorations" Value="false" />
+      <Setter Property="Topmost" Value="false" />
     </Style>
 
     <Style Selector="TextBlock">

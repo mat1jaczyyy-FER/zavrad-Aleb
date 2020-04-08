@@ -40,7 +40,7 @@ namespace Aleb.Client {
             if (!Validation.ValidateRoomName(name)) return null;
 
             Message response = await Network.Ask(new Message("JoinRoom", name), "RoomJoined", "RoomJoinFailed");
-            return response.Command == "RoomJoined"? new Room(response.Args[0]) { Users = response.Args.Skip(1).Select(i => new User(i)).ToArray() } : null;
+            return response.Command == "RoomJoined"? new Room(response.Args[0]) : null;
         }
     }
 }

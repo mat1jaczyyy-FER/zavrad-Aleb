@@ -1,9 +1,13 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="Aleb.GUI.Components.UserInRoom"
+             xmlns:Components="clr-namespace:Aleb.GUI.Components"
              Opacity="0">
 
   <Border HorizontalAlignment="Stretch" BorderBrush="{DynamicResource ThemeForegroundLowBrush}" BorderThickness="0 0 0 1">
-    <TextBlock Margin="5 3" x:Name="User" />
+    <StackPanel Margin="5 3" Orientation="Horizontal" Spacing="5">
+      <TextBlock VerticalAlignment="Center" x:Name="User" />
+      <Components:Checkmark VerticalAlignment="Center" x:Name="Ready" />
+    </StackPanel>
   </Border>
 </UserControl>

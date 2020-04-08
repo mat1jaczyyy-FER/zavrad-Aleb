@@ -5,6 +5,20 @@
              AttachedToVisualTree="Loaded" DetachedFromVisualTree="Unloaded">
 
   <Grid>
-    
+    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="15">
+      <TextBlock HorizontalAlignment="Center" FontWeight="Bold" x:Name="NameText" />
+
+      <StackPanel HorizontalAlignment="Center" Spacing="5" x:Name="Users">
+        <Components:UserInRoom />
+        <Components:UserInRoom />
+        <Components:UserInRoom />
+        <Components:UserInRoom />
+      </StackPanel>
+
+      <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Spacing="5">
+        <Button Content="Spreman!" x:Name="ReadyButton" Click="SetReady" />
+        <Button Content="Izlaz" Click="LeaveRoom" />
+      </StackPanel>
+    </StackPanel>
   </Grid>
 </UserControl>

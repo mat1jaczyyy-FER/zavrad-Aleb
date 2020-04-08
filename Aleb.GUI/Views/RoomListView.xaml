@@ -10,7 +10,7 @@
     </ScrollViewer>
 
     <Grid RowDefinitions="*,Auto,15" ColumnDefinitions="*,Auto,20">
-      <Components:Create Grid.Row="1" Grid.Column="1" Clicked="CreateRoom" />
+      <Components:Create Grid.Row="1" Grid.Column="1" ToolTip.Tip="Stvori sobu" x:Name="Create" Clicked="CreateRoom" />
     </Grid>
   </Grid>
 </UserControl>

@@ -9,11 +9,14 @@ using Aleb.Client;
 
 namespace Aleb.GUI.Components {
     public class RoomEntry: IconButton {
+        public delegate void RoomJoinedEventHandler(Room room);
+        public event RoomJoinedEventHandler RoomJoined;
+
         void InitializeComponent() {
             AvaloniaXamlLoader.Load(this);
 
             NameText = this.Get<TextBlock>("NameText");
-            Users = this.Get<StackPanel>("Users").Children.OfType<UserInRoom>().ToList();
+            Users = this.Get<StackPanel>("Users").Children.OfType<UserInList>().ToList();
         }
 
         protected override IBrush Fill {
@@ -22,7 +25,7 @@ namespace Aleb.GUI.Components {
         }
 
         TextBlock NameText;
-        List<UserInRoom> Users;
+        List<UserInList> Users;
 
         Room _room;
         public Room Room {
@@ -33,11 +36,15 @@ namespace Aleb.GUI.Components {
                 
                 for (int i = 0; i < 4; i++)
                     Users[i].Text = Room.Users[i]?.Name?? "";
+
+                Enabled = Room.Count < 4;
             }
         }
 
         public RoomEntry(): base("ThemeBackgroundBrush", "ThemeControlLowBrush", "ThemeControlHighBrush", "ThemeControlMidHighBrush") {
             InitializeComponent();
         }
+
+        void JoinRoom() => RoomJoined?.Invoke(Room);
     }
 }

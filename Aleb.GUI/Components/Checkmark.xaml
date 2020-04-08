@@ -1,0 +1,9 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Aleb.GUI.Components.Checkmark">
+
+  <Canvas Width="16" Height="16">
+    <Path StrokeThickness="3" Stroke="{DynamicResource ThemeForegroundLowBrush}" x:Name="Path"
+          Data="M 1,7 L 5,13 6,13 15,4" />
+  </Canvas>
+</UserControl>

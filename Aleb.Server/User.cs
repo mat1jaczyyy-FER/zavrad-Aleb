@@ -31,7 +31,7 @@ namespace Aleb.Server {
         void Broadcast(IEnumerable<User> users, string command, params dynamic[] args) {
             Message msg = new Message(command, args);
 
-            foreach (User user in users.Where(i => i != this)) {
+            foreach (User user in users.Where(i => i?.Client?.Connected == true && i != this)) {
                 user.Client.SendMessage(msg);
                 user.Client.Flush();
             }
