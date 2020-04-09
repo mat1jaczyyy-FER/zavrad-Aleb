@@ -19,14 +19,14 @@ namespace Aleb.Server {
 
         public static void Destroy(Room room) => Rooms.Remove(room);
 
-        class Person {
+        public class Person {
             public readonly User User;
             public bool Ready = false;
 
             public Person(User user) => User = user;
         }
 
-        List<Person> People = new List<Person>();
+        public List<Person> People { get; private set; } = new List<Person>();
         public List<User> Users => People.Select(i => i.User).ToList();
 
         public int Count => People.Count;
@@ -106,6 +106,6 @@ namespace Aleb.Server {
             Join(owner);
         }
 
-        public override string ToString() => $"{Name},{Count},{string.Join(',', People.Select(i => i.User.Name))}";
+        public override string ToString() => $"{Name},{Count}{string.Join("", People.Select(i => ',' + i.User.Name))}";
     }
 }

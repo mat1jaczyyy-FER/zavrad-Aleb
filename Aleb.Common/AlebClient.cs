@@ -13,7 +13,7 @@ namespace Aleb.Common {
 
         void Log(bool received, string raw) {
             if (LogCommunication && Connected && raw != null)
-                Console.WriteLine($"[NETW-{(received? "RECV" : "SEND")}] {Address} > {raw.Trim(' ', '\n')}");
+                Console.WriteLine($"[NETW-{(received? "RECV" : "SEND")}] {Address} > {raw.Trim().Trim('\n')}");
         }
 
         TcpClient _client;

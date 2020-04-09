@@ -84,7 +84,7 @@ namespace Aleb.Server {
                     Room room = (msg.Args.Length == 1)? Room.Rooms.FirstOrDefault(i => i.Name == msg.Args[0]) : null;
 
                     if (room?.Join(this) == true) {
-                        Client.Send("RoomJoined", room.ToString());
+                        Client.Send("RoomJoined", room.ToString(), string.Join(',', room.People.Select(i => i.Ready)));
 
                         BroadcastIdle("RoomUpdated", room.ToString());
                         Broadcast(room.Users, "UserJoined", Name);

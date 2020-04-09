@@ -16,7 +16,7 @@ namespace Aleb.Common {
         }
 
         protected Message(string raw) {
-            IEnumerable<string> args = raw?.Split(' ').Select(i => i.Trim(' ', '\n'));
+            IEnumerable<string> args = raw?.Split(Protocol.Delimiter).Select(i => i.Trim().Trim('\n'));
             if (args?.Any() != true) return;
 
             Command = args.First();
@@ -31,6 +31,6 @@ namespace Aleb.Common {
         }
 
         public override string ToString()
-            => $"{Command}{string.Join("", Args.Select(i => ' ' + i).ToArray())}\n";
+            => $"{Command}{string.Join("", Args.Select(i => Protocol.Delimiter + i).ToArray())}\n";
     }
 }

@@ -24,24 +24,16 @@ namespace Aleb.GUI.Views {
             Users = this.Get<StackPanel>("Users").Children.OfType<UserInRoom>().ToList();
 
             ReadyButton = this.Get<Button>("ReadyButton");
+            StartButton = this.Get<Button>("StartButton");
         }
 
         TextBlock NameText;
         List<UserInRoom> Users;
-        Button ReadyButton;
+        Button ReadyButton, StartButton;
 
-        Room _room;
-        public Room Room {
-            get => _room;
-            set {
-                _room = value;
-                NameText.Text = Room.Name;
-                
-                for (int i = 0; i < 4; i++) {
-                    Users[i].Text = Room.Users[i]?.Name?? "";
-                    Users[i].Ready.State = Room.Users[i]?.Ready;
-                }
-            }
+        void EnableStartButton() {
+            StartButton.IsVisible = Users[0].Text == Game.User.Name;
+            StartButton.IsEnabled = StartButton.IsVisible && Users.All(i => i.Ready.State == true);
         }
 
         public InRoomView() => throw new InvalidOperationException();
@@ -49,7 +41,14 @@ namespace Aleb.GUI.Views {
         public InRoomView(Room room) {
             InitializeComponent();
 
-            Room = room;
+            NameText.Text = room.Name;
+                
+            for (int i = 0; i < 4; i++) {
+                Users[i].Text = room.Users[i]?.Name?? "";
+                Users[i].Ready.State = room.Users[i]?.Ready;
+            }
+
+            EnableStartButton();
         }
 
         void Loaded(object sender, VisualTreeAttachmentEventArgs e) {
@@ -75,6 +74,8 @@ namespace Aleb.GUI.Views {
                 entry.Text = user.Name;
                 entry.Ready.State = user.Ready;
             }
+            
+            EnableStartButton();
         }
 
         void UserReady(User user) {
@@ -90,6 +91,8 @@ namespace Aleb.GUI.Views {
                 if (user == Game.User)
                     ReadyButton.Content = entry.Ready.State == true? "Nisam spreman!" : "Spreman!";
             }
+            
+            EnableStartButton();
         }
 
         void UserLeft(User user) {
@@ -108,6 +111,8 @@ namespace Aleb.GUI.Views {
                 Users[3].Text = "";
                 Users[3].Ready.State = null;
             }
+            
+            EnableStartButton();
         }
 
         void SetReady(object sender, RoutedEventArgs e)
@@ -117,6 +122,10 @@ namespace Aleb.GUI.Views {
             Requests.LeaveRoom();
 
             App.MainWindow.View = new RoomListView();
+        }
+
+        void Start(object sender, RoutedEventArgs e) {
+            Console.WriteLine("nisam jos implemento al sad cu");
         }
     }
 }

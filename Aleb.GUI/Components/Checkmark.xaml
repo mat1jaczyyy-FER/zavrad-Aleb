@@ -2,8 +2,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="Aleb.GUI.Components.Checkmark">
 
+  <UserControl.Resources>
+    <SolidColorBrush x:Key="Brush" />
+  </UserControl.Resources>
+  
   <Canvas Width="16" Height="16">
-    <Path StrokeThickness="3" Stroke="{DynamicResource ThemeForegroundLowBrush}" IsVisible="False" x:Name="Path"
+    <Path StrokeThickness="3" Stroke="{DynamicResource Brush}" IsVisible="False" x:Name="Path"
           Data="M 1,7 L 5,13 6,13 15,4" />
   </Canvas>
 </UserControl>

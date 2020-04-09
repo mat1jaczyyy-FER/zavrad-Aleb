@@ -21,7 +21,7 @@ namespace Aleb.GUI.Components {
                 _state = value;
 
                 Path.IsVisible = State != null;
-                Path.Stroke = (IBrush)Application.Current.Styles.FindResource((State?? false)? "ThemeAccentBrush" : "ThemeForegroundLowBrush");
+                Resources["Brush"] = (IBrush)Application.Current.Styles.FindResource((State?? false)? "ThemeAccentBrush" : "ThemeForegroundLowBrush");
             }
         }
 

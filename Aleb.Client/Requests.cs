@@ -40,7 +40,16 @@ namespace Aleb.Client {
             if (!Validation.ValidateRoomName(name)) return null;
 
             Message response = await Network.Ask(new Message("JoinRoom", name), "RoomJoined", "RoomJoinFailed");
-            return response.Command == "RoomJoined"? new Room(response.Args[0]) : null;
+
+            if (response.Command != "RoomJoined") return null;
+
+            Room ret = new Room(response.Args[0]);
+            bool[] ready = response.Args[1].Split(',').Select(i => Convert.ToBoolean(i)).ToArray();
+
+            for (int i = 0; i < ready.Length; i++)
+                ret.Users[i].Ready = ready[i];
+
+            return ret;
         }
 
         public static void LeaveRoom()
