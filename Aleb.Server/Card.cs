@@ -13,7 +13,7 @@ namespace Aleb.Server {
         VII, VIII, IX, X, Jack, Queen, King, Ace
     }
 
-    class Card {
+    class Card: IComparable<Card> {
         static Random RNG = new Random();
 
         public static void Distribute(Player[] players) {
@@ -59,16 +59,16 @@ namespace Aleb.Server {
         public static bool operator !=(Card a, Card b) => !(a == b);
 
         public override int GetHashCode() => HashCode.Combine(Suit, Value);
+        
+        public int CompareTo(Card other) {
+            if (this == other) return 0;
 
-        public static bool operator <(Card a, Card b)
-            => a.Suit == b.Suit
-                ? a.Value < b.Value
-                : a.Suit < b.Suit;
+            bool result = Suit == other.Suit
+                ? Value < other.Value
+                : Suit < other.Suit;
 
-        public static bool operator >(Card a, Card b)
-            => a.Suit == b.Suit
-                ? a.Value > b.Value
-                : a.Suit > b.Suit;
+            return result? -1 : 1;
+        }
 
         public bool Gt(Card other, Suit trump) {
             if (Suit == trump && other.Suit == trump) return Value.Gt(other.Value, true);

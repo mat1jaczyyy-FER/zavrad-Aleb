@@ -32,7 +32,7 @@ namespace Aleb.Server {
 
         Player Dealer, Current;
 
-        List<Round> History;
+        List<Round> History = new List<Round>();
         int[] Score => Enumerable.Range(0, 2).Select(i => History.Where(x => x.Finalized).Sum(x => x.Played[i])).ToArray();
 
         Room Room;
