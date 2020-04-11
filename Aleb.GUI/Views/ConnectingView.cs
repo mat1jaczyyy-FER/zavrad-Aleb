@@ -1,10 +1,13 @@
-﻿using Avalonia;
+﻿using System;
+
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Shapes;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
+using Avalonia.Threading;
 using Avalonia.VisualTree;
 
 using Aleb.Client;
@@ -21,11 +24,23 @@ namespace Aleb.GUI.Views {
         TextBlock Status;
         Button Retry;
 
-        public ConnectingView() {
+        bool AutoConnect = true;
+
+        public ConnectingView() => throw new InvalidOperationException();
+
+        public ConnectingView(bool auto) {
             InitializeComponent();
+
+            AutoConnect = auto;
         }
 
-        void Loaded(object sender, VisualTreeAttachmentEventArgs e) => Connect(sender, null);
+        void Loaded(object sender, VisualTreeAttachmentEventArgs e) {
+            if (AutoConnect) Connect(sender, null);
+            else {
+                Status.Text = "Veza s serverom izgubljena!";
+                Retry.IsVisible = true;
+            }
+        }
 
         void Unloaded(object sender, VisualTreeAttachmentEventArgs e) {}
 
@@ -36,6 +51,8 @@ namespace Aleb.GUI.Views {
             ConnectStatus result = await Network.Connect(App.Host);
 
             if (result == ConnectStatus.Success) {
+                Network.Disconnected += () => Dispatcher.UIThread.InvokeAsync(() => App.MainWindow.View = new ConnectingView(false));
+
                 App.MainWindow.View = new LoginView();
 
             } else if (result == ConnectStatus.VersionMismatch)

@@ -54,7 +54,7 @@
     <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="Auto,*,Auto">
       <Grid.Styles>
         <Style Selector="Canvas">
-          <Setter Property="Background" Value="Red" />
+          <Setter Property="Background" Value="Transparent" />
           <Setter Property="HorizontalAlignment" Value="Stretch" />
           <Setter Property="VerticalAlignment" Value="Stretch" />
         </Style>

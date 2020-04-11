@@ -93,7 +93,7 @@ namespace Aleb.GUI {
         void Loaded(object sender, EventArgs e) {
             Position = new PixelPoint(Position.X, Math.Max(0, Position.Y));
 
-            View = new ConnectingView();
+            View = new ConnectingView(true);
 
             observable = this.GetObservable(ClientSizeProperty).Subscribe(SizeUpdated);
         }

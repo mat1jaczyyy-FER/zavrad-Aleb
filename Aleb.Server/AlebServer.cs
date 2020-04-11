@@ -26,10 +26,8 @@ namespace Aleb.Server {
             sender.Flush();
         }
 
-        static void Disconnect(AlebClient sender) {
-            Console.WriteLine($"{sender.Address} disconnected without logging in");
-            sender.Dispose();
-        }
+        static void Disconnect(AlebClient sender)
+            => Console.WriteLine($"{sender.Address} disconnected without logging in");
 
         static void Main(string[] args) {
             AlebClient.LogCommunication = true;

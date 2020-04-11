@@ -20,18 +20,11 @@ namespace Aleb.Common {
         TcpClient Client {
             get => _client;
             set {
+                Dispose();
+
                 _client = value;
 
-                if (Client == null) {
-                    Disconnected?.Invoke(this);
-                    Disconnected = null;
-
-                    Reader = null;
-                    Writer = null;
-                    Address = "";
-                    MessageReceived = null;
-
-                } else {
+                if (Client != null) {
                     Reader = new StreamReader(Client.GetStream());
                     Writer = new StreamWriter(Client.GetStream());
 
@@ -67,7 +60,7 @@ namespace Aleb.Common {
                     Message msg;
 
                     try {
-                        raw = Reader.ReadLine(); // todo softlock on reconnect?
+                        raw = Reader.ReadLine();
                         msg = Message.Parse(raw);
 
                     } catch (IOException) {
@@ -110,8 +103,17 @@ namespace Aleb.Common {
         public void Dispose() {
             if (!Connected) return;
 
+            Disconnected?.Invoke(this);
+
             Client.Dispose();
-            Client = null;
+            _client = null;
+
+            Reader = null;
+            Writer = null;
+            Address = "";
+
+            MessageReceived = null;
+            Disconnected = null;
         }
     }
 }

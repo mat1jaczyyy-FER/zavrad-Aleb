@@ -33,6 +33,8 @@ namespace Aleb.Client {
             Server = new AlebClient(tcp);
 
             Server.MessageReceived += Received;
+            Server.Disconnected += _ => Disconnected?.Invoke();
+
             Task<Message> VersionTask = Register("Version");
 
             Server.Run();
@@ -48,6 +50,9 @@ namespace Aleb.Client {
             
             return ConnectStatus.Success;
         }
+        
+        public delegate void DisconnectedEventHandler();
+        public static event DisconnectedEventHandler Disconnected;
 
         static HashSet<(string[] Expected, TaskCompletionSource<Message> TCS)> Waiting = new HashSet<(string[], TaskCompletionSource<Message>)>();
         
@@ -104,7 +109,17 @@ namespace Aleb.Client {
             Server?.Dispose();
             Server = null;
 
+            Disconnected = null;
+
             RoomAdded = null;
+            RoomUpdated = null;
+            RoomDestroyed = null;
+
+            UserJoined = null;
+            UserLeft = null;
+            UserReady = null;
+
+            GameStarted = null;
         }
     }
 }
