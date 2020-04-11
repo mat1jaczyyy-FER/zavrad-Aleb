@@ -19,6 +19,10 @@ namespace Aleb.GUI {
         void InitializeComponent() {
             AvaloniaXamlLoader.Load(this);
 
+            Root = this.Get<Grid>("Root");
+            Canvas = this.Get<Canvas>("Canvas");
+            ContentRoot = this.Get<Grid>("ContentRoot");
+
             TitleText = this.Get<TextBlock>("Title");
             PopupTitle = this.Get<TextBlock>("PopupTitle");
             
@@ -30,8 +34,28 @@ namespace Aleb.GUI {
             PopupContainer = this.Get<Grid>("PopupContainer");
         }
 
+        Grid Root, ContentRoot;
+        Canvas Canvas;
+
+        double VirtualWidth {
+            get => Canvas.Width;
+            set {
+                Canvas.Width = value;
+                ContentRoot.Width = value;
+            }
+        }
+
+        double VirtualHeight {
+            get => Canvas.Height;
+            set {
+                Canvas.Height = value;
+                ContentRoot.Height = value;
+            }
+        }
+
         public TextBlock TitleText, PopupTitle;
         PreferencesButton PreferencesButton;
+
         Border view, popup;
         Grid PopupContainer;
 
@@ -64,14 +88,29 @@ namespace Aleb.GUI {
             #endif
         }
 
+        IDisposable observable;
+
         void Loaded(object sender, EventArgs e) {
             Position = new PixelPoint(Position.X, Math.Max(0, Position.Y));
 
             View = new ConnectingView();
+
+            observable = this.GetObservable(ClientSizeProperty).Subscribe(SizeUpdated);
         }
 
         void Unloaded(object sender, CancelEventArgs e) {
+            observable?.Dispose();
+        }
 
+        void SizeUpdated(Size size) {
+            double target = 960 / 540.0;
+            double aspect = size.Width / size.Height;
+            
+            VirtualWidth = (aspect <= target)? 960 : (540 * aspect);
+            VirtualHeight = (aspect >= target)? 540 : (960 / aspect);
+
+            double scale = Math.Min(size.Width / 960, size.Height / 540);
+            Root.RenderTransform = new ScaleTransform(scale, scale);
         }
 
         void Window_KeyDown(object sender, KeyEventArgs e) {
