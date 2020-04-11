@@ -79,8 +79,8 @@ namespace Aleb.GUI {
         }
 
         void BringToTop() {
-            Topmost = false;
             Topmost = true;
+            Topmost = false;
             Activate();
         }
 
