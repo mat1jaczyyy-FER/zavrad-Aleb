@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using Aleb.Common;
+
 namespace Aleb.Server {
     enum Suit {
         Hearts, Leaves, Bells, Acorns
@@ -14,12 +16,6 @@ namespace Aleb.Server {
     class Card {
         static Random RNG = new Random();
 
-        static void Swap<T>(List<T> list, int a, int b) {
-            T temp = list[a];
-            list[a] = list[b];
-            list[b] = temp;
-        }
-
         public static void Distribute(Player[] players) {
             List<Card> cards = new List<Card>();
 
@@ -27,8 +23,8 @@ namespace Aleb.Server {
                 foreach (Value value in EnumUtil.Values<Value>())
                     cards.Add(new Card(suit, value));
 
-            for (int i = cards.Count; i >= 0; i--)
-                Swap(cards, i, RNG.Next(i + 1));
+            for (int i = cards.Count - 1; i >= 0; i--)
+                cards.Swap(i, RNG.Next(i + 1));
 
             for (int i = 0; i < 4; i++) {
                 players[i].Cards = cards.Skip(i * 8).Take(6).ToList();
@@ -48,6 +44,8 @@ namespace Aleb.Server {
 
         public bool IsNext(Card other)
             => other.Suit == Suit && other.Value - 1 == Value;
+
+        public static implicit operator int(Card card) => (int)card.Suit * 8 + (int)card.Value;
 
         public override bool Equals(object obj) {
             if (!(obj is Card)) return false;

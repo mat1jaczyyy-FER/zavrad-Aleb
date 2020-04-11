@@ -60,6 +60,9 @@ namespace Aleb.Client {
         public delegate void UserEventHandler(User user);
         public static event UserEventHandler UserJoined, UserLeft, UserReady;
 
+        public delegate void GameStartedEventHandler(int dealer, List<int> yourCards);
+        public static event GameStartedEventHandler GameStarted;
+
         static void Received(AlebClient sender, Message msg) {
             foreach (var i in Waiting.ToHashSet()) {
                 if (i.Expected.Contains(msg.Command)) {
@@ -72,9 +75,11 @@ namespace Aleb.Client {
             else if (msg.Command == "RoomUpdated") RoomUpdated?.Invoke(new Room(msg.Args[0]));
             else if (msg.Command == "RoomDestroyed") RoomDestroyed?.Invoke(msg.Args[0]);
 
-            if (msg.Command == "UserJoined") UserJoined?.Invoke(new User(msg.Args[0]));
+            else if (msg.Command == "UserJoined") UserJoined?.Invoke(new User(msg.Args[0]));
             else if (msg.Command == "UserLeft") UserLeft?.Invoke(new User(msg.Args[0]));
             else if (msg.Command == "UserReady") UserReady?.Invoke(new User(msg.Args[0]) { Ready = Convert.ToBoolean(msg.Args[1]) });
+
+            else if (msg.Command == "GameStarted") GameStarted?.Invoke(Convert.ToInt32(msg.Args[0]), msg.Args[1].Split(',').Select(i => Convert.ToInt32(i)).ToList());
         }
 
         public static Task<Message> Register(params string[] expected) {

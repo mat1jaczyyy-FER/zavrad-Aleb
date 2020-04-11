@@ -112,6 +112,11 @@ namespace Aleb.Server {
                         Client.Send("UserReady", Name, value);
                         Broadcast(room.Users, "UserReady", Name, value);
                     }
+
+                } else if (msg.Command == "StartGame") {
+                    Room room = Room.Rooms.FirstOrDefault(i => i.Users.Contains(this));
+
+                    room?.Start(this);
                 }
             }
 

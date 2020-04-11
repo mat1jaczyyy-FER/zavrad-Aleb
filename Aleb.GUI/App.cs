@@ -9,6 +9,8 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 
+using Aleb.Client;
+
 namespace Aleb.GUI {
     class App: Application {
         static App instance;
@@ -22,6 +24,7 @@ namespace Aleb.GUI {
         public static string[] Args;
 
         public static string Host;
+        public static User User;
 
         public static void URL(string url) => Process.Start(new ProcessStartInfo() {
             FileName = url,

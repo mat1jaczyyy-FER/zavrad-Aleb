@@ -57,5 +57,8 @@ namespace Aleb.Client {
 
         public static void SetReady(bool state)
             => Network.Send(new Message("SetReady", state));
+
+        public static void StartGame()
+            => Network.Send(new Message("StartGame"));
     }
 }

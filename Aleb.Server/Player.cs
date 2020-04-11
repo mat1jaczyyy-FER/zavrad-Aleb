@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using Aleb.Common;
+
 namespace Aleb.Server {
     class Player {
         List<Card> _cards;
@@ -59,6 +61,18 @@ namespace Aleb.Server {
         
         public User User { get; private set; }
 
+        public void SendMessage(string command, params dynamic[] args) {
+            if (User?.Client?.Connected == true)
+                User.Client.SendMessage(new Message(command, args));
+        }
+
+        public void Flush() {
+            if (User?.Client?.Connected == true)
+                User.Client.Flush();
+        }
+
         public Player(User user) => User = user;
+
+        public string CardsString() => string.Join(',', Cards.Select(i => (int)i));
     }
 }

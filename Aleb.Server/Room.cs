@@ -90,7 +90,7 @@ namespace Aleb.Server {
         }
 
         public bool Start(User starting) {
-            if (Game != null || starting != People[0].User || Count < 4 || People.Skip(1).Any(i => !i.Ready))
+            if (Game != null || starting != People[0].User || Count < 4 || People.Any(i => !i.Ready))
                 return false;
 
             Game = new Game(this);

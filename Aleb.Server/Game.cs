@@ -1,8 +1,21 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Aleb.Server {
     class Game {
+        void Flush() {
+            foreach (Player player in Players)
+                player.Flush();
+        }
+
+        void Broadcast(int exclude, string command, params dynamic[] args) {
+            foreach (Player player in Players.Where((_, i) => i != exclude))
+                player.SendMessage(command, args);
+        }
+
+        void Broadcast(string command, params dynamic[] args) => Broadcast(-1, command, args);
+
         int Modulo(int n, int m) => (n + m) % m;
 
         enum GameState {
@@ -58,6 +71,11 @@ namespace Aleb.Server {
             Current = Dealer.Next;
 
             Card.Distribute(Players);
+
+            foreach (Player player in Players)
+                player.SendMessage("GameStarted", Array.IndexOf(Players, Dealer), player.CardsString());
+
+            Flush();
         }
 
         public bool Bid(int index, Suit? suit) {

@@ -32,7 +32,7 @@ namespace Aleb.GUI.Views {
         Button ReadyButton, StartButton;
 
         void EnableStartButton() {
-            StartButton.IsVisible = Users[0].Text == Game.User.Name;
+            StartButton.IsVisible = Users[0].Text == App.User.Name;
             StartButton.IsEnabled = StartButton.IsVisible && Users.All(i => i.Ready.State == true);
         }
 
@@ -55,12 +55,14 @@ namespace Aleb.GUI.Views {
             Network.UserJoined += UserJoined;
             Network.UserReady += UserReady;
             Network.UserLeft += UserLeft;
+            Network.GameStarted += GameStarted;
         }
 
         void Unloaded(object sender, VisualTreeAttachmentEventArgs e) {
             Network.UserJoined -= UserJoined;
             Network.UserReady -= UserReady;
             Network.UserLeft -= UserLeft;
+            Network.GameStarted -= GameStarted;
         }
 
         void UserJoined(User user) {
@@ -88,7 +90,7 @@ namespace Aleb.GUI.Views {
             if (entry != null) {
                 entry.Ready.State = user.Ready;
 
-                if (user == Game.User)
+                if (user == App.User)
                     ReadyButton.Content = entry.Ready.State == true? "Nisam spreman!" : "Spreman!";
             }
             
@@ -116,7 +118,7 @@ namespace Aleb.GUI.Views {
         }
 
         void SetReady(object sender, RoutedEventArgs e)
-            => Requests.SetReady(!Users.First(i => i.Text == Game.User.Name).Ready.State?? false);
+            => Requests.SetReady(!Users.First(i => i.Text == App.User.Name).Ready.State?? false);
 
         void LeaveRoom(object sender, RoutedEventArgs e) {
             Requests.LeaveRoom();
@@ -124,8 +126,19 @@ namespace Aleb.GUI.Views {
             App.MainWindow.View = new RoomListView();
         }
 
-        void Start(object sender, RoutedEventArgs e) {
-            Console.WriteLine("nisam jos implemento al sad cu");
+        void Start(object sender, RoutedEventArgs e) 
+            => Requests.StartGame();
+
+        void GameStarted(int dealer, List<int> cards) {
+            if (!Dispatcher.UIThread.CheckAccess()) {
+                Dispatcher.UIThread.InvokeAsync(() => GameStarted(dealer, cards));
+                return;
+            }
+
+            GameView view = new GameView(Users.Select(i => i.Text).ToList());
+            App.MainWindow.View = view;
+
+            view.GameStarted(dealer, cards);
         }
     }
 }

@@ -14,13 +14,6 @@ namespace Aleb.GUI {
             => AppBuilder.Configure<App>()
                 .UsePlatformDetect();
 
-        public static string GetBaseFolder(string folder) => Path.Combine(
-            Directory.GetParent(
-                Path.GetDirectoryName(AppDomain.CurrentDomain.BaseDirectory)
-            ).FullName,
-            folder
-        );
-
         public static readonly string UserPath = Path.Combine(Environment.GetEnvironmentVariable(
             RuntimeInformation.IsOSPlatform(OSPlatform.Windows)? "USERPROFILE" : "HOME"
         ), ".aleb");
