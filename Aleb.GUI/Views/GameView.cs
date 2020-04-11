@@ -57,6 +57,9 @@ namespace Aleb.GUI.Views {
 
             foreach (int card in cards)
                 Cards.Children.Add(new CardImage(card));
+
+            Cards.Children.Add(new CardImage(32));
+            Cards.Children.Add(new CardImage(32));
         }
     }
 }
