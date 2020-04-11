@@ -30,7 +30,8 @@
     <AvaloniaResource Include="**/*.xaml">
       <SubType>Designer</SubType>
     </AvaloniaResource>
-    <AvaloniaResource Include="Resources/*" />
+    <AvaloniaResource Include="Fonts/*" />
+    <AvaloniaResource Include="Images/*" />
   </ItemGroup>
   
 </Project>

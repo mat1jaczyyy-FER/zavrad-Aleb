@@ -56,7 +56,7 @@ namespace Aleb.GUI.Views {
             Cards.Children.Clear();
 
             foreach (int card in cards)
-                Cards.Children.Add(new TextBlock() { Text = card.ToString() });
+                Cards.Children.Add(new CardImage(card));
         }
     }
 }

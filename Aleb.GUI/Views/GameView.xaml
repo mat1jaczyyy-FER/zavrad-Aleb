@@ -5,15 +5,15 @@
              AttachedToVisualTree="Loaded" DetachedFromVisualTree="Unloaded">
 
   <DockPanel x:Name="Root">
-    <Components:UserInRoom DockPanel.Dock="Bottom" />
-    <Components:UserInRoom DockPanel.Dock="Top" />
-    <Components:UserInRoom DockPanel.Dock="Right" />
-    <Components:UserInRoom DockPanel.Dock="Left" />
+    <Components:UserInRoom DockPanel.Dock="Bottom" HorizontalAlignment="Center" />
+    <Components:UserInRoom DockPanel.Dock="Top" HorizontalAlignment="Center" />
+    <Components:UserInRoom DockPanel.Dock="Right" VerticalAlignment="Center" />
+    <Components:UserInRoom DockPanel.Dock="Left" VerticalAlignment="Center" />
 
-    <DockPanel DockPanel.Dock="Bottom" Margin="15">
-      <Border DockPanel.Dock="Bottom" BorderBrush="{DynamicResource ThemeForegroundLowBrush}" BorderThickness="2" CornerRadius="5">
-        <StackPanel Orientation="Horizontal" Spacing="5" x:Name="Cards" />
+    <Grid Margin="15" RowDefinitions="3*,10,*">
+      <Border Grid.Row="2" BorderBrush="{DynamicResource ThemeForegroundLowBrush}" BorderThickness="2" CornerRadius="5" HorizontalAlignment="Center">
+        <StackPanel Margin="5" Orientation="Horizontal" Spacing="5" x:Name="Cards" />
       </Border>
-    </DockPanel>
+    </Grid>
   </DockPanel>
 </UserControl>
