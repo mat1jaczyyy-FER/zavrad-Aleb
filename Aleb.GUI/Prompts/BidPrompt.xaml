@@ -1,0 +1,10 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Aleb.GUI.Prompts.BidPrompt"
+             xmlns:Components="clr-namespace:Aleb.GUI.Components"
+             AttachedToVisualTree="Loaded" DetachedFromVisualTree="Unloaded">
+
+  <Grid>
+    
+  </Grid>
+</UserControl>

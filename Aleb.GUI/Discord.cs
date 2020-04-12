@@ -1,4 +1,5 @@
 using System;
+using System.Timers;
 
 using DiscordRPC;
 
@@ -8,7 +9,7 @@ namespace Aleb.GUI {
         static DiscordRpcClient Presence;
         static Timestamps Time;
         
-        static Courier courier = new Courier() { Interval = 1000 };
+        static Timer courier = new Timer() { Interval = 1000 };
         static object locker = new object();
 
         static Discord() => courier.Elapsed += Refresh;

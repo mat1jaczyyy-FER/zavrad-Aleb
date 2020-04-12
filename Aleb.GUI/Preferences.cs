@@ -23,8 +23,6 @@ namespace Aleb.GUI {
             }
         }
 
-        
-
         public static void Decode(Stream input) {
             using (BinaryReader reader = new BinaryReader(input)) {
                 if (!reader.ReadBytes(4).Select(i => (char)i).SequenceEqual(Header))

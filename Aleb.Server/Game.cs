@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using Aleb.Common;
+
 namespace Aleb.Server {
     class Game {
         void Flush() {
@@ -15,14 +17,6 @@ namespace Aleb.Server {
         }
 
         void Broadcast(string command, params dynamic[] args) => Broadcast(-1, command, args);
-
-        int Modulo(int n, int m) => (n + m) % m;
-
-        enum GameState {
-            Bidding,
-            Declaring,
-            Playing
-        }
 
         Player[] Players = new Player[4];
 
@@ -46,9 +40,9 @@ namespace Aleb.Server {
             Players[3] = Room.Users[3].ToPlayer();
 
             for (int i = 0; i < 4; i++) {
-                Players[i].Previous = Players[Modulo(i - 1, 4)];
-                Players[i].Next = Players[Modulo(i + 1, 4)];
-                Players[i].Teammate = Players[Modulo(i + 2, 4)];
+                Players[i].Previous = Players[Utilities.Modulo(i - 1, 4)];
+                Players[i].Next = Players[Utilities.Modulo(i + 1, 4)];
+                Players[i].Teammate = Players[Utilities.Modulo(i + 2, 4)];
                 Players[i].Team = i % 2;
             }
 

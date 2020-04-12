@@ -27,6 +27,7 @@ namespace Aleb.GUI {
             PopupTitle = this.Get<TextBlock>("PopupTitle");
             
             PreferencesButton = this.Get<PreferencesButton>("PreferencesButton");
+            PopupClose = this.Get<Close>("PopupClose");
 
             view = this.Get<Border>("View");
             popup = this.Get<Border>("Popup");
@@ -55,6 +56,7 @@ namespace Aleb.GUI {
 
         public TextBlock TitleText, PopupTitle;
         PreferencesButton PreferencesButton;
+        public Close PopupClose;
 
         Border view, popup;
         Grid PopupContainer;
@@ -70,14 +72,15 @@ namespace Aleb.GUI {
                 popup.Child = value;
 
                 PreferencesButton.Enabled = Popup == null;
+
+                PopupClose.IsEnabled = true;
                 PopupContainer.IsVisible = Popup != null;
+
                 view.Opacity = Popup != null? 0.2 : 1;
                 view.Background = Popup != null? (IBrush)Application.Current.Styles.FindResource("ThemeBorderHighBrush") : null;
 
-                if (Popup != null) {
-                    //Popup.HorizontalAlignment = HorizontalAlignment.Center;
+                if (Popup != null)
                     Popup.Margin = Thickness.Parse("0 10");
-                }
             }
         }
 

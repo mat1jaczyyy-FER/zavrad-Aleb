@@ -5,6 +5,8 @@ using System.Text;
 
 namespace Aleb.Common {
     public static class Utilities {
+        public static int Modulo(int n, int m) => (n + m) % m;
+
         public static void Swap<T>(this List<T> list, int a, int b) {
             T temp = list[a];
             list[a] = list[b];

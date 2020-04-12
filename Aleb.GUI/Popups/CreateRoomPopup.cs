@@ -45,7 +45,7 @@ namespace Aleb.GUI.Popups {
         void Return() => Create(null, null);
 
         async void Create(object sender, RoutedEventArgs e) {
-            RoomName.IsEnabled = CreateButton.IsEnabled = false;
+            RoomName.IsEnabled = CreateButton.IsEnabled = App.MainWindow.PopupClose.IsEnabled = false;
             Status.Text = " ";
             Focus();
             
@@ -54,6 +54,7 @@ namespace Aleb.GUI.Popups {
             if (room == null) {
                 RoomName.IsEnabled = true;
                 CreateButton.IsEnabled = false;
+                App.MainWindow.PopupClose.IsEnabled = true;
 
                 Status.Text = "Nije moguće stvoriti sobu.";
                 return;

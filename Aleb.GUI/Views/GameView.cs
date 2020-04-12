@@ -14,6 +14,7 @@ using Avalonia.VisualTree;
 using Aleb.Client;
 using Aleb.Common;
 using Aleb.GUI.Components;
+using Aleb.GUI.Prompts;
 
 namespace Aleb.GUI.Views {
     public class GameView: UserControl {
@@ -22,10 +23,22 @@ namespace Aleb.GUI.Views {
 
             UserText = this.Get<DockPanel>("Root").Children.OfType<UserInRoom>().ToList();
             Cards = this.Get<StackPanel>("Cards");
+
+            prompt = this.Get<Border>("Prompt");
         }
 
         List<UserInRoom> UserText;
         StackPanel Cards;
+
+        Border prompt;
+
+        public Control Prompt {
+            get => (Control)prompt.Child;
+            set {
+                prompt.Child = value;
+                prompt.IsVisible = Prompt != null;
+            }
+        }
 
         public GameView() => throw new InvalidOperationException();
 
@@ -39,6 +52,8 @@ namespace Aleb.GUI.Views {
                 text.Text = name;
 
             UserText = UserText.RotateWith(i => i.Text == names[0]).ToList();
+
+            You = UserText.IndexOf(UserText.First(i => i.Text == App.User.Name));
         }
 
         void Loaded(object sender, VisualTreeAttachmentEventArgs e) {
@@ -49,9 +64,28 @@ namespace Aleb.GUI.Views {
             Network.GameStarted -= GameStarted;
         }
 
+        GameState State;
+        int You;
+
+        void SetPlaying(int playing) {
+            for (int i = 0; i < 4; i++)
+                UserText[i].Background = i == playing
+                    ? (IBrush)Application.Current.FindResource("ThemeForegroundLowBrush")
+                    : new SolidColorBrush(Color.Parse("Transparent"));
+
+            if (playing != You) return;
+
+            if (State == GameState.Bidding)
+                Prompt = new BidPrompt();
+        }
+
         public void GameStarted(int dealer, List<int> cards) {
             for (int i = 0; i < 4; i++)
                 UserText[i].Ready.State = i == dealer;
+
+            State = GameState.Bidding;
+
+            SetPlaying(Utilities.Modulo(dealer + 1, 4));
 
             Cards.Children.Clear();
 
