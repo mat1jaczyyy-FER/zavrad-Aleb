@@ -26,5 +26,8 @@ namespace Aleb.Common {
 
             return enumerable.Rotate(index);
         }
+
+        public static T? ToEnum<T>(this string str) where T: struct, Enum
+            => Enum.TryParse(str, false, out T value)? value : (T?)null;
     }
 }

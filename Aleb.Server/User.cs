@@ -53,9 +53,6 @@ namespace Aleb.Server {
             private set {
                 if (_client == value) return;
 
-                if (_client != null)
-                    _client.Dispose();
-
                 _client = value;
 
                 if (_client != null) {
@@ -118,6 +115,13 @@ namespace Aleb.Server {
 
                     room?.Start(this);
                 }
+
+            } else if (State == UserState.InGame) {
+                if (msg.Command == "Bid") {
+                    if (msg.Args.Length == 1)
+                        Game.Bid(Player, msg.Args[0].ToEnum<Suit>());
+
+                }
             }
 
             Client.Flush();
@@ -146,6 +150,12 @@ namespace Aleb.Server {
             Password = password;
         }
 
-        public Player ToPlayer() => new Player(this);
+        Player Player;
+        Game Game;
+
+        public Player ToPlayer(Game game) {
+            Game = game;
+            return Player = new Player(this);
+        }
     }
 }

@@ -10,7 +10,7 @@
     <Components:UserInRoom DockPanel.Dock="Right" VerticalAlignment="Center" />
     <Components:UserInRoom DockPanel.Dock="Left" VerticalAlignment="Center" />
 
-    <Grid Margin="15" RowDefinitions="3*,10,*">
+    <Grid Margin="15" RowDefinitions="2*,10,*">
       <Grid RowDefinitions="*,4*,*" ColumnDefinitions="*,2*,*">
         <Border Grid.Row="1" Grid.Column="1" Background="{DynamicResource ThemeControlHighBrush}" IsVisible="False" x:Name="Prompt" />
       </Grid>

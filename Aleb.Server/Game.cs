@@ -34,10 +34,10 @@ namespace Aleb.Server {
         public Game(Room room) {
             Room = room;
 
-            Players[0] = Room.Users[0].ToPlayer();
-            Players[1] = Room.Users[2].ToPlayer();
-            Players[2] = Room.Users[1].ToPlayer();
-            Players[3] = Room.Users[3].ToPlayer();
+            Players[0] = Room.Users[0].ToPlayer(this);
+            Players[1] = Room.Users[2].ToPlayer(this);
+            Players[2] = Room.Users[1].ToPlayer(this);
+            Players[3] = Room.Users[3].ToPlayer(this);
 
             for (int i = 0; i < 4; i++) {
                 Players[i].Previous = Players[Utilities.Modulo(i - 1, 4)];
@@ -72,13 +72,15 @@ namespace Aleb.Server {
             Flush();
         }
 
-        public bool Bid(int index, Suit? suit) {
-            if (State != GameState.Bidding || Players[index] != Current)
-                return false;
+        public void Bid(Player sender, Suit? suit) {
+            if (State != GameState.Bidding || sender != Current) return;
 
             if (suit == null) {
-                if (Current == Dealer) return false;
+                if (Current == Dealer) return;
                 Current = Current.Next;
+
+                foreach (Player player in Players)
+                    player.SendMessage("TrumpNext", Array.IndexOf(Players, Current));
 
             } else {
                 Table = new Table(suit.Value, Current);
@@ -88,9 +90,12 @@ namespace Aleb.Server {
 
                 State++;
                 Current = Dealer.Next;
+
+                foreach (Player player in Players)
+                    player.SendMessage("TrumpChosen", Array.IndexOf(Players, player), suit.ToString(), player.CardsString());
             }
 
-            return true;
+            Flush();
         }
 
         public bool Declare(int index, List<int> indexes) {

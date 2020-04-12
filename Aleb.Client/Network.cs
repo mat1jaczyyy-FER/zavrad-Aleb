@@ -68,6 +68,12 @@ namespace Aleb.Client {
         public delegate void GameStartedEventHandler(int dealer, List<int> yourCards);
         public static event GameStartedEventHandler GameStarted;
 
+        public delegate void TrumpNextEventHandler(int playing);
+        public static event TrumpNextEventHandler TrumpNext;
+
+        public delegate void TrumpChosenEventHandler(int selector, Suit trump, List<int> yourCards);
+        public static event TrumpChosenEventHandler TrumpChosen;
+
         static void Received(AlebClient sender, Message msg) {
             foreach (var i in Waiting.ToHashSet()) {
                 if (i.Expected.Contains(msg.Command)) {
@@ -85,6 +91,9 @@ namespace Aleb.Client {
             else if (msg.Command == "UserReady") UserReady?.Invoke(new User(msg.Args[0]) { Ready = Convert.ToBoolean(msg.Args[1]) });
 
             else if (msg.Command == "GameStarted") GameStarted?.Invoke(Convert.ToInt32(msg.Args[0]), msg.Args[1].Split(',').Select(i => Convert.ToInt32(i)).ToList());
+
+            else if (msg.Command == "TrumpNext") TrumpNext?.Invoke(Convert.ToInt32(msg.Args[0]));
+            else if (msg.Command == "TrumpChosen") TrumpChosen?.Invoke(Convert.ToInt32(msg.Args[0]), msg.Args[1].ToEnum<Suit>().Value, msg.Args[2].Split(',').Select(i => Convert.ToInt32(i)).ToList());
         }
 
         public static Task<Message> Register(params string[] expected) {

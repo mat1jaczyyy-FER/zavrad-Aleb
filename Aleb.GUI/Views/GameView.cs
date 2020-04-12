@@ -9,6 +9,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
+using Avalonia.Threading;
 using Avalonia.VisualTree;
 
 using Aleb.Client;
@@ -58,14 +59,31 @@ namespace Aleb.GUI.Views {
 
         void Loaded(object sender, VisualTreeAttachmentEventArgs e) {
             Network.GameStarted += GameStarted;
+
+            Network.TrumpNext += TrumpNext;
+            Network.TrumpChosen += TrumpChosen;
         }
 
         void Unloaded(object sender, VisualTreeAttachmentEventArgs e) {
             Network.GameStarted -= GameStarted;
+            
+            Network.TrumpNext -= TrumpNext;
+            Network.TrumpChosen -= TrumpChosen;
         }
 
         GameState State;
         int You;
+
+        int _dealer;
+        int Dealer {
+            get => _dealer;
+            set {
+                _dealer = value;
+                
+                for (int i = 0; i < 4; i++)
+                    UserText[i].Ready.State = i == Dealer;
+            }
+        }
 
         void SetPlaying(int playing) {
             for (int i = 0; i < 4; i++)
@@ -73,19 +91,21 @@ namespace Aleb.GUI.Views {
                     ? (IBrush)Application.Current.FindResource("ThemeForegroundLowBrush")
                     : new SolidColorBrush(Color.Parse("Transparent"));
 
-            if (playing != You) return;
-
             if (State == GameState.Bidding)
-                Prompt = new BidPrompt();
+                Prompt = (playing == You)? new BidPrompt(playing == Dealer) : null;
+
+            else if (State == GameState.Declaring) {}
         }
 
         public void GameStarted(int dealer, List<int> cards) {
-            for (int i = 0; i < 4; i++)
-                UserText[i].Ready.State = i == dealer;
+            if (!Dispatcher.UIThread.CheckAccess()) {
+                Dispatcher.UIThread.InvokeAsync(() => GameStarted(dealer, cards));
+                return;
+            }
+
+            Dealer = dealer;
 
             State = GameState.Bidding;
-
-            SetPlaying(Utilities.Modulo(dealer + 1, 4));
 
             Cards.Children.Clear();
 
@@ -94,6 +114,37 @@ namespace Aleb.GUI.Views {
 
             Cards.Children.Add(new CardImage(32));
             Cards.Children.Add(new CardImage(32));
+
+            SetPlaying(Utilities.Modulo(Dealer + 1, 4));
+        }
+
+        public void TrumpNext(int playing) {
+            if (!Dispatcher.UIThread.CheckAccess()) {
+                Dispatcher.UIThread.InvokeAsync(() => TrumpNext(playing));
+                return;
+            }
+
+            if (State != GameState.Bidding) return;
+
+            SetPlaying(playing);
+        }
+
+        public void TrumpChosen(int selector, Suit trump, List<int> cards) {
+            if (!Dispatcher.UIThread.CheckAccess()) {
+                Dispatcher.UIThread.InvokeAsync(() => TrumpChosen(selector, trump, cards));
+                return;
+            }
+
+            if (State != GameState.Bidding) return;
+
+            State = GameState.Declaring;
+
+            Cards.Children.Clear();
+
+            foreach (int card in cards)
+                Cards.Children.Add(new CardImage(card));
+
+            SetPlaying(Utilities.Modulo(Dealer + 1, 4));
         }
     }
 }

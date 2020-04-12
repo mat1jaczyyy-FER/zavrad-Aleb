@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -20,14 +21,31 @@ namespace Aleb.GUI.Prompts {
     public class BidPrompt: UserControl {
         void InitializeComponent() {
             AvaloniaXamlLoader.Load(this);
+
+            Skip = this.Get<Button>("Skip");
+            MustPick = this.Get<TextBlock>("MustPick");
         }
 
-        public BidPrompt() {
+        Button Skip;
+        TextBlock MustPick;
+
+        public BidPrompt() => throw new InvalidOperationException();
+
+        public BidPrompt(bool last) {
             InitializeComponent();
+
+            if (last) {
+                Skip.IsVisible = false;
+                MustPick.IsVisible = true;
+            }
         }
 
         void Loaded(object sender, VisualTreeAttachmentEventArgs e) {}
 
         void Unloaded(object sender, VisualTreeAttachmentEventArgs e) {}
+
+        void Pick(Suit? suit) => Requests.Bid(suit);
+
+        void DontPick(object sender, RoutedEventArgs e) => Pick(null);
     }
 }

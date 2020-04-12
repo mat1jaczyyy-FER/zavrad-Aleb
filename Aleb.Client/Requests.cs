@@ -60,5 +60,8 @@ namespace Aleb.Client {
 
         public static void StartGame()
             => Network.Send(new Message("StartGame"));
+
+        public static void Bid(Suit? suit)
+            => Network.Send(new Message("Bid", suit.ToString()));
     }
 }

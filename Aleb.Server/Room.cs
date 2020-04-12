@@ -94,7 +94,10 @@ namespace Aleb.Server {
                 return false;
 
             Game = new Game(this);
-            People.ForEach(i => i.Ready = false);
+            People.ForEach(i => {
+                i.Ready = false;
+                i.User.State = UserState.InGame;
+            });
 
             return true;
         }

@@ -4,7 +4,17 @@
              xmlns:Components="clr-namespace:Aleb.GUI.Components"
              AttachedToVisualTree="Loaded" DetachedFromVisualTree="Unloaded">
 
-  <Grid>
-    
+  <Grid RowDefinitions="3*,2*,3*">
+    <TextBlock Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Odaberite Adut" />
+
+    <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal" Spacing="10">
+      <Components:TrumpButton Suit="Hearts" Clicked="Pick" />
+      <Components:TrumpButton Suit="Leaves" Clicked="Pick" />
+      <Components:TrumpButton Suit="Bells" Clicked="Pick" />
+      <Components:TrumpButton Suit="Acorns" Clicked="Pick" />
+    </StackPanel>
+
+    <Button Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" Content="Dalje" x:Name="Skip" Click="DontPick" />
+    <TextBlock Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Zadnji ste na redu i morate zvati" IsVisible="False" x:Name="MustPick" />
   </Grid>
 </UserControl>
