@@ -8,6 +8,8 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 
 using Aleb.Client;
 
@@ -30,6 +32,9 @@ namespace Aleb.GUI {
             FileName = url,
             UseShellExecute = true
         });
+
+        public static Bitmap GetImage(string uri)
+            => new Bitmap(AvaloniaLocator.Current.GetService<IAssetLoader>().Open(new Uri($"avares://Aleb.GUI/Assets/{uri}.png")));
 
         public override void Initialize() {
             AvaloniaXamlLoader.Load(this);
