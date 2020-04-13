@@ -17,7 +17,6 @@ namespace Aleb.Server {
 
     class Table {
         Suit Trump;
-        public readonly Player Bidder;
 
         List<Action> played;
         public Action Winner => played.Aggregate((a, b) => a.Card.Gt(b.Card, Trump)? a : b);
@@ -52,9 +51,8 @@ namespace Aleb.Server {
             return true;
         }
 
-        public Table(Suit trump, Player bidder) {
+        public Table(Suit trump) {
             Trump = trump;
-            Bidder = bidder;
 
             BelaCards = new List<Card> {
                 new Card(Trump, Value.Queen),

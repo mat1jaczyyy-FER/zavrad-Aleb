@@ -10,31 +10,16 @@ using Avalonia.Media;
 using Aleb.Client;
 
 namespace Aleb.GUI.Components {
-    public class UserInRoom: UserControl {
-        void InitializeComponent() {
+    public class UserInRoom: UserDisplay {
+        protected override void InitializeComponent() {
             AvaloniaXamlLoader.Load(this);
 
-            User = this.Get<TextBlock>("User");
+            base.InitializeComponent();
+            
             Ready = this.Get<Checkmark>("Ready");
         }
 
-        TextBlock User;
-
-        public string Text {
-            get => User.Text;
-            set {
-                if (value.Length > 0 && value != " ") {
-                    User.Text = value;
-                    Opacity = 1;
-
-                } else {
-                    User.Text = " ";
-                    Opacity = 0;
-                }
-            }
-        }
-
-        public Checkmark Ready;
+        public Checkmark Ready { get; private set; }
 
         public UserInRoom() {
             InitializeComponent();

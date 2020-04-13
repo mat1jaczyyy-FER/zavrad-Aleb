@@ -1,0 +1,10 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Aleb.GUI.Components.CardStack"
+             xmlns:media="clr-namespace:Avalonia.Media;assembly=Avalonia.Visuals"
+             DetachedFromVisualTree="Unloaded">
+
+  <LayoutTransformControl x:Name="Root">
+    <StackPanel Orientation="Horizontal" Spacing="-30" MaxHeight="105" x:Name="Contents" />
+  </LayoutTransformControl>
+</UserControl>

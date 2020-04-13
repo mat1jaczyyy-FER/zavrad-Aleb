@@ -29,5 +29,8 @@ namespace Aleb.Common {
 
         public static T? ToEnum<T>(this string str) where T: struct, Enum
             => Enum.TryParse(str, false, out T value)? value : (T?)null;
+
+        public static List<int> ToIntList(this string str)
+            => (str == null || str == "")? new List<int>() : str.Split(',').Select(i => Convert.ToInt32(i)).ToList();
     }
 }

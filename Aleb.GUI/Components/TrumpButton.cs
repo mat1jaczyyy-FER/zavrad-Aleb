@@ -1,5 +1,5 @@
-﻿using Avalonia.Controls;
-using Avalonia.Controls.Shapes;
+﻿using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
@@ -37,6 +37,11 @@ namespace Aleb.GUI.Components {
             InitializeComponent();
 
             MouseLeave(this, null);
+        }
+
+        protected override void Unloaded(object sender, VisualTreeAttachmentEventArgs e) {
+            base.Unloaded(sender, e);
+            Clicked = null;
         }
 
         protected override void Click(PointerReleasedEventArgs e) => Clicked?.Invoke(Suit);

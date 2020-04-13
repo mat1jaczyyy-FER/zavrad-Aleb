@@ -26,7 +26,9 @@ namespace Aleb.Server {
         public bool CreateCalls(List<int> indexes) {
             Calls calls = new Calls();
 
-            if (indexes == null) {
+            if (indexes != null) {
+                if (!indexes.Any()) return false;
+
                 List<Card> cards = Cards.Where((x, i) => indexes.Contains(i)).ToList();
 
                 foreach (Value value in EnumUtil.Values<Value>().Where(i => i.CallValue() > 0)) {
@@ -72,7 +74,5 @@ namespace Aleb.Server {
         }
 
         public Player(User user) => User = user;
-
-        public string CardsString() => string.Join(',', Cards.Select(i => (int)i));
     }
 }

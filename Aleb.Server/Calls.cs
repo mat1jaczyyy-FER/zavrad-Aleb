@@ -46,5 +46,12 @@ namespace Aleb.Server {
         }
 
         public bool Gt(Calls other) => Max.Gt(other.Max);
+
+        public override string ToString() {
+            List<Card> cards = Cards.ToList();
+            cards.Sort();
+
+            return string.Join(',', cards.Select(i => (int)i));
+        }
     }
 }

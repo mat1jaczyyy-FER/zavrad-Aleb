@@ -121,7 +121,14 @@ namespace Aleb.Server {
                     if (msg.Args.Length == 1)
                         Game.Bid(Player, msg.Args[0].ToEnum<Suit>());
 
+                } else if (msg.Command == "Declare") {
+                    if (msg.Args.Length == 1) {
+                        List<int> indexes = msg.Args[0] != "null"? msg.Args[0].ToIntList() : null;
+                        Client.Send("YouDeclared", Game.Declare(Player, indexes));
+                    }
                 }
+
+                Game.Flush();
             }
 
             Client.Flush();
@@ -153,7 +160,7 @@ namespace Aleb.Server {
         Player Player;
         Game Game;
 
-        public Player ToPlayer(Game game) {
+        public Player ToPlayer(Game game) { //todo clear these!!
             Game = game;
             return Player = new Player(this);
         }

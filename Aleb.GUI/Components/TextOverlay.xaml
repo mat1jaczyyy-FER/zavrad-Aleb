@@ -1,0 +1,9 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Aleb.GUI.Components.TextOverlay"
+             Background="{DynamicResource ThemeControlLowBrush}">
+
+  <StackPanel>
+    <TextBlock FontSize="15" Margin="40 20" x:Name="Text" />
+  </StackPanel>
+</UserControl>

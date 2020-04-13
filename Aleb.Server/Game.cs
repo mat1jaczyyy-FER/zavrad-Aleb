@@ -6,7 +6,7 @@ using Aleb.Common;
 
 namespace Aleb.Server {
     class Game {
-        void Flush() {
+        public void Flush() {
             foreach (Player player in Players)
                 player.Flush();
         }
@@ -67,7 +67,7 @@ namespace Aleb.Server {
             Card.Distribute(Players);
 
             foreach (Player player in Players)
-                player.SendMessage("GameStarted", Array.IndexOf(Players, Dealer), player.CardsString());
+                player.SendMessage("GameStarted", Array.IndexOf(Players, Dealer), player.Cards.ToIntString());
 
             Flush();
         }
@@ -80,10 +80,11 @@ namespace Aleb.Server {
                 Current = Current.Next;
 
                 foreach (Player player in Players)
-                    player.SendMessage("TrumpNext", Array.IndexOf(Players, Current));
+                    player.SendMessage("TrumpNext");
 
             } else {
-                Table = new Table(suit.Value, Current);
+                Table = new Table(suit.Value);
+                History.Add(new Round(Current));
 
                 foreach (Player player in Players)
                     player.RevealTalon();
@@ -92,23 +93,20 @@ namespace Aleb.Server {
                 Current = Dealer.Next;
 
                 foreach (Player player in Players)
-                    player.SendMessage("TrumpChosen", Array.IndexOf(Players, player), suit.ToString(), player.CardsString());
+                    player.SendMessage("TrumpChosen", suit.ToString(), player.Cards.ToIntString());
             }
-
-            Flush();
         }
 
-        public bool Declare(int index, List<int> indexes) {
-            if (State != GameState.Declaring || Players[index] != Current)
+        public bool Declare(Player player, List<int> indexes) {
+            if (State != GameState.Declaring || player != Current)
                 return false;
 
-            if (indexes.Any(i => i < 0 || 8 <= i)) return false;
+            if (indexes?.Any(i => i < 0 || 8 <= i) == true) return false;
 
             if (!Current.CreateCalls(indexes)) return false;
 
             if (Current.Calls.Max.Cards.Count == 8) {
-                History.Add(new Round(Current));
-                History.Last().Belot(Current, Score[Current.Team]);
+                History.Last().Belot(Current, Score[Current.Team]); //todo implementaj ovo nekako
 
                 Start();
                 return true;
@@ -116,10 +114,14 @@ namespace Aleb.Server {
 
             if (Current == Dealer) {
                 Player maxPlayer = Players.Aggregate((a, b) => a.Calls.Gt(b.Calls)? a : b);
-                History.Add(new Round(maxPlayer));
+                int total = History.Last().ApplyCalls(maxPlayer);
+
+                Broadcast("WinningDeclaration", Array.IndexOf(Players, maxPlayer), total, maxPlayer.Calls.ToString(), maxPlayer.Teammate.Calls.ToString());
 
                 State++;
             }
+
+            Broadcast("PlayerDeclared", Current.Calls.Max.Value);
 
             Current = Current.Next;
             return true;

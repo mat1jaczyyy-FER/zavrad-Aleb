@@ -27,5 +27,8 @@ namespace Aleb.Server {
             if (value <= Value.VIII) return 0;
             return Points[Index(value, trump) + (!trump? 2 : 0)];
         }
+
+        public static string ToIntString(this List<Card> cards)
+            => string.Join(',', cards.Select(i => (int)i));
     }
 }

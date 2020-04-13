@@ -5,12 +5,15 @@ namespace Aleb.Server {
         public int[] Calls { get; private set; } = new int[2];
         public int[] Played { get; private set; } = new int[2];
 
-        int Team;
-        bool Fail;
+        public int Team { get; private set; }
+        public bool Fail { get; private set; }
         public bool Finalized { get; private set; }
 
-        public Round(Player caller)
-            => Calls[Team = caller.Team] = caller.Calls.Total + caller.Teammate.Calls.Total;
+        public Round(Player bidder)
+            => Team = bidder.Team;
+
+        public int ApplyCalls(Player caller)
+            => Calls[caller.Team] = caller.Calls.Total + caller.Teammate.Calls.Total;
 
         public void Bela(Player caller) => Calls[caller.Team] += 20;
 

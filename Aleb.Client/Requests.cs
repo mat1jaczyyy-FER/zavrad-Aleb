@@ -63,5 +63,8 @@ namespace Aleb.Client {
 
         public static void Bid(Suit? suit)
             => Network.Send(new Message("Bid", suit.ToString()));
+
+        public static void Declare(List<int> indexes)
+            => Network.Send(new Message("Declare", indexes != null? string.Join(',', indexes) : "null"));
     }
 }

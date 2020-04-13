@@ -5,7 +5,6 @@ using System.Linq;
 using Aleb.Common;
 
 namespace Aleb.Server {
-
     enum Value {
         VII, VIII, IX, X, Jack, Queen, King, Ace
     }

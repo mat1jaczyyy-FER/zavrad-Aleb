@@ -68,11 +68,20 @@ namespace Aleb.Client {
         public delegate void GameStartedEventHandler(int dealer, List<int> yourCards);
         public static event GameStartedEventHandler GameStarted;
 
-        public delegate void TrumpNextEventHandler(int playing);
+        public delegate void TrumpNextEventHandler();
         public static event TrumpNextEventHandler TrumpNext;
 
-        public delegate void TrumpChosenEventHandler(int selector, Suit trump, List<int> yourCards);
+        public delegate void TrumpChosenEventHandler(Suit trump, List<int> yourCards);
         public static event TrumpChosenEventHandler TrumpChosen;
+        
+        public delegate void YouDeclaredEventHandler(bool result);
+        public static event YouDeclaredEventHandler YouDeclared;
+        
+        public delegate void PlayerDeclaredEventHandler(int value);
+        public static event PlayerDeclaredEventHandler PlayerDeclared;
+
+        public delegate void WinningDeclarationEventHandler(int player, int value, List<int> calls, List<int> teammateCalls);
+        public static event WinningDeclarationEventHandler WinningDeclaration;
 
         static void Received(AlebClient sender, Message msg) {
             foreach (var i in Waiting.ToHashSet()) {
@@ -90,10 +99,14 @@ namespace Aleb.Client {
             else if (msg.Command == "UserLeft") UserLeft?.Invoke(new User(msg.Args[0]));
             else if (msg.Command == "UserReady") UserReady?.Invoke(new User(msg.Args[0]) { Ready = Convert.ToBoolean(msg.Args[1]) });
 
-            else if (msg.Command == "GameStarted") GameStarted?.Invoke(Convert.ToInt32(msg.Args[0]), msg.Args[1].Split(',').Select(i => Convert.ToInt32(i)).ToList());
+            else if (msg.Command == "GameStarted") GameStarted?.Invoke(Convert.ToInt32(msg.Args[0]), msg.Args[1].ToIntList());
 
-            else if (msg.Command == "TrumpNext") TrumpNext?.Invoke(Convert.ToInt32(msg.Args[0]));
-            else if (msg.Command == "TrumpChosen") TrumpChosen?.Invoke(Convert.ToInt32(msg.Args[0]), msg.Args[1].ToEnum<Suit>().Value, msg.Args[2].Split(',').Select(i => Convert.ToInt32(i)).ToList());
+            else if (msg.Command == "TrumpNext") TrumpNext?.Invoke();
+            else if (msg.Command == "TrumpChosen") TrumpChosen?.Invoke(msg.Args[0].ToEnum<Suit>().Value, msg.Args[1].ToIntList());
+            
+            else if (msg.Command == "YouDeclared") YouDeclared?.Invoke(Convert.ToBoolean(msg.Args[0]));
+            else if (msg.Command == "PlayerDeclared") PlayerDeclared?.Invoke(Convert.ToInt32(msg.Args[0]));
+            else if (msg.Command == "WinningDeclaration") WinningDeclaration?.Invoke(Convert.ToInt32(msg.Args[0]), Convert.ToInt32(msg.Args[1]), msg.Args[2].ToIntList(), msg.Args[3].ToIntList());
         }
 
         public static Task<Message> Register(params string[] expected) {
