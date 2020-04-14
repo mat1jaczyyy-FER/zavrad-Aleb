@@ -4,6 +4,6 @@
              Background="{DynamicResource ThemeControlLowBrush}">
 
   <StackPanel>
-    <TextBlock FontSize="15" Margin="40 20" x:Name="Text" />
+    <TextBlock Margin="40 20" x:Name="Text" />
   </StackPanel>
 </UserControl>

@@ -8,7 +8,7 @@
       <StackPanel Margin="10 3" Orientation="Horizontal" Spacing="4">
         <Components:DealerIcon VerticalAlignment="Center" x:Name="DealerIcon" />
 
-        <TextBlock VerticalAlignment="Center" x:Name="User" />
+        <TextBlock VerticalAlignment="Center" FontWeight="Bold" x:Name="User" />
       </StackPanel>
     </Border>
   </LayoutTransformControl>

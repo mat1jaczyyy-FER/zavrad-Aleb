@@ -31,6 +31,7 @@ namespace Aleb.GUI.Views {
             TableSegments = Enumerable.Range(0, 4).Select(i => this.Get<Border>($"Table{i}")).ToList();
 
             prompt = this.Get<Border>("Prompt");
+            trump = this.Get<Border>("Trump");
         }
 
         List<UserInGame> UserText;
@@ -38,7 +39,7 @@ namespace Aleb.GUI.Views {
 
         List<Border> TableSegments;
 
-        Border prompt;
+        Border prompt, trump;
 
         Control Prompt {
             get => (Control)prompt.Child;
@@ -52,6 +53,11 @@ namespace Aleb.GUI.Views {
                 prompt.Background = (value is TextOverlay)? null : (IBrush)Application.Current.FindResource("ThemeControlMidHighBrush");
                 prompt.IsVisible = Prompt != null;
             }
+        }
+
+        Trump Trump {
+            get => (Trump)trump.Child;
+            set => trump.Child = value;
         }
 
         void Table(int index, Control value) {
@@ -214,6 +220,8 @@ namespace Aleb.GUI.Views {
             if (State != GameState.Bidding) return;
 
             ClearTable();
+
+            Trump = new Trump(trump, UserText[lastPlaying].Text);
 
             DeclareSelected = new bool[8];
             State = GameState.Declaring;

@@ -1,0 +1,10 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Aleb.GUI.Components.Trump">
+
+  <StackPanel Orientation="Horizontal" Spacing="5" Margin="10">
+    <Image VerticalAlignment="Center" Width="60" x:Name="Image" />
+
+    <TextBlock VerticalAlignment="Center" FontWeight="Bold" x:Name="Text" />
+  </StackPanel>
+</UserControl>
