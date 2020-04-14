@@ -21,11 +21,11 @@ namespace Aleb.Server {
 
         public static bool Gt(this Value value, Value other, bool trump) => Index(value, trump) >= Index(other, trump);
 
-        static int[] Points = new int[] { 20, 14, 11, 10, 4, 3, 2, 0 };
+        static int[] Points = new int[] { 0, 2, 3, 4, 10, 11, 14, 20 };
 
         public static int ToPoints(this Value value, bool trump) {
             if (value <= Value.VIII) return 0;
-            return Points[Index(value, trump) + (!trump? 2 : 0)];
+            return Points[Index(value, trump) - (trump? 0 : 2)];
         }
 
         public static string ToIntString(this List<Card> cards)

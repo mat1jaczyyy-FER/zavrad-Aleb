@@ -77,11 +77,18 @@ namespace Aleb.Client {
         public delegate void YouDeclaredEventHandler(bool result);
         public static event YouDeclaredEventHandler YouDeclared;
         
-        public delegate void PlayerDeclaredEventHandler(int value);
-        public static event PlayerDeclaredEventHandler PlayerDeclared;
+        public delegate void SimpleIntEventHandler(int value);
+        public static event SimpleIntEventHandler PlayerDeclared;
 
         public delegate void WinningDeclarationEventHandler(int player, int value, List<int> calls, List<int> teammateCalls);
         public static event WinningDeclarationEventHandler WinningDeclaration;
+
+        public static event SimpleIntEventHandler YouPlayed;
+
+        public static event SimpleIntEventHandler CardPlayed;
+
+        public delegate void TableCompleteEventHandler(int winner, List<int> calls, List<int> played);
+        public static event TableCompleteEventHandler TableComplete;
 
         static void Received(AlebClient sender, Message msg) {
             foreach (var i in Waiting.ToHashSet()) {
@@ -107,6 +114,10 @@ namespace Aleb.Client {
             else if (msg.Command == "YouDeclared") YouDeclared?.Invoke(Convert.ToBoolean(msg.Args[0]));
             else if (msg.Command == "PlayerDeclared") PlayerDeclared?.Invoke(Convert.ToInt32(msg.Args[0]));
             else if (msg.Command == "WinningDeclaration") WinningDeclaration?.Invoke(Convert.ToInt32(msg.Args[0]), Convert.ToInt32(msg.Args[1]), msg.Args[2].ToIntList(), msg.Args[3].ToIntList());
+
+            else if (msg.Command == "YouPlayed") YouPlayed?.Invoke(Convert.ToInt32(msg.Args[0]));
+            else if (msg.Command == "CardPlayed") CardPlayed?.Invoke(Convert.ToInt32(msg.Args[0]));
+            else if (msg.Command == "TableComplete") TableComplete?.Invoke(Convert.ToInt32(msg.Args[0]), msg.Args[1].ToIntList(), msg.Args[2].ToIntList());
         }
 
         public static Task<Message> Register(params string[] expected) {

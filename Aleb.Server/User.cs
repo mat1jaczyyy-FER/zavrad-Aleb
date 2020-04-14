@@ -126,6 +126,10 @@ namespace Aleb.Server {
                         List<int> indexes = msg.Args[0] != "null"? msg.Args[0].ToIntList() : null;
                         Client.Send("YouDeclared", Game.Declare(Player, indexes));
                     }
+
+                } else if (msg.Command == "PlayCard") {
+                    if (msg.Args.Length == 2)
+                        Client.Send("YouPlayed", Game.PlayCard(Player, Convert.ToInt32(msg.Args[0]), Convert.ToBoolean(msg.Args[1])));
                 }
 
                 Game.Flush();

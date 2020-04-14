@@ -5,6 +5,6 @@
              DetachedFromVisualTree="Unloaded">
 
   <LayoutTransformControl x:Name="Root">
-    <StackPanel Orientation="Horizontal" Spacing="-30" MaxHeight="105" x:Name="Contents" />
+    <StackPanel Orientation="Horizontal" Spacing="-30" ZIndex="1" MaxHeight="105" x:Name="Contents" />
   </LayoutTransformControl>
 </UserControl>

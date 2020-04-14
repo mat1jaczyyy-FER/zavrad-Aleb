@@ -66,9 +66,13 @@ namespace Aleb.Server {
             return result? -1 : 1;
         }
 
-        public bool Gt(Card other, Suit trump) {
+        public bool Gt(Card other, Suit trump, Suit first) {
             if (Suit == trump && other.Suit == trump) return Value.Gt(other.Value, true);
             if (Suit == trump || other.Suit == trump) return Suit == trump;
+
+            if (Suit == first && other.Suit == first) return Value.Gt(other.Value, false);
+            if (Suit == first || other.Suit == first) return Suit == first;
+
             return Value.Gt(other.Value, false);
         }
     }

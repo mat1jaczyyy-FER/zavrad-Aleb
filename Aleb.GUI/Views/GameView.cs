@@ -18,6 +18,7 @@ using Aleb.Client;
 using Aleb.Common;
 using Aleb.GUI.Components;
 using Aleb.GUI.Prompts;
+using Avalonia.Styling;
 
 namespace Aleb.GUI.Views {
     public class GameView: UserControl {
@@ -29,7 +30,9 @@ namespace Aleb.GUI.Views {
             Cards = this.Get<StackPanel>("Cards");
             
             TableSegments = Enumerable.Range(0, 4).Select(i => this.Get<Border>($"Table{i}")).ToList();
+            CardTableSegments = Enumerable.Range(0, 4).Select(i => this.Get<Border>($"CardTable{i}")).ToList();
 
+            alert = this.Get<StackPanel>("Alert");
             prompt = this.Get<Border>("Prompt");
             trump = this.Get<Border>("Trump");
         }
@@ -37,8 +40,9 @@ namespace Aleb.GUI.Views {
         List<UserInGame> UserText;
         StackPanel Cards;
 
-        List<Border> TableSegments;
-
+        List<Border> TableSegments, CardTableSegments;
+        
+        StackPanel alert;
         Border prompt, trump;
 
         Control Prompt {
@@ -55,23 +59,39 @@ namespace Aleb.GUI.Views {
             }
         }
 
+        Control Alert {
+            get => (Control)alert.Children.FirstOrDefault();
+            set {
+                alert.Children.Clear();
+                alert.Children.Add(value);
+            }
+        }
+
         Trump Trump {
             get => (Trump)trump.Child;
             set => trump.Child = value;
         }
 
+        HorizontalAlignment[] TableH = new HorizontalAlignment[] {
+            HorizontalAlignment.Center,
+            HorizontalAlignment.Right,
+            HorizontalAlignment.Center,
+            HorizontalAlignment.Left
+        };
+
+        VerticalAlignment[] TableV = new VerticalAlignment[] {
+            VerticalAlignment.Bottom,
+            VerticalAlignment.Center,
+            VerticalAlignment.Top,
+            VerticalAlignment.Center
+        };
+
         void Table(int index, Control value) {
             if (value != null) {
                 int position = Utilities.Modulo(index - You, 4);
-            
-                if (position % 2 == 0) {
-                    value.HorizontalAlignment = HorizontalAlignment.Center;
-                    value.VerticalAlignment = (position == 0)? VerticalAlignment.Bottom : VerticalAlignment.Top;
-
-                } else {
-                    value.HorizontalAlignment = (position == 1)? HorizontalAlignment.Right : HorizontalAlignment.Left;
-                    value.VerticalAlignment = VerticalAlignment.Center;
-                }
+                
+                value.HorizontalAlignment = TableH[position];
+                value.VerticalAlignment = TableV[position];
 
                 if (value is CardStack cardStack) cardStack.ApplyPosition(position);
             }
@@ -79,9 +99,26 @@ namespace Aleb.GUI.Views {
             TableSegments[index].Child = value;
         }
 
+        void CardTable(int index, CardImage value) {
+            if (value != null) {
+                int position = Utilities.Modulo(index - You, 4);
+                
+                value.HorizontalAlignment = TableH.Rotate(2).ElementAt(position);
+                value.VerticalAlignment = TableV.Rotate(2).ElementAt(position);
+
+                value.MaxHeight = 130;
+                value.Margin = new Thickness(5);
+
+                CardTableSegments[index].Child = value;
+
+            } else CardTableSegments[index].Child.Opacity = 0;
+        }
+
         void ClearTable() {
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 4; i++) {
                 Table(i, null);
+                CardTable(i, null);
+            }
         }
 
         CardImage CreateCard(int card) {
@@ -111,8 +148,14 @@ namespace Aleb.GUI.Views {
             foreach (var (text, name) in UserText.Zip(names.RotateWith(i => i == App.User.Name)))
                 text.Text = name;
 
-            TableSegments = TableSegments.Rotate(UserText.Select(i => i.Text).ToList().IndexOf(names[0])).ToList();
-            UserText = UserText.RotateWith(i => i.Text == names[0]).ToList();
+            int position = UserText.Select(i => i.Text).ToList().IndexOf(names[0]);
+            
+            UserText = UserText.Rotate(position).ToList();
+            TableSegments = TableSegments.Rotate(position).ToList();
+            CardTableSegments = CardTableSegments.Rotate(position).ToList();
+
+            for (int i = 0; i < 4; i++)
+                CardTable(i, new CardImage(32) { Opacity = 0 });
 
             You = UserText.IndexOf(UserText.First(i => i.Text == App.User.Name));
         }
@@ -126,6 +169,10 @@ namespace Aleb.GUI.Views {
             Network.YouDeclared += YouDeclared;
             Network.PlayerDeclared += PlayerDeclared;
             Network.WinningDeclaration += WinningDeclaration;
+
+            Network.YouPlayed += YouPlayed;
+            Network.CardPlayed += CardPlayed;
+            Network.TableComplete += TableComplete;
         }
 
         void Unloaded(object sender, VisualTreeAttachmentEventArgs e) {
@@ -137,6 +184,10 @@ namespace Aleb.GUI.Views {
             Network.YouDeclared -= YouDeclared;
             Network.PlayerDeclared -= PlayerDeclared;
             Network.WinningDeclaration -= WinningDeclaration;
+
+            Network.YouPlayed -= YouPlayed;
+            Network.CardPlayed -= CardPlayed;
+            Network.TableComplete -= TableComplete;
         }
 
         GameState State;
@@ -153,7 +204,7 @@ namespace Aleb.GUI.Views {
             }
         }
 
-        int lastPlaying;
+        int lastPlaying, lastInTable;
 
         void SetPlaying(int playing) {
             lastPlaying = playing;
@@ -180,6 +231,10 @@ namespace Aleb.GUI.Views {
 
                 int margin = 15 * Convert.ToInt32(DeclareSelected[index]);
                 sender.Margin = new Thickness(0, -margin, 0, margin);
+            
+            } else if (State == GameState.Playing) {
+                if (lastPlaying == You) Requests.PlayCard(index, false); //todo bela
+                else Table(You, new TextOverlay("Niste na potezu", 3000));
             }
         }
 
@@ -257,8 +312,8 @@ namespace Aleb.GUI.Views {
             
             Table(lastPlaying, new TextOverlay((value != 0)? value.ToString() : "Dalje"));
 
-            if (lastPlaying != Dealer)
-                NextPlaying();
+            if (lastPlaying == Dealer) SetPlaying(-1);
+            else NextPlaying();
         }
 
         public void WinningDeclaration(int player, int value, List<int> calls, List<int> teammateCalls) {
@@ -268,8 +323,6 @@ namespace Aleb.GUI.Views {
             }
 
             if (State != GameState.Declaring) return;
-
-            SetPlaying(-1);
 
             int noDeclarations = value != 0? 0 : 1500;
 
@@ -283,17 +336,60 @@ namespace Aleb.GUI.Views {
                     Table(player, new CardStack(calls));
                     Table(Utilities.Modulo(player + 2, 4), new CardStack(teammateCalls));
 
-                    Prompt = new TextOverlay(value.ToString());
+                    Alert = new TextOverlay(value.ToString());
 
-                } else Prompt = new TextOverlay("Nema zvanja");
+                } else Alert = new TextOverlay("Nema zvanja");
 
                 Task.Delay(3000 - noDeclarations).ContinueWith(_ => Dispatcher.UIThread.InvokeAsync(() => {
                     ClearTable();
-                    Prompt = null;
+                    Alert = null;
                     State = GameState.Playing;
 
                     SetPlaying(Utilities.Modulo(Dealer + 1, 4));
+                    lastInTable = Utilities.Modulo(lastPlaying - 1, 4);
                 }));
+            }));
+        }
+
+        public void YouPlayed(int index) {
+            if (!Dispatcher.UIThread.CheckAccess()) {
+                Dispatcher.UIThread.InvokeAsync(() => YouPlayed(index));
+                return;
+            }
+
+            if (State != GameState.Playing) return;
+
+            if (index != -1) Cards.Children.RemoveAt(index);
+            else Table(You, new TextOverlay("Neispravna karta", 3000));
+        }
+
+        public void CardPlayed(int card) {
+            if (!Dispatcher.UIThread.CheckAccess()) {
+                Dispatcher.UIThread.InvokeAsync(() => CardPlayed(card));
+                return;
+            }
+
+            if (State != GameState.Playing) return;
+
+            CardTable(lastPlaying, new CardImage(card));
+
+            if (lastPlaying == lastInTable) SetPlaying(-1);
+            else NextPlaying();
+        }
+
+        public void TableComplete(int winner, List<int> calls, List<int> played) {
+            if (!Dispatcher.UIThread.CheckAccess()) {
+                Dispatcher.UIThread.InvokeAsync(() => TableComplete(winner, calls, played));
+                return;
+            }
+
+            if (State != GameState.Playing) return;
+
+            Task.Delay(2000).ContinueWith(_ => Dispatcher.UIThread.InvokeAsync(() => {
+                ClearTable();
+
+                SetPlaying(winner);
+                lastInTable = Utilities.Modulo(lastPlaying - 1, 4);
             }));
         }
     }

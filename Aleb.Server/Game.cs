@@ -127,25 +127,29 @@ namespace Aleb.Server {
             return true;
         }
 
-        public bool Play(int index, int card, bool bela) {
-            if (State != GameState.Playing || Players[index] != Current)
-                return false;
+        public int PlayCard(Player player, int card, bool bela) {
+            if (State != GameState.Playing || player != Current)
+                return -1;
 
-            if (card < 0 || Current.Cards.Count <= card) return false;
+            if (card < 0 || Current.Cards.Count <= card) return -1;
 
-            if (!Table.Play(Current, index, bela)) return false;
+            if (!Table.Play(Current, card, bela, out Card played)) return -1;
 
             if (bela) History.Last().Bela(Current);
 
             if (Table.Complete()) {
                 bool last = Players[0].Cards.Count == 0;
-                History.Last().Play(Table, last, out Current);
+                History.Last().Play(Table, last, out Current); // todo finalize later?
+
+                Broadcast("TableComplete", Array.IndexOf(Players, Current), History.Last().ToString());
 
                 if (last) Start();
 
             } else Current = Current.Next;
 
-            return true;
+            Broadcast("CardPlayed", (int)played, bela);
+
+            return card;
         }
     }
 }

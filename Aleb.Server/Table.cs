@@ -19,7 +19,7 @@ namespace Aleb.Server {
         Suit Trump;
 
         List<Action> played;
-        public Action Winner => played.Aggregate((a, b) => a.Card.Gt(b.Card, Trump)? a : b);
+        public Action Winner => played.Aggregate((a, b) => a.Card.Gt(b.Card, Trump, played[0].Card.Suit)? a : b);
 
         public int Points => played.Sum(i => i.Card.Points(Trump));
 
@@ -29,18 +29,30 @@ namespace Aleb.Server {
 
         public bool Complete() => played.Count == 4;
 
-        public bool Play(Player player, int index, bool bela) {
-            if (Complete()) return false;
+        public bool Play(Player player, int index, bool bela, out Card card) {
+            card = player.Cards[index];
 
-            Card card = player.Cards[index];
+            if (Complete()) return false;
 
             if (played.Count != 0) {
                 IEnumerable<Card> matching = player.Cards.Where(i => i.Suit == played[0].Card.Suit);
-                if (!matching.Any()) matching = player.Cards.Where(i => i.Suit == Trump);
-                if (!matching.Any()) matching = player.Cards;
 
-                IEnumerable<Card> playable = matching.Where(i => i.Gt(Winner.Card, Trump));
-                if (playable.Any() && !playable.Contains(card)) return false;
+                if (!matching.Any()) {
+                    IEnumerable<Card> trumps = matching = player.Cards.Where(i => i.Suit == Trump);
+
+                    if (matching.Any()) {
+                        matching = matching.Where(i => i.Gt(Winner.Card, Trump, played[0].Card.Suit));
+                        if (!matching.Any()) matching = trumps;
+                    }
+
+                } else {
+                    IEnumerable<Card> following = matching;
+
+                    matching = matching.Where(i => i.Gt(Winner.Card, Trump, played[0].Card.Suit));
+                    if (!matching.Any()) matching = following;
+                }
+
+                if (matching.Any() && !matching.Contains(card)) return false;
             }
 
             if (bela && (BelaCards.Intersect(player.Cards).Count() != BelaCards.Count() || !BelaCards.Contains(card)))
