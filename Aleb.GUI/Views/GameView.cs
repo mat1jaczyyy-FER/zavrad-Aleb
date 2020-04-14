@@ -31,7 +31,6 @@ namespace Aleb.GUI.Views {
             TableSegments = Enumerable.Range(0, 4).Select(i => this.Get<Border>($"Table{i}")).ToList();
 
             prompt = this.Get<Border>("Prompt");
-            alert = this.Get<Border>("Alert");
         }
 
         List<UserInGame> UserText;
@@ -39,19 +38,20 @@ namespace Aleb.GUI.Views {
 
         List<Border> TableSegments;
 
-        Border prompt, alert;
+        Border prompt;
 
         Control Prompt {
             get => (Control)prompt.Child;
             set {
+                if (value is TextOverlay textOverlay) {
+                    textOverlay.HorizontalAlignment = HorizontalAlignment.Center;
+                    textOverlay.VerticalAlignment = VerticalAlignment.Center;
+                }
+
                 prompt.Child = value;
+                prompt.Background = (value is TextOverlay)? null : (IBrush)Application.Current.FindResource("ThemeControlMidHighBrush");
                 prompt.IsVisible = Prompt != null;
             }
-        }
-
-        TextOverlay Alert {
-            get => (TextOverlay)alert.Child;
-            set => alert.Child = value;
         }
 
         void Table(int index, Control value) {
@@ -143,7 +143,7 @@ namespace Aleb.GUI.Views {
                 _dealer = value;
                 
                 for (int i = 0; i < 4; i++)
-                    UserText[i].DealerIcon.State = i == Dealer;
+                    UserText[i].DealerIcon.IsVisible = i == Dealer;
             }
         }
 
@@ -232,12 +232,11 @@ namespace Aleb.GUI.Views {
             if (State != GameState.Declaring) return;
             
             if (result) {
-                DeclareSelected = null;
                 Table(You, null);
+                DeclareSelected = null;
                 Prompt = null;
-                Alert = null;
 
-            } else Alert = new TextOverlay("Nevažeće zvanje", 3000);
+            } else Table(You, new TextOverlay("Nevažeće zvanje", 3000));
         }
 
         public void PlayerDeclared(int value) {
@@ -264,20 +263,25 @@ namespace Aleb.GUI.Views {
 
             SetPlaying(-1);
 
-            Task.Delay(2500).ContinueWith(_ => Dispatcher.UIThread.InvokeAsync(() => {
+            int noDeclarations = value != 0? 0 : 1500;
+
+            Task.Delay(1500 - noDeclarations).ContinueWith(_ => Dispatcher.UIThread.InvokeAsync(() => {
                 ClearTable();
 
                 foreach (CardImage card in Cards.Children.OfType<CardImage>())
                     card.Margin = new Thickness(0);
 
-                Table(player, new CardStack(calls));
-                Table(Utilities.Modulo(player + 2, 4), new CardStack(teammateCalls));
+                if (value != 0) {
+                    Table(player, new CardStack(calls));
+                    Table(Utilities.Modulo(player + 2, 4), new CardStack(teammateCalls));
 
-                Table(Utilities.Modulo(player + 1, 4), new TextOverlay(value.ToString()));
+                    Prompt = new TextOverlay(value.ToString());
 
-                Task.Delay(3000).ContinueWith(_ => Dispatcher.UIThread.InvokeAsync(() => {
+                } else Prompt = new TextOverlay("Nema zvanja");
+
+                Task.Delay(3000 - noDeclarations).ContinueWith(_ => Dispatcher.UIThread.InvokeAsync(() => {
                     ClearTable();
-                    
+                    Prompt = null;
                     State = GameState.Playing;
 
                     SetPlaying(Utilities.Modulo(Dealer + 1, 4));

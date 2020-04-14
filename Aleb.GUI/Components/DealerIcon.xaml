@@ -1,8 +1,9 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="Aleb.GUI.Components.DealerIcon">
+             x:Class="Aleb.GUI.Components.DealerIcon"
+             IsVisible="False">
   
-  <Canvas Width="16" Height="16">
-    <Ellipse Width="16" Height="16" Opacity="0" Fill="{DynamicResource ThemeAccentBrush}" x:Name="Ellipse" />
+  <Canvas Width="8" Height="8">
+    <Ellipse Width="8" Height="8" Fill="{DynamicResource ThemeAccentBrush}" x:Name="Ellipse" />
   </Canvas>
 </UserControl>

@@ -1,13 +1,15 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="Aleb.GUI.Components.UserInGame"
-             xmlns:Components="clr-namespace:Aleb.GUI.Components"
-             Opacity="0">
+             xmlns:Components="clr-namespace:Aleb.GUI.Components">
 
-  <Border HorizontalAlignment="Stretch" BorderBrush="{DynamicResource ThemeForegroundLowBrush}" BorderThickness="0 0 0 1">
-    <StackPanel Margin="5 3" Orientation="Horizontal" Spacing="5">
-      <TextBlock VerticalAlignment="Center" x:Name="User" />
-      <Components:DealerIcon VerticalAlignment="Center" x:Name="DealerIcon" />
-    </StackPanel>
-  </Border>
+  <LayoutTransformControl x:Name="Root">
+    <Border BorderThickness="2" x:Name="Border">
+      <StackPanel Margin="10 3" Orientation="Horizontal" Spacing="4">
+        <Components:DealerIcon VerticalAlignment="Center" x:Name="DealerIcon" />
+
+        <TextBlock VerticalAlignment="Center" x:Name="User" />
+      </StackPanel>
+    </Border>
+  </LayoutTransformControl>
 </UserControl>

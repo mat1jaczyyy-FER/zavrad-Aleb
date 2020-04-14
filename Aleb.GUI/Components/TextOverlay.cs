@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
+
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
 
 namespace Aleb.GUI.Components {
     public class TextOverlay: UserControl {
@@ -21,7 +23,7 @@ namespace Aleb.GUI.Components {
             Text.Text = text;
 
             if (timeout > 0)
-                Task.Delay(timeout).ContinueWith(_ => IsVisible = false);
+                Task.Delay(timeout).ContinueWith(_ => Dispatcher.UIThread.InvokeAsync(() => IsVisible = false));
         }
     }
 }
