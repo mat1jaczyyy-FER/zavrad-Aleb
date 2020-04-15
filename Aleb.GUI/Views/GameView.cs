@@ -19,6 +19,7 @@ using Aleb.Common;
 using Aleb.GUI.Components;
 using Aleb.GUI.Prompts;
 using Avalonia.Styling;
+using System.Threading;
 
 namespace Aleb.GUI.Views {
     public class GameView: UserControl {
@@ -28,6 +29,12 @@ namespace Aleb.GUI.Views {
             UserText = this.Get<DockPanel>("Root").Children.OfType<UserInGame>().ToList();
 
             Cards = this.Get<StackPanel>("Cards");
+            Rounds = this.Get<StackPanel>("Rounds");
+
+            Declarations = this.Get<RoundRow>("Declarations");
+            CurrentRound = this.Get<RoundRow>("CurrentRound");
+            TotalRound = this.Get<RoundRow>("TotalRound");
+            Total = this.Get<RoundRow>("Total");
             
             TableSegments = Enumerable.Range(0, 4).Select(i => this.Get<Border>($"Table{i}")).ToList();
             CardTableSegments = Enumerable.Range(0, 4).Select(i => this.Get<Border>($"CardTable{i}")).ToList();
@@ -38,7 +45,9 @@ namespace Aleb.GUI.Views {
         }
 
         List<UserInGame> UserText;
-        StackPanel Cards;
+        StackPanel Cards, Rounds;
+
+        RoundRow Declarations, CurrentRound, TotalRound, Total;
 
         List<Border> TableSegments, CardTableSegments;
         
@@ -86,9 +95,11 @@ namespace Aleb.GUI.Views {
             VerticalAlignment.Center
         };
 
+        int Position(int index) => Utilities.Modulo(index - You, 4);
+
         void Table(int index, Control value) {
             if (value != null) {
-                int position = Utilities.Modulo(index - You, 4);
+                int position = Position(index);
                 
                 value.HorizontalAlignment = TableH[position];
                 value.VerticalAlignment = TableV[position];
@@ -101,13 +112,13 @@ namespace Aleb.GUI.Views {
 
         void CardTable(int index, CardImage value) {
             if (value != null) {
-                int position = Utilities.Modulo(index - You, 4);
+                int position = Position(index);
                 
                 value.HorizontalAlignment = TableH.Rotate(2).ElementAt(position);
                 value.VerticalAlignment = TableV.Rotate(2).ElementAt(position);
-
-                value.MaxHeight = 130;
-                value.Margin = new Thickness(5);
+                
+                value.Cursor = Cursor.Default;
+                value.MaxHeight = 128;
 
                 CardTableSegments[index].Child = value;
 
@@ -135,7 +146,51 @@ namespace Aleb.GUI.Views {
 
             while (Cards.Children.Count < 8)
                 Cards.Children.Add(CreateCard(32));
+
+            Cards.Parent.Opacity = 1;  
         }
+
+        static List<string> FailScore(List<int> score, bool fail)
+            => score.Select(i => (fail && i == 0)? "—" : i.ToString()).ToList();
+
+        static List<string> emptyRow = new List<string>() { "", "" };
+
+        void UpdateRow<T>(RoundRow row, List<T> values) {
+            row.Left = values[Team].ToString();
+            row.Right = values[1 - Team].ToString();
+        }
+
+        void UpdateCurrentRound(List<int> calls, List<int> played) {
+            UpdateRow(Declarations, calls);
+            UpdateRow(CurrentRound, played);
+            UpdateRow(TotalRound, calls.Zip(played).Select(t => t.First + t.Second).ToList());
+        }
+
+        void UpdateCurrentRound(List<int> final, bool fail) {
+            UpdateRow(Declarations, emptyRow);
+            UpdateRow(CurrentRound, emptyRow);
+            UpdateRow(TotalRound, FailScore(final, fail));
+        }
+
+        void UpdateCurrentRound(int called, int team) {
+            List<int> calls = new List<int>() {
+                (team == Team)? called : 0,
+                (team != Team)? called : 0
+            };
+
+            UpdateRow(Declarations, calls);
+            UpdateRow(CurrentRound, new List<int>() { 0, 0 });
+            UpdateRow(TotalRound, calls);
+        }
+
+        void ClearCurrentRound() {
+            UpdateRow(Declarations, emptyRow);
+            UpdateRow(CurrentRound, emptyRow);
+            UpdateRow(TotalRound, emptyRow);
+        }
+
+        void ScoreEnter(object sender, PointerEventArgs e) => Rounds.IsVisible = true;
+        void ScoreLeave(object sender, PointerEventArgs e) => Rounds.IsVisible = false;
 
         public GameView() => throw new InvalidOperationException();
 
@@ -172,7 +227,9 @@ namespace Aleb.GUI.Views {
 
             Network.YouPlayed += YouPlayed;
             Network.CardPlayed += CardPlayed;
+
             Network.TableComplete += TableComplete;
+            Network.RoundComplete += RoundComplete;
         }
 
         void Unloaded(object sender, VisualTreeAttachmentEventArgs e) {
@@ -187,11 +244,14 @@ namespace Aleb.GUI.Views {
 
             Network.YouPlayed -= YouPlayed;
             Network.CardPlayed -= CardPlayed;
+
             Network.TableComplete -= TableComplete;
+            Network.RoundComplete -= RoundComplete;
         }
 
         GameState State;
         int You;
+        int Team => You % 2;
 
         int _dealer;
         int Dealer {
@@ -204,7 +264,9 @@ namespace Aleb.GUI.Views {
             }
         }
 
-        int lastPlaying, lastInTable;
+        bool[] DeclareSelected;
+
+        int lastPlaying, lastInTable, selectedTrump, roundNum;
 
         void SetPlaying(int playing) {
             lastPlaying = playing;
@@ -221,8 +283,6 @@ namespace Aleb.GUI.Views {
 
         void NextPlaying() => SetPlaying(Utilities.Modulo(lastPlaying + 1, 4));
 
-        bool[] DeclareSelected;
-
         void CardClicked(CardImage sender) {
             int index = Cards.Children.IndexOf(sender);
 
@@ -238,22 +298,44 @@ namespace Aleb.GUI.Views {
             }
         }
 
-        public void GameStarted(int dealer, List<int> cards) {
+        double DeclarationLog(double x) => Math.Log(2 * x + 1, 1.0013);
+
+        int DeclarationDelay(double a, double b) {
+            a = DeclarationLog(a);
+            b = DeclarationLog(b);
+            return (int)(1500 + Math.Max(a, b) + Math.Pow(a * b, 0.45));
+        }
+
+        AutoResetEvent StartWait = new AutoResetEvent(false);
+
+        void Restart(int dealer, List<int> cards) {
             if (!Dispatcher.UIThread.CheckAccess()) {
-                Dispatcher.UIThread.InvokeAsync(() => GameStarted(dealer, cards));
+                Dispatcher.UIThread.InvokeAsync(() => Restart(dealer, cards));
                 return;
             }
+
+            ClearCurrentRound();
+            ClearTable();
 
             Dealer = dealer;
 
             State = GameState.Bidding;
 
             CreateCards(cards);
+            Trump = null;
 
             SetPlaying(Utilities.Modulo(Dealer + 1, 4));
         }
 
-        public void TrumpNext() {
+        public void GameStarted(int dealer, List<int> cards) {
+            if (State == GameState.Playing) Task.Run(() => {
+                StartWait.WaitOne();
+                Restart(dealer, cards);
+            });
+            else Restart(dealer, cards);
+        }
+
+        void TrumpNext() {
             if (!Dispatcher.UIThread.CheckAccess()) {
                 Dispatcher.UIThread.InvokeAsync(() => TrumpNext());
                 return;
@@ -266,7 +348,7 @@ namespace Aleb.GUI.Views {
             NextPlaying();
         }
 
-        public void TrumpChosen(Suit trump, List<int> cards) {
+        void TrumpChosen(Suit trump, List<int> cards) {
             if (!Dispatcher.UIThread.CheckAccess()) {
                 Dispatcher.UIThread.InvokeAsync(() => TrumpChosen(trump, cards));
                 return;
@@ -277,6 +359,7 @@ namespace Aleb.GUI.Views {
             ClearTable();
 
             Trump = new Trump(trump, UserText[lastPlaying].Text);
+            selectedTrump = lastPlaying;
 
             DeclareSelected = new bool[8];
             State = GameState.Declaring;
@@ -286,7 +369,7 @@ namespace Aleb.GUI.Views {
             SetPlaying(Utilities.Modulo(Dealer + 1, 4));
         }
 
-        public void YouDeclared(bool result) {
+        void YouDeclared(bool result) {
             if (!Dispatcher.UIThread.CheckAccess()) {
                 Dispatcher.UIThread.InvokeAsync(() => YouDeclared(result));
                 return;
@@ -302,7 +385,7 @@ namespace Aleb.GUI.Views {
             } else Table(You, new TextOverlay("Nevažeće zvanje", 3000));
         }
 
-        public void PlayerDeclared(int value) {
+        void PlayerDeclared(int value) {
             if (!Dispatcher.UIThread.CheckAccess()) {
                 Dispatcher.UIThread.InvokeAsync(() => PlayerDeclared(value));
                 return;
@@ -316,7 +399,7 @@ namespace Aleb.GUI.Views {
             else NextPlaying();
         }
 
-        public void WinningDeclaration(int player, int value, List<int> calls, List<int> teammateCalls) {
+        void WinningDeclaration(int player, int value, List<int> calls, List<int> teammateCalls) {
             if (!Dispatcher.UIThread.CheckAccess()) {
                 Dispatcher.UIThread.InvokeAsync(() => WinningDeclaration(player, value, calls, teammateCalls));
                 return;
@@ -326,7 +409,7 @@ namespace Aleb.GUI.Views {
 
             int noDeclarations = value != 0? 0 : 1500;
 
-            Task.Delay(1500 - noDeclarations).ContinueWith(_ => Dispatcher.UIThread.InvokeAsync(() => {
+            Task.Delay(value != 0? 1500 : 0).ContinueWith(_ => Dispatcher.UIThread.InvokeAsync(() => {
                 ClearTable();
 
                 foreach (CardImage card in Cards.Children.OfType<CardImage>())
@@ -340,10 +423,12 @@ namespace Aleb.GUI.Views {
 
                 } else Alert = new TextOverlay("Nema zvanja");
 
-                Task.Delay(3000 - noDeclarations).ContinueWith(_ => Dispatcher.UIThread.InvokeAsync(() => {
+                Task.Delay(DeclarationDelay(calls.Count, teammateCalls.Count)).ContinueWith(_ => Dispatcher.UIThread.InvokeAsync(() => {
                     ClearTable();
                     Alert = null;
                     State = GameState.Playing;
+
+                    UpdateCurrentRound(value, Position(player) % 2);
 
                     SetPlaying(Utilities.Modulo(Dealer + 1, 4));
                     lastInTable = Utilities.Modulo(lastPlaying - 1, 4);
@@ -351,7 +436,7 @@ namespace Aleb.GUI.Views {
             }));
         }
 
-        public void YouPlayed(int index) {
+        void YouPlayed(int index) {
             if (!Dispatcher.UIThread.CheckAccess()) {
                 Dispatcher.UIThread.InvokeAsync(() => YouPlayed(index));
                 return;
@@ -359,25 +444,32 @@ namespace Aleb.GUI.Views {
 
             if (State != GameState.Playing) return;
 
-            if (index != -1) Cards.Children.RemoveAt(index);
-            else Table(You, new TextOverlay("Neispravna karta", 3000));
+            if (index != -1) {
+                Cards.Children.RemoveAt(index);
+                
+                if (!Cards.Children.Any()) Cards.Parent.Opacity = 0;
+
+            } else Table(You, new TextOverlay("Neispravna karta", 3000));
         }
 
-        public void CardPlayed(int card) {
+        void CardPlayed(int card, bool bela) {
             if (!Dispatcher.UIThread.CheckAccess()) {
-                Dispatcher.UIThread.InvokeAsync(() => CardPlayed(card));
+                Dispatcher.UIThread.InvokeAsync(() => CardPlayed(card, bela));
                 return;
             }
 
             if (State != GameState.Playing) return;
-
+            
+            Table(lastPlaying, null);
             CardTable(lastPlaying, new CardImage(card));
+
+            if (bela) {} //TODO bela
 
             if (lastPlaying == lastInTable) SetPlaying(-1);
             else NextPlaying();
         }
 
-        public void TableComplete(int winner, List<int> calls, List<int> played) {
+        void TableComplete(int winner, List<int> calls, List<int> played) {
             if (!Dispatcher.UIThread.CheckAccess()) {
                 Dispatcher.UIThread.InvokeAsync(() => TableComplete(winner, calls, played));
                 return;
@@ -385,11 +477,45 @@ namespace Aleb.GUI.Views {
 
             if (State != GameState.Playing) return;
 
+            UpdateCurrentRound(calls, played);
+
             Task.Delay(2000).ContinueWith(_ => Dispatcher.UIThread.InvokeAsync(() => {
                 ClearTable();
 
                 SetPlaying(winner);
                 lastInTable = Utilities.Modulo(lastPlaying - 1, 4);
+            }));
+        }
+
+        void RoundComplete(int winner, List<int> calls, List<int> played, List<int> final, bool fail, List<int> total) {
+            if (!Dispatcher.UIThread.CheckAccess()) {
+                Dispatcher.UIThread.InvokeAsync(() => RoundComplete(winner, calls, played, final, fail, total));
+                return;
+            }
+
+            if (State != GameState.Playing) return;
+
+            UpdateCurrentRound(calls, played);
+
+            if (fail) Table(selectedTrump, new TextOverlay($"Pali {(Position(selectedTrump) % 2 == 0? "ste" : "su")}"));
+
+            Task.Delay(2000).ContinueWith(_ => Dispatcher.UIThread.InvokeAsync(() => {
+                ClearTable();
+
+                SetPlaying(-1);
+
+                UpdateCurrentRound(final, fail);
+
+                Task.Delay(1000).ContinueWith(_ => Dispatcher.UIThread.InvokeAsync(() => {
+                    RoundRow row = new RoundRow() { Legend = $"{++roundNum}.", IsVisible = Rounds.IsVisible };
+                    UpdateRow(row, FailScore(final, fail));
+                    Rounds.Children.Add(row);
+
+                    UpdateRow(Total, total);
+                    Total.IsVisible = true;
+
+                    StartWait.Set();
+                }));
             }));
         }
     }

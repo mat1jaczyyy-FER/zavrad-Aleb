@@ -1,0 +1,32 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Aleb.GUI.Components.RoundRow"
+             Background="{DynamicResource ThemeControlLowBrush}">
+
+    <Grid ColumnDefinitions="Auto,*,*" x:Name="Root">
+      <Grid.Styles>
+        <Style Selector="Border">
+          <Setter Property="BorderThickness" Value="2 0 0 2" />
+          <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderLowBrush}" />
+          <Setter Property="CornerRadius" Value="0" />
+        </Style>
+        
+        <Style Selector="Border TextBlock">
+          <Setter Property="HorizontalAlignment" Value="Right" />
+          <Setter Property="Margin" Value="6 3 6 2" />
+        </Style>
+      </Grid.Styles>
+
+      <Border Grid.Column="0" Background="{DynamicResource ThemeForegroundBrush}" IsVisible="False">
+        <TextBlock HorizontalAlignment="Right" Foreground="{DynamicResource ThemeBorderMidBrush}" Text=" " />
+      </Border>
+      
+      <Border Grid.Column="1" Classes="regular" MinWidth="52" MaxWidth="52">
+        <TextBlock HorizontalAlignment="Right" Text=" " />
+      </Border>
+
+      <Border Grid.Column="2" Classes="regular" MinWidth="52" MaxWidth="52">
+        <TextBlock HorizontalAlignment="Right" Text=" " />
+      </Border>
+    </Grid>
+</UserControl>

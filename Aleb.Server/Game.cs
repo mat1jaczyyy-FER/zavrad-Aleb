@@ -11,12 +11,10 @@ namespace Aleb.Server {
                 player.Flush();
         }
 
-        void Broadcast(int exclude, string command, params dynamic[] args) {
-            foreach (Player player in Players.Where((_, i) => i != exclude))
+        void Broadcast(string command, params dynamic[] args) {
+            foreach (Player player in Players)
                 player.SendMessage(command, args);
         }
-
-        void Broadcast(string command, params dynamic[] args) => Broadcast(-1, command, args);
 
         Player[] Players = new Player[4];
 
@@ -68,8 +66,6 @@ namespace Aleb.Server {
 
             foreach (Player player in Players)
                 player.SendMessage("GameStarted", Array.IndexOf(Players, Dealer), player.Cards.ToIntString());
-
-            Flush();
         }
 
         public void Bid(Player sender, Suit? suit) {
@@ -139,11 +135,21 @@ namespace Aleb.Server {
 
             if (Table.Complete()) {
                 bool last = Players[0].Cards.Count == 0;
-                History.Last().Play(Table, last, out Current); // todo finalize later?
+                Round current = History.Last();
 
-                Broadcast("TableComplete", Array.IndexOf(Players, Current), History.Last().ToString());
+                current.Play(Table, last, out Current);
 
-                if (last) Start();
+                string round = current.ToString();
+
+                if (last) {
+                    current.Finish();
+                    Start();
+
+                    Broadcast("RoundComplete", Array.IndexOf(Players, Current), round, current.ToString(), string.Join(',', Score));
+                
+                } else {
+                    Broadcast("TableComplete", Array.IndexOf(Players, Current), round);
+                }
 
             } else Current = Current.Next;
 

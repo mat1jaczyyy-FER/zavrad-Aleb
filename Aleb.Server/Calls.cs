@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Aleb.Server {
-    class Call {
+    class Call: IComparable<Call> {
         public readonly int Value;
         public readonly List<Card> Cards;
 
@@ -11,6 +12,8 @@ namespace Aleb.Server {
             Cards = cards.ToList();
             Cards.Sort();
         }
+
+        public int CompareTo(Call other) => Gt(other)? 1 : -1;
 
         public bool Gt(Call other) {
             if (Value != other.Value) return Value > other.Value;

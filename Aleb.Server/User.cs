@@ -113,7 +113,8 @@ namespace Aleb.Server {
                 } else if (msg.Command == "StartGame") {
                     Room room = Room.Rooms.FirstOrDefault(i => i.Users.Contains(this));
 
-                    room?.Start(this);
+                    if (room?.Start(this) == true)
+                        room.Game.Flush();
                 }
 
             } else if (State == UserState.InGame) {

@@ -6,7 +6,7 @@ namespace Aleb.Server {
         public int[] Played { get; private set; } = new int[2];
 
         public int Team { get; private set; }
-        public bool Fail { get; private set; }
+        bool Fail;
         public bool Finalized { get; private set; }
 
         public Round(Player bidder)
@@ -22,25 +22,30 @@ namespace Aleb.Server {
 
             winner = table.Winner.Player;
             table.Clear();
+        }
 
-            if (last) {
-                bool capot = false;
+        public void Finish() {
+            bool capot = false;
 
+            for (int i = 0; i < 2; i++)
+                if (Played[i] == 0) {
+                    Played[i] += 90 + Calls.Sum();
+                    capot = true;
+                    break;
+                }
+
+            if (!capot)
                 for (int i = 0; i < 2; i++)
-                    if (Played[i] == 0) {
-                        Played[i] += 90 + Calls.Sum();
-                        capot = true;
-                        break;
-                    }
+                    Played[i] += Calls[i];
 
-                if (!capot)
-                    for (int i = 0; i < 2; i++)
-                        Played[i] += Calls[i];
-
-                Calls = new int[2];
-                Fail = Played[Team] <= Played[1 - Team];
-                Finalized = true;
+            Calls = new int[2];
+            
+            if (Fail = Played[Team] <= Played[1 - Team]) {
+                Played[1 - Team] += Played[Team];
+                Played[Team] = 0;
             }
+
+            Finalized = true;
         }
 
         public void Belot(Player caller, int currentScore) {
@@ -48,5 +53,9 @@ namespace Aleb.Server {
             Played[caller.Team] += 1001 - currentScore;
             Finalized = true;
         }
+
+        public override string ToString() => Finalized
+            ? $"{string.Join(',', Played)};{Fail}"
+            : $"{string.Join(',', Calls)};{string.Join(',', Played)}";
     }
 }
