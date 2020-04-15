@@ -29,7 +29,7 @@ namespace Aleb.Server {
 
             for (int i = 0; i < 2; i++)
                 if (Played[i] == 0) {
-                    Played[i] += 90 + Calls.Sum();
+                    Played[1 - i] += 90 + Calls.Sum();
                     capot = true;
                     break;
                 }
