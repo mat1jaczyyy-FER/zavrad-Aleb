@@ -268,6 +268,8 @@ namespace Aleb.GUI.Views {
 
         int lastPlaying, lastInTable, selectedTrump, roundNum;
 
+        CardImage[] Bela;
+
         void SetPlaying(int playing) {
             lastPlaying = playing;
 
@@ -292,9 +294,17 @@ namespace Aleb.GUI.Views {
                 int margin = 15 * Convert.ToInt32(DeclareSelected[index]);
                 sender.Margin = new Thickness(0, -margin, 0, margin);
             
-            } else if (State == GameState.Playing) {
-                if (lastPlaying == You) Requests.PlayCard(index, false); //todo bela
-                else Table(You, new TextOverlay("Niste na potezu", 3000));
+            } else if (State == GameState.Playing && Prompt == null) {
+                if (lastPlaying == You) {
+                    if (Bela?.Contains(sender) == true) {
+                        sender.Margin = new Thickness(0, -15, 0, 15);
+
+                        Prompt = new BelaPrompt(index);
+                        Bela = null;
+
+                    } else Requests.PlayCard(index, false);
+
+                } else Table(You, new TextOverlay("Niste na potezu", 3000));
             }
         }
 
@@ -365,6 +375,11 @@ namespace Aleb.GUI.Views {
             State = GameState.Declaring;
 
             CreateCards(cards);
+
+            int queen = (int)trump * 8 + 5;
+
+            if (!Enumerable.Range(queen, 2).Except(cards).Any())
+                Bela = Cards.Children.OfType<CardImage>().Skip(cards.IndexOf(queen)).Take(2).ToArray();
 
             SetPlaying(Utilities.Modulo(Dealer + 1, 4));
         }
@@ -449,6 +464,8 @@ namespace Aleb.GUI.Views {
                 
                 if (!Cards.Children.Any()) Cards.Parent.Opacity = 0;
 
+                Prompt = null;
+
             } else Table(You, new TextOverlay("Neispravna karta", 3000));
         }
 
@@ -463,7 +480,8 @@ namespace Aleb.GUI.Views {
             Table(lastPlaying, null);
             CardTable(lastPlaying, new CardImage(card));
 
-            if (bela) {} //TODO bela
+            if (bela)
+                Table(lastPlaying, new TextOverlay("Bela"));
 
             if (lastPlaying == lastInTable) SetPlaying(-1);
             else NextPlaying();

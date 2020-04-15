@@ -73,7 +73,7 @@ namespace Aleb.Server {
 
             for (int i = 0; i < 2; i++) {
                 if (score[i] >= 1001) done = true;
-                if (score[i] > score[1 - i]) winner = i;
+                if (score[i] > score[1 - i]) winner = i; //todo nerijeseno?
             }
 
             if (!done) return false;
