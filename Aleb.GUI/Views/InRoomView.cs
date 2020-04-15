@@ -135,10 +135,7 @@ namespace Aleb.GUI.Views {
                 return;
             }
 
-            GameView view = new GameView(Users.Select(i => i.Text).ToList());
-            App.MainWindow.View = view;
-
-            view.GameStarted(dealer, cards);
+            App.MainWindow.View = new GameView(Users.Select(i => i.Text).ToList(), dealer, cards);
         }
     }
 }

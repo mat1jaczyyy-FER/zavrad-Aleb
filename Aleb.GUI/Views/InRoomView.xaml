@@ -9,6 +9,12 @@
       <TextBlock HorizontalAlignment="Center" FontWeight="Bold" x:Name="NameText" />
 
       <StackPanel HorizontalAlignment="Center" Spacing="5" x:Name="Users">
+        <StackPanel.Styles>
+          <Style Selector="Components|UserInRoom">
+            <Setter Property="HorizontalAlignment" Value="Center" />
+          </Style>
+        </StackPanel.Styles>
+        
         <Components:UserInRoom />
         <Components:UserInRoom />
         <Components:UserInRoom />

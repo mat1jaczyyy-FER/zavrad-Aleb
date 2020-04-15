@@ -25,7 +25,7 @@ namespace Aleb.GUI {
 
         public static string[] Args;
 
-        public static string Host;
+        public static string Host = "88.207.58.77";
         public static User User;
 
         public static void URL(string url) => Process.Start(new ProcessStartInfo() {

@@ -94,6 +94,9 @@ namespace Aleb.Client {
         public delegate void RoundCompleteEventHandler(int winner, List<int> calls, List<int> played, List<int> final, bool fail, List<int> total);
         public static event RoundCompleteEventHandler RoundComplete;
 
+        public delegate void GameFinishedEventHandler(List<int> score, Room room);
+        public static event GameFinishedEventHandler GameFinished;
+
         static void Received(AlebClient sender, Message msg) {
             foreach (var i in Waiting.ToHashSet()) {
                 if (i.Expected.Contains(msg.Command)) {
@@ -124,6 +127,8 @@ namespace Aleb.Client {
 
             else if (msg.Command == "TableComplete") TableComplete?.Invoke(Convert.ToInt32(msg.Args[0]), msg.Args[1].ToIntList(), msg.Args[2].ToIntList());
             else if (msg.Command == "RoundComplete") RoundComplete?.Invoke(Convert.ToInt32(msg.Args[0]), msg.Args[1].ToIntList(), msg.Args[2].ToIntList(), msg.Args[3].ToIntList(), Convert.ToBoolean(msg.Args[4]), msg.Args[5].ToIntList());
+
+            else if (msg.Command == "GameFinished") GameFinished?.Invoke(msg.Args[0].ToIntList(), new Room(msg.Args[1]));
         }
 
         public static Task<Message> Register(params string[] expected) {

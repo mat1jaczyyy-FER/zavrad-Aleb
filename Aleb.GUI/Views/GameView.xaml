@@ -67,7 +67,7 @@
         </Style>
       </StackPanel.Styles>
 
-      <Components:RoundRow Header="True" Alignment="Center" Left="Vi" Right="Oni" />
+      <Components:RoundRow Header="True" Alignment="Center" Left="Mi" Right="Vi" />
       <Components:RoundRow x:Name="Declarations" />
       <Components:RoundRow x:Name="CurrentRound" />
       <Components:RoundRow Header="True" Legend="Σ" x:Name="TotalRound" />

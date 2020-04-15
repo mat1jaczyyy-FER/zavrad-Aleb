@@ -133,7 +133,9 @@ namespace Aleb.Server {
                         Client.Send("YouPlayed", Game.PlayCard(Player, Convert.ToInt32(msg.Args[0]), Convert.ToBoolean(msg.Args[1])));
                 }
 
-                Game.Flush();
+                if (Game != null) Game.Flush();
+                else Room.Rooms.FirstOrDefault(i => i.Users.Contains(this))
+                    .Users.ForEach(i => i?.Client?.Flush());
             }
 
             Client.Flush();
@@ -168,6 +170,11 @@ namespace Aleb.Server {
         public Player ToPlayer(Game game) { //todo clear these!!
             Game = game;
             return Player = new Player(this);
+        }
+
+        public void CompletedGame() {
+            Player = null;
+            Game = null;
         }
     }
 }

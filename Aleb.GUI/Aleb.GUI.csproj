@@ -34,5 +34,5 @@
     <AvaloniaResource Include="Fonts/*" />
     <AvaloniaResource Include="Assets/**/*" />
   </ItemGroup>
-  
+
 </Project>

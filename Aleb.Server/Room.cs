@@ -5,6 +5,8 @@ using Aleb.Common;
 
 namespace Aleb.Server {
     class Room {
+        public const int ScoreGoal = 1001;
+
         public static List<Room> Rooms { get; private set; } = new List<Room>();
 
         public static Room Create(string name, User creator) {
@@ -44,7 +46,7 @@ namespace Aleb.Server {
             if (!Users.Contains(leaving)) return false;
 
             if (Game != null)
-                DestroyGame(Users.IndexOf(leaving) >> 1);
+                DestroyGame();
 
             People.Remove(People.First(i => i.User == leaving));
             leaving.State = UserState.Idle;
@@ -67,24 +69,25 @@ namespace Aleb.Server {
 
         public Game Game { get; private set; }
 
-        public bool GameCompleted(int[] score) {
-            bool done = false;
-            int winner = -1;
+        public bool GameCompleted() {
+            for (int i = 0; i < 2; i++)
+                if (Game?.Score[i] >= ScoreGoal) {
+                    DestroyGame();
+                    return true;
+                }
 
-            for (int i = 0; i < 2; i++) {
-                if (score[i] >= 1001) done = true;
-                if (score[i] > score[1 - i]) winner = i; //todo nerijeseno?
-            }
-
-            if (!done) return false;
-
-            DestroyGame(winner);
-
-            return true;
+            return false;
         }
 
-        void DestroyGame(int winner) {
-            // todo send winscreen request
+        void DestroyGame() {
+            Message msg = new Message("GameFinished", string.Join(',', Game.Score), ToString());
+
+            foreach (User user in Users) {
+                user.CompletedGame();
+                user.State = UserState.InRoom;
+
+                user.Client.SendMessage(msg);
+            }
 
             Game = null;
         }

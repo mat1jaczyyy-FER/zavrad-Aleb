@@ -24,8 +24,8 @@ namespace Aleb.Server {
 
         Player Dealer, Current;
 
-        List<Round> History = new List<Round>();
-        int[] Score => Enumerable.Range(0, 2).Select(i => History.Where(x => x.Finalized).Sum(x => x.Played[i])).ToArray();
+        public List<Round> History { get; private set; } = new List<Round>();
+        public int[] Score => Enumerable.Range(0, 2).Select(i => History.Where(x => x.Finalized).Sum(x => x.Played[i])).ToArray();
 
         Room Room;
 
@@ -50,7 +50,7 @@ namespace Aleb.Server {
         }
 
         public void Start() {
-            if (Room.GameCompleted(Score)) return;
+            if (Room.GameCompleted()) return;
 
             State = GameState.Bidding;
 

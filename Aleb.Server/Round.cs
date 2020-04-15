@@ -50,7 +50,7 @@ namespace Aleb.Server {
 
         public void Belot(Player caller, int currentScore) {
             Calls = new int[2];
-            Played[caller.Team] += 1001 - currentScore;
+            Played[caller.Team] += Room.ScoreGoal - currentScore;
             Finalized = true;
         }
 

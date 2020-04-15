@@ -194,7 +194,7 @@ namespace Aleb.GUI.Views {
 
         public GameView() => throw new InvalidOperationException();
 
-        public GameView(List<string> names) {
+        public GameView(List<string> names, int dealer, List<int> cards) {
             InitializeComponent();
 
             UserText.Swap(1, 2);
@@ -213,6 +213,8 @@ namespace Aleb.GUI.Views {
                 CardTable(i, new CardImage(32) { Opacity = 0 });
 
             You = UserText.IndexOf(UserText.First(i => i.Text == App.User.Name));
+
+            GameStarted(dealer, cards);
         }
 
         void Loaded(object sender, VisualTreeAttachmentEventArgs e) {
@@ -230,6 +232,8 @@ namespace Aleb.GUI.Views {
 
             Network.TableComplete += TableComplete;
             Network.RoundComplete += RoundComplete;
+
+            Network.GameFinished += GameFinished;
         }
 
         void Unloaded(object sender, VisualTreeAttachmentEventArgs e) {
@@ -247,6 +251,8 @@ namespace Aleb.GUI.Views {
 
             Network.TableComplete -= TableComplete;
             Network.RoundComplete -= RoundComplete;
+
+            Network.GameFinished -= GameFinished;
         }
 
         GameState State;
@@ -337,7 +343,7 @@ namespace Aleb.GUI.Views {
             SetPlaying(Utilities.Modulo(Dealer + 1, 4));
         }
 
-        public void GameStarted(int dealer, List<int> cards) {
+        void GameStarted(int dealer, List<int> cards) {
             if (State == GameState.Playing) Task.Run(() => {
                 StartWait.WaitOne();
                 Restart(dealer, cards);
@@ -535,6 +541,24 @@ namespace Aleb.GUI.Views {
                     StartWait.Set();
                 }));
             }));
+        }
+        
+        void Finish(List<int> score, Room room) {
+            if (!Dispatcher.UIThread.CheckAccess()) {
+                Dispatcher.UIThread.InvokeAsync(() => Finish(score, room));
+                return;
+            }
+
+            App.MainWindow.View = new ResultsView(score, room);
+        }
+
+        void GameFinished(List<int> score, Room room) {
+            if (State != GameState.Playing) return;
+
+            Task.Run(() => {
+                StartWait.WaitOne();
+                Finish(score, room);
+            });
         }
     }
 }
