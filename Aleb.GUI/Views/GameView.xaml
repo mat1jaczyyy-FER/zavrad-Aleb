@@ -72,7 +72,7 @@
       <Components:RoundRow x:Name="CurrentRound" />
       <Components:RoundRow Header="True" Legend="Σ" x:Name="TotalRound" />
 
-      <StackPanel x:Name="Rounds" />
+      <StackPanel IsVisible="False" x:Name="Rounds" />
 
       <Components:RoundRow Header="True" Legend="Σ" IsVisible="False" x:Name="Total" />
     </StackPanel>

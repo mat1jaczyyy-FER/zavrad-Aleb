@@ -511,7 +511,7 @@ namespace Aleb.GUI.Views {
             }));
         }
 
-        void RoundComplete(int winner, List<int> calls, List<int> played, List<int> final, bool fail, List<int> total) {
+        void RoundComplete(int winner, List<int> calls, List<int> played, List<int> final, bool fail, List<int> total) { //todo winner je visak
             if (!Dispatcher.UIThread.CheckAccess()) {
                 Dispatcher.UIThread.InvokeAsync(() => RoundComplete(winner, calls, played, final, fail, total));
                 return;
@@ -531,7 +531,12 @@ namespace Aleb.GUI.Views {
                 UpdateCurrentRound(final, fail);
 
                 Task.Delay(1000).ContinueWith(_ => Dispatcher.UIThread.InvokeAsync(() => {
-                    RoundRow row = new RoundRow() { Legend = $"{++roundNum}.", IsVisible = Rounds.IsVisible };
+                    RoundRow row = new RoundRow() { Legend = $"{++roundNum}." };
+                    
+                    bool temp = Rounds.IsVisible;
+                    Rounds.IsVisible = false;
+                    Rounds.IsVisible = temp;
+
                     UpdateRow(row, FailScore(final, fail));
                     Rounds.Children.Add(row);
 
