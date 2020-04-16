@@ -44,7 +44,7 @@
     <Color x:Key="ThemeControlMidHighColor">#FF1F1F1F</Color>
     <Color x:Key="ThemeControlHighColor">#FF242424</Color>
     <Color x:Key="ThemeControlVeryHighColor">#FF2A2A2A</Color>
-    <Color x:Key="ThemeControlDarkenColor">#20000000</Color>
+    <Color x:Key="ThemeControlDarkenColor">#40000000</Color>
     <Color x:Key="ThemeControlHighlightLowColor">#FFA8A8A8</Color>
     <Color x:Key="ThemeControlHighlightMidColor">#FF828282</Color>
     <Color x:Key="ThemeControlHighlightHighColor">#FF505050</Color>

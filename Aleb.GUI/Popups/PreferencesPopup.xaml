@@ -1,0 +1,43 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Aleb.GUI.Popups.PreferencesPopup"
+             xmlns:Components="clr-namespace:Aleb.GUI.Components"
+             AttachedToVisualTree="Loaded" DetachedFromVisualTree="Unloaded">
+
+  <StackPanel Spacing="5" Margin="10 5">
+    <StackPanel.Styles>
+      <Style Selector="StackPanel > Border">
+        <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderHighBrush}" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="Height" Value="2" />
+        <Setter Property="BorderThickness" Value="0 1 0 0" />
+      </Style>
+
+      <Style Selector="TextBlock.heading">
+        <Setter Property="Foreground" Value="{DynamicResource ThemeControlHighlightMidBrush}" />
+      </Style>
+    </StackPanel.Styles>
+
+    <TextBlock Classes="heading" Text="Prikaz" />
+
+    <RadioButton GroupName="TeamNames" Click="MiVi_Changed" x:Name="MiVi">Mi, Vi</RadioButton>
+    <RadioButton GroupName="TeamNames" Click="ViOni_Changed" x:Name="ViOni">Vi, Oni</RadioButton>
+
+    <Border />
+
+    <TextBlock Classes="heading" Text="Upravljanje" />
+    <CheckBox Click="DiscordPresence_Changed" x:Name="DiscordPresence">Discord integracija</CheckBox>
+    <Button Background="{DynamicResource ThemeControlHighBrush}" Content="Otvori mapu s crashevima" Click="OpenCrashesFolder" />
+
+    <Border />
+
+    <TextBlock Classes="heading" Text="Vrijeme izgubljeno na igri" />
+    <TextBlock x:Name="CurrentSession" />
+    <TextBlock x:Name="AllTime" />
+
+    <Border />
+    
+    <TextBlock HorizontalAlignment="Center" Text="Aleb / " x:Name="Version" />
+    <!--<TextBlock HorizontalAlignment="Center" Text="2020 mat1jaczyyy" />-->
+  </StackPanel>
+</UserControl>

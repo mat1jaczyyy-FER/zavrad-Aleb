@@ -81,7 +81,6 @@ namespace Aleb.GUI.Views {
         
         void CreateRoom() {
             App.MainWindow.Popup = new CreateRoomPopup();
-            App.MainWindow.PopupTitle.Text = "Stvori sobu";
         }
 
         async void JoinRoom(Room room) {

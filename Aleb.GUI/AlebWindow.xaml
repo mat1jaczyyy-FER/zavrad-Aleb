@@ -32,7 +32,7 @@
             <Grid>
               <Border BorderThickness="0" x:Name="View" />
 
-              <Grid RowDefinitions="*,Auto,Auto,*" ColumnDefinitions="*,2*,*" x:Name="PopupContainer" IsVisible="False" Background="Transparent">
+              <Grid RowDefinitions="*,Auto,Auto,*" ColumnDefinitions="*,2*,*" x:Name="PopupContainer" IsVisible="False" Background="{DynamicResource ThemeControlDarkenBrush}">
                 <Grid Grid.Row="1" Grid.Column="1" ColumnDefinitions="*,Auto" Background="{DynamicResource ThemeBorderMidBrush}">
                   <Grid Grid.Column="1" Background="Transparent" />
 

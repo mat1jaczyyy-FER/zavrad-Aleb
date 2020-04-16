@@ -15,7 +15,6 @@ using Avalonia.VisualTree;
 using Aleb.Client;
 using Aleb.Common;
 using Aleb.GUI.Components;
-using Microsoft.VisualBasic.CompilerServices;
 
 namespace Aleb.GUI.Views {
     public class ResultsView: UserControl {

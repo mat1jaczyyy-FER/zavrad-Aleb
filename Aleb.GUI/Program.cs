@@ -10,6 +10,8 @@ namespace Aleb.GUI {
     static class Program {
         public static readonly string Version = "Alpha Build 1";
 
+        public static Stopwatch TimeSpent = new Stopwatch();
+
         public static AppBuilder BuildAvaloniaApp()
             => AppBuilder.Configure<App>()
                 .UsePlatformDetect();
@@ -46,9 +48,12 @@ namespace Aleb.GUI {
                 }
             };
             
+            TimeSpent.Start();
             App.Args = args;
             
             BuildAvaloniaApp().StartWithClassicDesktopLifetime(null);
+            
+            Preferences.Save();
         }
     }
 }

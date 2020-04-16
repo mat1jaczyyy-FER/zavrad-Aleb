@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Avalonia;
@@ -19,7 +20,6 @@ using Aleb.Common;
 using Aleb.GUI.Components;
 using Aleb.GUI.Prompts;
 using Avalonia.Styling;
-using System.Threading;
 
 namespace Aleb.GUI.Views {
     public class GameView: UserControl {
@@ -30,7 +30,8 @@ namespace Aleb.GUI.Views {
 
             Cards = this.Get<StackPanel>("Cards");
             Rounds = this.Get<StackPanel>("Rounds");
-
+            
+            TitleRow = this.Get<RoundRow>("TitleRow");
             Declarations = this.Get<RoundRow>("Declarations");
             CurrentRound = this.Get<RoundRow>("CurrentRound");
             TotalRound = this.Get<RoundRow>("TotalRound");
@@ -47,7 +48,7 @@ namespace Aleb.GUI.Views {
         List<UserInGame> UserText;
         StackPanel Cards, Rounds;
 
-        RoundRow Declarations, CurrentRound, TotalRound, Total;
+        RoundRow TitleRow, Declarations, CurrentRound, TotalRound, Total;
 
         List<Border> TableSegments, CardTableSegments;
         
@@ -160,6 +161,18 @@ namespace Aleb.GUI.Views {
             row.Right = values[1 - Team].ToString();
         }
 
+        void UpdateTitleRow(bool mivi) {
+            if (!Dispatcher.UIThread.CheckAccess()) {
+                Dispatcher.UIThread.InvokeAsync(() => UpdateTitleRow(mivi));
+                return;
+            }
+
+            UpdateRow(TitleRow, mivi
+                ? new List<string>() { "Mi", "Vi" }
+                : new List<string>() { "Vi", "Oni" }
+            );
+        }
+
         void UpdateCurrentRound(List<int> calls, List<int> played) {
             UpdateRow(Declarations, calls);
             UpdateRow(CurrentRound, played);
@@ -214,6 +227,9 @@ namespace Aleb.GUI.Views {
 
             You = UserText.IndexOf(UserText.First(i => i.Text == App.User.Name));
 
+            UpdateTitleRow(Preferences.MiVi);
+            Preferences.MiViChanged += UpdateTitleRow;
+
             GameStarted(dealer, cards);
         }
 
@@ -237,6 +253,8 @@ namespace Aleb.GUI.Views {
         }
 
         void Unloaded(object sender, VisualTreeAttachmentEventArgs e) {
+            Preferences.MiViChanged -= UpdateTitleRow;
+
             Network.GameStarted -= GameStarted;
             
             Network.TrumpNext -= TrumpNext;

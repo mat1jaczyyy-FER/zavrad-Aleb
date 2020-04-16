@@ -21,6 +21,8 @@ namespace Aleb.GUI.Popups {
         void InitializeComponent() {
             AvaloniaXamlLoader.Load(this);
 
+            App.MainWindow.PopupTitle.Text = "Stvori sobu";
+
             RoomName = this.Get<ValidationTextBox>("RoomName");
             CreateButton = this.Get<Button>("CreateButton");
             Status = this.Get<TextBlock>("Status");

@@ -6,6 +6,8 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.VisualTree;
 
+using Aleb.GUI.Popups;
+
 namespace Aleb.GUI.Components {
     public class PreferencesButton: IconButton {
         protected override IBrush Fill {
@@ -19,6 +21,7 @@ namespace Aleb.GUI.Components {
             MouseLeave(this, null);
         }
 
-        protected override void Click(PointerReleasedEventArgs e) {}
+        protected override void Click(PointerReleasedEventArgs e)
+            => App.MainWindow.Popup = new PreferencesPopup();
     }
 }

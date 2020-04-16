@@ -75,12 +75,6 @@ namespace Aleb.GUI {
 
                 PopupClose.IsEnabled = true;
                 PopupContainer.IsVisible = Popup != null;
-
-                view.Opacity = Popup != null? 0.2 : 1;
-                view.Background = Popup != null? (IBrush)Application.Current.Styles.FindResource("ThemeBorderHighBrush") : null;
-
-                if (Popup != null)
-                    Popup.Margin = Thickness.Parse("0 10");
             }
         }
 
