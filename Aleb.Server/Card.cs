@@ -19,8 +19,10 @@ namespace Aleb.Server {
                 foreach (Value value in EnumUtil.Values<Value>())
                     cards.Add(new Card(suit, value));
 
-            for (int i = cards.Count - 1; i >= 0; i--)
-                cards.Swap(i, RNG.Next(i + 1));
+            //for (int i = cards.Count - 1; i >= 0; i--)
+            //    cards.Swap(i, RNG.Next(i + 1));
+
+            cards = new List<Card>() { new Card(0),new Card(1),new Card(2),new Card(8),new Card(9),new Card(10),new Card(11) }.Concat(cards.Skip(7)).ToList();
 
             for (int i = 0; i < 4; i++) {
                 players[i].Cards = cards.Skip(i * 8).Take(6).ToList();
@@ -36,6 +38,11 @@ namespace Aleb.Server {
         public Card(Suit suit, Value value) {
             Suit = suit;
             Value = value;
+        }
+
+        Card(int card) {
+            Suit = (Suit)(card / 8);
+            Value = (Value)(card % 8);
         }
 
         public bool IsNext(Card other)

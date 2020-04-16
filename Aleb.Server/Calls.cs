@@ -32,7 +32,7 @@ namespace Aleb.Server {
     }
 
     class Calls {
-        public Call Max => IndividualCalls.FirstOrDefault()?? new Call(0, Enumerable.Empty<Card>());
+        public Call Max => IndividualCalls.LastOrDefault()?? new Call(0, Enumerable.Empty<Card>());
         public int Total => IndividualCalls.Sum(i => i.Value);
 
         HashSet<Card> Cards = new HashSet<Card>();
