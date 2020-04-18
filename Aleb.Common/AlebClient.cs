@@ -61,6 +61,8 @@ namespace Aleb.Common {
 
             Task.Run(() => {
                 while (true) {
+                    ResetHeartbeat();
+
                     string raw;
                     Message msg;
 
@@ -86,14 +88,17 @@ namespace Aleb.Common {
         }
 
         Dictionary<int, Stack<Message>> SendBuffer = new Dictionary<int, Stack<Message>>();
+        object locker = new object();
 
         public void Send(int delay, Message msg) {
             if (!Connected) return;
+            
+            lock (locker) {
+                if (!SendBuffer.ContainsKey(delay))
+                    SendBuffer.Add(delay, new Stack<Message>());
 
-            if (!SendBuffer.ContainsKey(delay))
-                SendBuffer.Add(delay, new Stack<Message>());
-
-            SendBuffer[delay].Push(msg);
+                SendBuffer[delay].Push(msg);
+            }
         }
 
         public void Send(int delay, string command, params dynamic[] args)
@@ -107,24 +112,41 @@ namespace Aleb.Common {
 
         void Flush(Stack<Message> buf) {
             if (!Connected) return;
+            
+            lock (locker) {
+                while (buf.TryPop(out Message msg)) { 
+                    Log(false, msg.ToString());
+                    Writer.Write(msg);
+                }
 
-            while (buf.TryPop(out Message msg)) { 
-                Log(false, msg.ToString());
-                Writer.Write(msg);
+                Writer.Flush();
             }
 
-            Writer.Flush();
+            ResetHeartbeat();
         }
 
         public void Flush() {
             if (!Connected) return;
 
-            foreach (var (delay, buf) in SendBuffer) {
-                if (delay <= 0) Flush(buf);
-                else new Courier<Stack<Message>>(delay, buf, Flush);
-            }
+            lock (locker) {
+                foreach (var (delay, buf) in SendBuffer) {
+                    if (delay <= 0) Flush(buf);
+                    else new Courier<Stack<Message>>(delay, buf, Flush);
+                }
 
-            SendBuffer.Clear();
+                SendBuffer.Clear();
+            }
+        }
+
+        Courier<Message> Heartbeat;
+        
+        void ResetHeartbeat() {
+            Heartbeat?.Cancel();
+
+            Heartbeat = new Courier<Message>(30000, new Message("Heartbeat"), msg => {
+                Send(msg);
+                Flush();
+            });
         }
 
         public AlebClient(TcpClient client) => Client = client;

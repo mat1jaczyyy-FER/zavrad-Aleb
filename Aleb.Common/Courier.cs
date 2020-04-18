@@ -23,5 +23,10 @@ namespace Aleb.Common {
 
             Handler?.Invoke(source.Info);
         }
+
+        public void Cancel() {
+            Elapsed -= Tick;
+            Stop();
+        }
     }
 }
