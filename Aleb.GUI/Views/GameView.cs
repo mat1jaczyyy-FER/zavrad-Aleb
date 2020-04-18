@@ -251,7 +251,6 @@ namespace Aleb.GUI.Views {
             Network.TableComplete += TableComplete;
             Network.ContinuePlayingCards += ContinuePlayingCards;
 
-            Network.RoundComplete += RoundComplete;
             Network.FinalScores += FinalScores;
             Network.TotalScore += TotalScore;
 
@@ -278,7 +277,6 @@ namespace Aleb.GUI.Views {
             Network.TableComplete -= TableComplete;
             Network.ContinuePlayingCards -= ContinuePlayingCards;
 
-            Network.RoundComplete -= RoundComplete;
             Network.FinalScores -= FinalScores;
             Network.TotalScore -= TotalScore;
 
@@ -508,15 +506,17 @@ namespace Aleb.GUI.Views {
             else NextPlaying();
         }
 
-        void TableComplete(int winner, List<int> calls, List<int> played) {
+        void TableComplete(List<int> calls, List<int> played, bool fail) {
             if (!Dispatcher.UIThread.CheckAccess()) {
-                Dispatcher.UIThread.InvokeAsync(() => TableComplete(winner, calls, played));
+                Dispatcher.UIThread.InvokeAsync(() => TableComplete(calls, played, fail));
                 return;
             }
 
             if (State != GameState.Playing) return;
 
             UpdateCurrentRound(calls, played);
+
+            if (fail) Table(selectedTrump, new TextOverlay($"Pali {(Position(selectedTrump) % 2 == 0? "ste" : "su")}"));
         }
 
         void ContinuePlayingCards(int winner) {
@@ -531,19 +531,6 @@ namespace Aleb.GUI.Views {
 
             SetPlaying(winner);
             lastInTable = Utilities.Modulo(lastPlaying - 1, 4);
-        }
-
-        void RoundComplete(int winner, List<int> calls, List<int> played, List<int> final, bool fail, List<int> total) {
-            if (!Dispatcher.UIThread.CheckAccess()) {
-                Dispatcher.UIThread.InvokeAsync(() => RoundComplete(winner, calls, played, final, fail, total));
-                return;
-            }
-
-            if (State != GameState.Playing) return;
-
-            UpdateCurrentRound(calls, played);
-
-            if (fail) Table(selectedTrump, new TextOverlay($"Pali {(Position(selectedTrump) % 2 == 0? "ste" : "su")}"));
         }
 
         void FinalScores(List<int> final, bool fail) {

@@ -6,7 +6,7 @@ namespace Aleb.Server {
         public int[] Played { get; private set; } = new int[2];
 
         public int Team { get; private set; }
-        bool Fail;
+        public bool Fail { get; private set; }
         public bool Finalized { get; private set; }
 
         public Round(Player bidder)

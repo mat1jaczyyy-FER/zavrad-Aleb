@@ -90,13 +90,10 @@ namespace Aleb.Client {
         public delegate void CardPlayedEventHandler(int card, bool bela);
         public static event CardPlayedEventHandler CardPlayed;
 
-        public delegate void TableCompleteEventHandler(int winner, List<int> calls, List<int> played);
+        public delegate void TableCompleteEventHandler(List<int> calls, List<int> played, bool fail);
         public static event TableCompleteEventHandler TableComplete;
         
         public static event SimpleIntEventHandler ContinuePlayingCards;
-
-        public delegate void RoundCompleteEventHandler(int winner, List<int> calls, List<int> played, List<int> final, bool fail, List<int> total);
-        public static event RoundCompleteEventHandler RoundComplete;
 
         public delegate void FinalScoresEventHandler(List<int> final, bool fail);
         public static event FinalScoresEventHandler FinalScores;
@@ -137,10 +134,9 @@ namespace Aleb.Client {
             else if (msg.Command == "YouPlayed") YouPlayed?.Invoke(Convert.ToInt32(msg.Args[0]));
             else if (msg.Command == "CardPlayed") CardPlayed?.Invoke(Convert.ToInt32(msg.Args[0]), Convert.ToBoolean(msg.Args[1]));
 
-            else if (msg.Command == "TableComplete") TableComplete?.Invoke(Convert.ToInt32(msg.Args[0]), msg.Args[1].ToIntList(), msg.Args[2].ToIntList());
+            else if (msg.Command == "TableComplete") TableComplete?.Invoke(msg.Args[0].ToIntList(), msg.Args[1].ToIntList(), Convert.ToBoolean(msg.Args[2]));
             else if (msg.Command == "ContinuePlayingCards") ContinuePlayingCards?.Invoke(Convert.ToInt32(msg.Args[0]));
 
-            else if (msg.Command == "RoundComplete") RoundComplete?.Invoke(Convert.ToInt32(msg.Args[0]), msg.Args[1].ToIntList(), msg.Args[2].ToIntList(), msg.Args[3].ToIntList(), Convert.ToBoolean(msg.Args[4]), msg.Args[5].ToIntList());
             else if (msg.Command == "FinalScores") FinalScores?.Invoke(msg.Args[0].ToIntList(), Convert.ToBoolean(msg.Args[1]));
             else if (msg.Command == "TotalScore") TotalScore?.Invoke(msg.Args[0].ToIntList(), Convert.ToBoolean(msg.Args[1]), msg.Args[2].ToIntList());
 

@@ -150,14 +150,12 @@ namespace Aleb.Server {
                     current.Finish();
                     Start(3000);
 
-                    Broadcast("RoundComplete", Array.IndexOf(Players, Current), round, current.ToString(), string.Join(',', Score));
                     Broadcast(2000, "FinalScores", current.ToString());
                     Broadcast(3000, "TotalScore", current.ToString(), string.Join(',', Score));
                 
-                } else {
-                    Broadcast("TableComplete", Array.IndexOf(Players, Current), round);
-                    Broadcast(2000, "ContinuePlayingCards", Array.IndexOf(Players, Current));
-                }
+                } else Broadcast(2000, "ContinuePlayingCards", Array.IndexOf(Players, Current));
+                
+                Broadcast("TableComplete", round, current.Fail);
 
             } else Current = Current.Next;
 
