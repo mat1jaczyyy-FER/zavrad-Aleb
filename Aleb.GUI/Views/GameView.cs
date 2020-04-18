@@ -30,7 +30,8 @@ namespace Aleb.GUI.Views {
 
             Cards = this.Get<StackPanel>("Cards");
             Rounds = this.Get<StackPanel>("Rounds");
-            
+            Score = this.Get<StackPanel>("Score");
+
             TitleRow = this.Get<RoundRow>("TitleRow");
             Declarations = this.Get<RoundRow>("Declarations");
             CurrentRound = this.Get<RoundRow>("CurrentRound");
@@ -46,7 +47,7 @@ namespace Aleb.GUI.Views {
         }
 
         List<UserInGame> UserText;
-        StackPanel Cards, Rounds;
+        StackPanel Cards, Rounds, Score;
 
         RoundRow TitleRow, Declarations, CurrentRound, TotalRound, Total;
 
@@ -435,6 +436,8 @@ namespace Aleb.GUI.Views {
             foreach (CardImage card in Cards.Children.OfType<CardImage>())
                 card.Margin = new Thickness(0);
 
+            Score.Opacity = 0;
+
             if (value != 0) {
                 Table(player, new CardStack(calls));
                 Table(Utilities.Modulo(player + 2, 4), new CardStack(teammateCalls));
@@ -457,6 +460,8 @@ namespace Aleb.GUI.Views {
             ClearTable();
             Alert = null;
             State = GameState.Playing;
+
+            Score.Opacity = 1;
 
             SetPlaying(Utilities.Modulo(Dealer + 1, 4));
             lastInTable = Utilities.Modulo(lastPlaying - 1, 4);

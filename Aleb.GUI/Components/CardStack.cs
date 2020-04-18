@@ -30,7 +30,7 @@ namespace Aleb.GUI.Components {
             foreach (int card in cards)
                 Contents.Children.Add(new CardImage(card));
             
-            Contents.MaxHeight = Math.Max(Contents.MaxHeight, 138 - 6 * cards.Count);
+            Contents.MaxHeight = Math.Min(Contents.MaxHeight, 155 - 8 * cards.Count);
         }
 
         void Unloaded(object sender, VisualTreeAttachmentEventArgs e) {}

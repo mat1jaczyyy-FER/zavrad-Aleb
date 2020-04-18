@@ -56,7 +56,7 @@
   
     <Border HorizontalAlignment="Left" VerticalAlignment="Top" x:Name="Trump" />
 
-    <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top" PointerEnter="ScoreEnter" PointerLeave="ScoreLeave">
+    <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top" PointerEnter="ScoreEnter" PointerLeave="ScoreLeave" x:Name="Score">
       <StackPanel.Styles>
         <Style Selector="StackPanel">
           <Setter Property="HorizontalAlignment" Value="Right" />
