@@ -23,7 +23,7 @@ namespace Aleb.Server {
 
         public void ClearCalls() => Calls = null;
 
-        public bool CreateCalls(List<int> indexes) {
+        public bool CreateCalls(List<int> indexes) { // todo rename sve calls u declarations
             Calls calls = new Calls();
 
             if (indexes != null) {
@@ -58,15 +58,27 @@ namespace Aleb.Server {
             return true;
         }
 
+        double DeclarationLog(double x) => Math.Log(2 * x + 1, 1.0013);
+
+        public int DeclarationDelay() {
+            double a = DeclarationLog(Calls.Used);
+            double b = DeclarationLog(Teammate.Calls.Used);
+
+            return (int)(1500 + Math.Max(a, b) + Math.Pow(a * b, 0.45));
+        }
+
         public Player Previous, Next, Teammate;
         public int Team;
         
         public User User { get; private set; }
 
-        public void SendMessage(string command, params dynamic[] args) {
+        public void SendMessage(int delay, string command, params dynamic[] args) {
             if (User?.Client?.Connected == true)
-                User.Client.SendMessage(new Message(command, args));
+                User.Client.Send(delay, new Message(command, args));
         }
+
+        public void SendMessage(string command, params dynamic[] args)
+            => SendMessage(0, command, args);
 
         public void Flush() {
             if (User?.Client?.Connected == true)

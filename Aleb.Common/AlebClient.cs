@@ -80,22 +80,46 @@ namespace Aleb.Common {
             });
         }
 
-        Stack<Message> SendBuffer = new Stack<Message>();
+        Dictionary<int, Stack<Message>> SendBuffer = new Dictionary<int, Stack<Message>>();
 
-        public void SendMessage(Message msg) => SendBuffer.Push(msg);
-
-        public void Send(string command, params dynamic[] args)
-            => SendMessage(new Message(command, args));
-
-        public void Flush() {
+        public void Send(int delay, Message msg) {
             if (!Connected) return;
 
-            while (SendBuffer.TryPop(out Message msg)) { 
+            if (!SendBuffer.ContainsKey(delay))
+                SendBuffer.Add(delay, new Stack<Message>());
+
+            SendBuffer[delay].Push(msg);
+        }
+
+        public void Send(int delay, string command, params dynamic[] args)
+            => Send(delay, new Message(command, args));
+        
+        public void Send(Message msg)
+            => Send(0, msg);
+
+        public void Send(string command, params dynamic[] args)
+            => Send(0, command, args);
+
+        void Flush(Stack<Message> buf) {
+            if (!Connected) return;
+
+            while (buf.TryPop(out Message msg)) { 
                 Log(false, msg.ToString());
                 Writer.Write(msg);
             }
 
             Writer.Flush();
+        }
+
+        public void Flush() {
+            if (!Connected) return;
+
+            foreach (var (delay, buf) in SendBuffer) {
+                if (delay <= 0) Flush(buf);
+                else new Courier<Stack<Message>>(delay, buf, Flush);
+            }
+
+            SendBuffer.Clear();
         }
 
         public AlebClient(TcpClient client) => Client = client;

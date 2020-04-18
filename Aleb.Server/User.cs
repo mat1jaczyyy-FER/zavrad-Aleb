@@ -9,7 +9,6 @@ using Aleb.Common;
 namespace Aleb.Server {
     class User {
         static List<User> Pool = new List<User>();
-        static IEnumerable<User> Connected => Pool.Where(i => i.Client != null);
 
         public static User Connect(string name, string password, AlebClient client) {
             if (!Validation.ValidateUsername(name)) return null;
@@ -32,16 +31,13 @@ namespace Aleb.Server {
             Message msg = new Message(command, args);
 
             foreach (User user in users.Where(i => i?.Client?.Connected == true && i != this)) {
-                user.Client.SendMessage(msg);
+                user.Client.Send(msg);
                 user.Client.Flush();
             }
         }
 
         void BroadcastIdle(string command, params dynamic[] args)
             => Broadcast(Pool.Where(i => i.State == UserState.Idle), command, args);
-
-        void Broadcast(string command, params dynamic[] args)
-            => Broadcast(Pool, command, args);
 
         public UserState State = UserState.Idle;
 

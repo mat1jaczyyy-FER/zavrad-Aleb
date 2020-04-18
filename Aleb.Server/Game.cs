@@ -11,10 +11,13 @@ namespace Aleb.Server {
                 player.Flush();
         }
 
-        void Broadcast(string command, params dynamic[] args) {
+        void Broadcast(int delay, string command, params dynamic[] args) {
             foreach (Player player in Players)
-                player.SendMessage(command, args);
+                player.SendMessage(delay, command, args);
         }
+
+        void Broadcast(string command, params dynamic[] args)
+            => Broadcast(0, command, args);
 
         Player[] Players = new Player[4];
 
@@ -49,8 +52,8 @@ namespace Aleb.Server {
             Start();
         }
 
-        public void Start() {
-            if (Room.GameCompleted()) return;
+        public void Start(int delay = 0) {
+            if (Room.GameCompleted(delay)) return;
 
             State = GameState.Bidding;
 
@@ -65,7 +68,7 @@ namespace Aleb.Server {
             Card.Distribute(Players);
 
             foreach (Player player in Players)
-                player.SendMessage("GameStarted", Array.IndexOf(Players, Dealer), player.Cards.ToIntString());
+                player.SendMessage(delay, "GameStarted", Array.IndexOf(Players, Dealer), player.Cards.ToIntString());
         }
 
         public void Bid(Player sender, Suit? suit) {
@@ -112,7 +115,9 @@ namespace Aleb.Server {
                 Player maxPlayer = Players.Aggregate((a, b) => a.Calls.Gt(b.Calls)? a : b);
                 int total = History.Last().ApplyCalls(maxPlayer);
 
-                Broadcast("WinningDeclaration", Array.IndexOf(Players, maxPlayer), total, maxPlayer.Calls.ToString(), maxPlayer.Teammate.Calls.ToString());
+                int delay = total != 0? 1500 : 0;
+                Broadcast(delay, "WinningDeclaration", Array.IndexOf(Players, maxPlayer), total, maxPlayer.Calls.ToString(), maxPlayer.Teammate.Calls.ToString());
+                Broadcast(delay + maxPlayer.DeclarationDelay(), "StartPlayingCards");
 
                 State++;
             }
@@ -143,12 +148,15 @@ namespace Aleb.Server {
 
                 if (last) {
                     current.Finish();
-                    Start();
+                    Start(3000);
 
                     Broadcast("RoundComplete", Array.IndexOf(Players, Current), round, current.ToString(), string.Join(',', Score));
+                    Broadcast(2000, "FinalScores", current.ToString());
+                    Broadcast(3000, "TotalScore", current.ToString(), string.Join(',', Score));
                 
                 } else {
                     Broadcast("TableComplete", Array.IndexOf(Players, Current), round);
+                    Broadcast(2000, "ContinuePlayingCards", Array.IndexOf(Players, Current));
                 }
 
             } else Current = Current.Next;

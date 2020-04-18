@@ -31,7 +31,7 @@ namespace Aleb.GUI {
 
         public static CultureInfo Culture = new CultureInfo("hr-HR");
 
-        public static string Host = "88.207.58.77";
+        public static string Host;
         public static User User;
 
         public static void URL(string url) => Process.Start(new ProcessStartInfo() {
@@ -51,6 +51,10 @@ namespace Aleb.GUI {
 
         public override void OnFrameworkInitializationCompleted() {
             if (!(ApplicationLifetime is IClassicDesktopStyleApplicationLifetime lifetime)) throw new ApplicationException("Invalid ApplicationLifetime");
+
+            #if !DEBUG
+                Host = "88.207.58.77";
+            #endif
 
             if (Args.Length == 2 && Args[0] == "--host") Host = Args[1];
             else if (Args.Length != 0) {

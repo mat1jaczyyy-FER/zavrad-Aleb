@@ -69,24 +69,24 @@ namespace Aleb.Server {
 
         public Game Game { get; private set; }
 
-        public bool GameCompleted() {
+        public bool GameCompleted(int delay = 0) {
             for (int i = 0; i < 2; i++)
                 if (Game?.Score[i] >= ScoreGoal) {
-                    DestroyGame();
+                    DestroyGame(delay);
                     return true;
                 }
 
             return false;
         }
 
-        void DestroyGame() {
+        void DestroyGame(int delay = 0) {
             Message msg = new Message("GameFinished", string.Join(',', Game.Score), ToString());
 
             foreach (User user in Users) {
                 user.CompletedGame();
                 user.State = UserState.InRoom;
 
-                user.Client.SendMessage(msg);
+                user.Client.Send(delay, msg);
             }
 
             Game = null;
