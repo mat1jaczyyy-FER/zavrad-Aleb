@@ -156,9 +156,10 @@ namespace Aleb.GUI.Views {
 
         static List<string> emptyRow = new List<string>() { "", "" };
 
-        void UpdateRow<T>(RoundRow row, List<T> values) {
-            row.Left = values[Team].ToString();
-            row.Right = values[1 - Team].ToString();
+        void UpdateRow<T>(RoundRow row, List<T> values, bool autoTeams = true) {
+            int team = autoTeams? Team : 0;
+            row.Left = values[team].ToString();
+            row.Right = values[1 - team].ToString();
         }
 
         void UpdateTitleRow(bool mivi) {
@@ -167,10 +168,10 @@ namespace Aleb.GUI.Views {
                 return;
             }
 
-            UpdateRow(TitleRow, mivi
+            UpdateRow(TitleRow, (mivi
                 ? new List<string>() { "Mi", "Vi" }
                 : new List<string>() { "Vi", "Oni" }
-            );
+            ), false);
         }
 
         void UpdateCurrentRound(List<int> calls, List<int> played) {
