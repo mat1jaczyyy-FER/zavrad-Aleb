@@ -47,11 +47,11 @@ namespace Aleb.GUI.Popups {
         DispatcherTimer Timer;
 
         void UpdateTime(object sender, EventArgs e) {
-            CurrentSession.Text = $"Trenutna sesija: {Program.TimeSpent.Elapsed.Humanize(minUnit: TimeUnit.Second, maxUnit: TimeUnit.Hour)}";
+            CurrentSession.Text = $"Trenutna sesija: {Program.TimeSpent.Elapsed.Humanize(minUnit: TimeUnit.Second, maxUnit: TimeUnit.Hour, culture: App.Culture)}";
 
             if (Preferences.Time >= (long)TimeSpan.MaxValue.TotalSeconds) Preferences.BaseTime = 0;
 
-            AllTime.Text = $"Sveukupno: {Preferences.Time.Seconds().Humanize(minUnit: TimeUnit.Second, maxUnit: TimeUnit.Hour)}";
+            AllTime.Text = $"Sveukupno: {Preferences.Time.Seconds().Humanize(minUnit: TimeUnit.Second, maxUnit: TimeUnit.Hour, culture: App.Culture)}";
         }
 
         public PreferencesPopup() {

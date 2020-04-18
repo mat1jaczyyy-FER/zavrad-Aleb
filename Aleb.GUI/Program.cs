@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 using Avalonia;
 
 namespace Aleb.GUI {
     static class Program {
-        public static readonly string Version = "Alpha Build 1";
+        public static readonly string Version = "Alpha Build 2";
 
         public static Stopwatch TimeSpent = new Stopwatch();
 
@@ -24,6 +26,8 @@ namespace Aleb.GUI {
 
         [STAThread]
         static void Main(string[] args) {
+            Thread.CurrentThread.CurrentCulture = Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+
             AppDomain.CurrentDomain.UnhandledException += (object sender, UnhandledExceptionEventArgs e) => {
                 if (!Directory.Exists(CrashDir)) Directory.CreateDirectory(CrashDir);
                 

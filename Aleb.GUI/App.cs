@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 
@@ -27,6 +28,8 @@ namespace Aleb.GUI {
         public static readonly KeyModifiers ControlKey = RuntimeInformation.IsOSPlatform(OSPlatform.OSX)? KeyModifiers.Meta : KeyModifiers.Control;
 
         public static string[] Args;
+
+        public static CultureInfo Culture = new CultureInfo("hr-HR");
 
         public static string Host = "88.207.58.77";
         public static User User;
