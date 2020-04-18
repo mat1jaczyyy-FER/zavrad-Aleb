@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 using Aleb.Common;
 
@@ -18,6 +19,8 @@ namespace Aleb.Server {
     class Table {
         Suit Trump;
 
+        public TaskCompletionSource<bool> Bela { get; private set; }
+
         List<Action> played;
         public Action Winner => played.Aggregate((a, b) => a.Card.Gt(b.Card, Trump, played[0].Card.Suit)? a : b);
 
@@ -29,7 +32,8 @@ namespace Aleb.Server {
 
         public bool Complete() => played.Count == 4;
 
-        public bool Play(Player player, int index, bool bela, out Card card) {
+        public bool Play(Player player, int index, out bool bela, out Card card) {
+            bela = false;
             card = player.Cards[index];
 
             if (Complete()) return false;
@@ -55,8 +59,15 @@ namespace Aleb.Server {
                 if (matching.Any() && !matching.Contains(card)) return false;
             }
 
-            if (bela && (BelaCards.Intersect(player.Cards).Count() != BelaCards.Count() || !BelaCards.Contains(card)))
-                return false;
+            if (BelaCards.Intersect(player.Cards).Count() == BelaCards.Count() && BelaCards.Contains(card)) {
+                Bela = new TaskCompletionSource<bool>();
+
+                player.SendMessage("AskBela");
+                player.Flush();
+
+                bela = Bela.Task.Result;
+                Bela = null;
+            }
 
             played.Add(new Action(player, card));
             player.Cards.RemoveAt(index);

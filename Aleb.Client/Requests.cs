@@ -67,7 +67,10 @@ namespace Aleb.Client {
         public static void Declare(List<int> indexes)
             => Network.Send(new Message("Declare", indexes != null? string.Join(',', indexes) : "null"));
 
-        public static void PlayCard(int index, bool bela)
-            => Network.Send(new Message("PlayCard", index, bela));
+        public static void PlayCard(int index)
+            => Network.Send(new Message("PlayCard", index));
+
+        public static void Bela(bool bela)
+            => Network.Send(new Message("Bela", bela));
     }
 }

@@ -23,14 +23,8 @@ namespace Aleb.GUI.Prompts {
             AvaloniaXamlLoader.Load(this);
         }
 
-        int Index;
-
-        public BelaPrompt() => throw new InvalidOperationException();
-
-        public BelaPrompt(int index) {
+        public BelaPrompt() {
             InitializeComponent();
-
-            Index = index;
         }
 
         void Loaded(object sender, VisualTreeAttachmentEventArgs e) {}
@@ -38,9 +32,9 @@ namespace Aleb.GUI.Prompts {
         void Unloaded(object sender, VisualTreeAttachmentEventArgs e) {}
 
         void Skip(object sender, RoutedEventArgs e) 
-            => Requests.PlayCard(Index, false);
+            => Requests.Bela(false);
 
         void Call(object sender, RoutedEventArgs e)
-            => Requests.PlayCard(Index, true);
+            => Requests.Bela(true);
     }
 }

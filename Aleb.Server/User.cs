@@ -52,7 +52,7 @@ namespace Aleb.Server {
                 _client = value;
 
                 if (_client != null) {
-                    _client.MessageReceived += Received;
+                    _client.MessageReceived += (sender, msg) => Task.Run(() => Received(sender, msg));
                     _client.Disconnected += Disconnect;
 
                     _client.Name = Name;
@@ -127,9 +127,11 @@ namespace Aleb.Server {
                     }
 
                 } else if (msg.Command == "PlayCard") {
-                    if (msg.Args.Length == 2)
-                        Client.Send("YouPlayed", Game.PlayCard(Player, Convert.ToInt32(msg.Args[0]), Convert.ToBoolean(msg.Args[1])));
-                }
+                    if (msg.Args.Length == 1)
+                        Client.Send("YouPlayed", Game.PlayCard(Player, Convert.ToInt32(msg.Args[0])));
+                
+                } else if (msg.Command == "Bela")
+                    Game.Bela(Player, Convert.ToBoolean(msg.Args[0]));
 
                 if (Game != null) Game.Flush();
                 else Room.Rooms.FirstOrDefault(i => i.Users.Contains(this))
@@ -165,7 +167,7 @@ namespace Aleb.Server {
         Player Player;
         Game Game;
 
-        public Player ToPlayer(Game game) { //todo clear these!!
+        public Player ToPlayer(Game game) {
             Game = game;
             return Player = new Player(this);
         }

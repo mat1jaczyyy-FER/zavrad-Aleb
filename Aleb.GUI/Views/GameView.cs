@@ -247,6 +247,7 @@ namespace Aleb.GUI.Views {
             Network.StartPlayingCards += StartPlayingCards;
 
             Network.YouPlayed += YouPlayed;
+            Network.AskBela += AskBela;
             Network.CardPlayed += CardPlayed;
 
             Network.TableComplete += TableComplete;
@@ -273,6 +274,7 @@ namespace Aleb.GUI.Views {
             Network.StartPlayingCards -= StartPlayingCards;
 
             Network.YouPlayed -= YouPlayed;
+            Network.AskBela -= AskBela;
             Network.CardPlayed -= CardPlayed;
 
             Network.TableComplete -= TableComplete;
@@ -302,8 +304,7 @@ namespace Aleb.GUI.Views {
         bool[] DeclareSelected;
 
         int lastPlaying, lastInTable, selectedTrump, roundNum;
-
-        CardImage[] Bela;
+        CardImage lastPlayed;
 
         void SetPlaying(int playing) {
             lastPlaying = playing;
@@ -331,13 +332,8 @@ namespace Aleb.GUI.Views {
             
             } else if (State == GameState.Playing && Prompt == null) {
                 if (lastPlaying == You) {
-                    if (Bela?.Contains(sender) == true) {
-                        sender.Margin = new Thickness(0, -15, 0, 15);
-
-                        Prompt = new BelaPrompt(index);
-                        Bela = null;
-
-                    } else Requests.PlayCard(index, false);
+                    lastPlayed = sender;
+                    Requests.PlayCard(index);
 
                 } else Table(You, new TextOverlay("Niste na potezu", 3000));
             }
@@ -392,11 +388,6 @@ namespace Aleb.GUI.Views {
             State = GameState.Declaring;
 
             CreateCards(cards);
-
-            int queen = (int)trump * 8 + 5;
-
-            if (!Enumerable.Range(queen, 2).Except(cards).Any())
-                Bela = Cards.Children.OfType<CardImage>().Skip(cards.IndexOf(queen)).Take(2).ToArray();
 
             SetPlaying(Utilities.Modulo(Dealer + 1, 4));
         }
@@ -487,6 +478,19 @@ namespace Aleb.GUI.Views {
                 Prompt = null;
 
             } else Table(You, new TextOverlay("Neispravna karta", 3000));
+        }
+
+        void AskBela() {
+            if (!Dispatcher.UIThread.CheckAccess()) {
+                Dispatcher.UIThread.InvokeAsync(AskBela);
+                return;
+            }
+
+            if (State != GameState.Playing) return;
+
+            lastPlayed.Margin = new Thickness(0, -15, 0, 15);
+
+            Prompt = new BelaPrompt();
         }
 
         void CardPlayed(int card, bool bela) {

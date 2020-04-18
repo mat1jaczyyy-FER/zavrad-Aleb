@@ -128,13 +128,13 @@ namespace Aleb.Server {
             return true;
         }
 
-        public int PlayCard(Player player, int card, bool bela) {
+        public int PlayCard(Player player, int card) {
             if (State != GameState.Playing || player != Current)
                 return -1;
 
             if (card < 0 || Current.Cards.Count <= card) return -1;
 
-            if (!Table.Play(Current, card, bela, out Card played)) return -1;
+            if (!Table.Play(Current, card, out bool bela, out Card played)) return -1;
 
             if (bela) History.Last().Bela(Current);
 
@@ -162,6 +162,13 @@ namespace Aleb.Server {
             Broadcast("CardPlayed", (int)played, bela);
 
             return card;
+        }
+
+        public void Bela(Player player, bool bela) {
+            if (State != GameState.Playing || player != Current)
+                return;
+
+            Table.Bela?.TrySetResult(bela);
         }
     }
 }
