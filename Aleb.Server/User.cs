@@ -54,6 +54,8 @@ namespace Aleb.Server {
                 if (_client != null) {
                     _client.MessageReceived += Received;
                     _client.Disconnected += Disconnect;
+
+                    _client.Name = Name;
                 }
             }
         }

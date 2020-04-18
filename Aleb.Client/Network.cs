@@ -35,6 +35,8 @@ namespace Aleb.Client {
             Server.MessageReceived += Received;
             Server.Disconnected += _ => Disconnected?.Invoke();
 
+            Server.Name = "Server";
+
             Task<Message> VersionTask = Register("Version");
 
             Server.Run();

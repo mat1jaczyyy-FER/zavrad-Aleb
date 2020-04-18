@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -11,9 +12,11 @@ namespace Aleb.Common {
     public class AlebClient: IDisposable {
         public static bool LogCommunication = false;
 
+        static Stopwatch time = new Stopwatch();
+
         void Log(bool received, string raw) {
             if (LogCommunication && Connected && raw != null)
-                Console.WriteLine($"[NETW-{(received? "RECV" : "SEND")}] {Address} > {raw.Trim().Trim('\n')}");
+                Console.WriteLine($"{time.Elapsed.ToString()} [NETW-{(received? "RECV" : "SEND")}] {Name} ({Address}) > {raw.Trim().Trim('\n')}");
         }
 
         TcpClient _client;
@@ -41,6 +44,8 @@ namespace Aleb.Common {
         StreamReader Reader;
         StreamWriter Writer;
         public string Address { get; private set; } = "";
+
+        public string Name = "<unknown>";
 
         public delegate void MessageReceivedEventHandler(AlebClient sender, Message msg);
         public event MessageReceivedEventHandler MessageReceived;
@@ -123,6 +128,8 @@ namespace Aleb.Common {
         }
 
         public AlebClient(TcpClient client) => Client = client;
+
+        static AlebClient() => time.Start();
 
         public void Dispose() {
             if (!Connected) return;
