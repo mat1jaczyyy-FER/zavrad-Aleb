@@ -105,7 +105,7 @@ namespace Aleb.Server {
             if (!Current.CreateCalls(indexes)) return false;
 
             if (Current.Calls.Max.Cards.Count == 8) {
-                History.Last().Belot(Current, Score[Current.Team]); //todo implementaj ovo nekako
+                History.Last().Belot(Current, Score[Current.Team], Room.ScoreGoal); //todo implementaj ovo nekako
 
                 Start();
                 return true;
@@ -146,8 +146,22 @@ namespace Aleb.Server {
 
                 string round = current.ToString();
 
-                if (last) {
-                    current.Finish();
+                bool dosta = false;
+
+                if (Room.Type == GameType.Dosta) {
+                    int[] score = Score;
+
+                    for (int i = 0; i < 2; i++) {
+                        score[i] += current.Played[i] + (current.Played[i] > 0? current.Calls[i] : 0);
+                        if (score[i] >= Room.ScoreGoal) {
+                            dosta = true;
+                            break;
+                        }
+                    }
+                }
+                
+                if (last || dosta) {
+                    current.Finish(last);
                     Start(3000);
 
                     Broadcast(2000, "FinalScores", current.ToString());

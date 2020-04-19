@@ -11,6 +11,11 @@ namespace Aleb.Common {
         Idle, InRoom, InGame   
     }
 
+    public enum GameType {
+        Dosta,
+        Prolaz
+    }
+
     public enum GameState {
         Bidding,
         Declaring,

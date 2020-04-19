@@ -24,11 +24,16 @@ namespace Aleb.GUI.Popups {
             App.MainWindow.PopupTitle.Text = "Stvori sobu";
 
             RoomName = this.Get<ValidationTextBox>("RoomName");
+            Type = this.Get<ComboBox>("Type");
+            Goal = this.Get<ComboBox>("Goal");
+
             CreateButton = this.Get<Button>("CreateButton");
             Status = this.Get<TextBlock>("Status");
         }
 
         ValidationTextBox RoomName;
+        ComboBox Type, Goal;
+
         Button CreateButton;
         TextBlock Status;
 
@@ -36,6 +41,8 @@ namespace Aleb.GUI.Popups {
             InitializeComponent();
 
             RoomName.Validator = Validation.ValidateRoomName;
+            Type.SelectedItem = GameType.Prolaz;
+            Goal.SelectedIndex = 2;
         }
 
         void Loaded(object sender, VisualTreeAttachmentEventArgs e) {}
@@ -51,7 +58,7 @@ namespace Aleb.GUI.Popups {
             Status.Text = " ";
             Focus();
             
-            Room room = await Requests.CreateRoom(RoomName.Text);
+            Room room = await Requests.CreateRoom(RoomName.Text, (GameType)Type.SelectedItem, Goal.SelectedIndex);
 
             if (room == null) {
                 RoomName.IsEnabled = true;

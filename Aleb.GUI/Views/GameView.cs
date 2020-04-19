@@ -578,18 +578,10 @@ namespace Aleb.GUI.Views {
             UpdateRow(Total, total);
             Total.IsVisible = true;
         }
-        
-        void Finish(List<int> score, Room room) {
-            if (!Dispatcher.UIThread.CheckAccess()) {
-                Dispatcher.UIThread.InvokeAsync(() => Finish(score, room));
-                return;
-            }
-
-        }
 
         void GameFinished(List<int> score, Room room) {
             if (!Dispatcher.UIThread.CheckAccess()) {
-                Dispatcher.UIThread.InvokeAsync(() => Finish(score, room));
+                Dispatcher.UIThread.InvokeAsync(() => GameFinished(score, room));
                 return;
             }
 

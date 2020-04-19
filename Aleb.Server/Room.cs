@@ -5,15 +5,18 @@ using Aleb.Common;
 
 namespace Aleb.Server {
     class Room {
-        public const int ScoreGoal = 1001;
+        public static readonly List<int> ScoreGoals = new List<int>() { 501, 701, 1001 };
 
         public static List<Room> Rooms { get; private set; } = new List<Room>();
 
-        public static Room Create(string name, User creator) {
+        public static Room Create(string name, GameType? type, int goal, User creator) {
             if (!Validation.ValidateRoomName(name)) return null;
+            if (type == null) return null;
+            if (goal < 0 || ScoreGoals.Count < goal) return null;
+
             if (Rooms.Any(i => i.Name == name || i.Users.Contains(creator))) return null;
 
-            Room room = new Room(name, creator);
+            Room room = new Room(name, type.Value, ScoreGoals[goal], creator);
             Rooms.Add(room);
 
             return room;
@@ -32,6 +35,9 @@ namespace Aleb.Server {
         public List<User> Users => People.Select(i => i.User).ToList();
 
         public int Count => People.Count;
+
+        public readonly GameType Type;
+        public readonly int ScoreGoal;
 
         public bool Join(User joining) {
             if (Count >= 4) return false;
@@ -107,11 +113,14 @@ namespace Aleb.Server {
 
         public readonly string Name;
 
-        Room(string name, User owner) {
+        Room(string name, GameType type, int goal, User owner) {
             Name = name;
+            Type = type;
+            ScoreGoal = goal;
+
             Join(owner);
         }
 
-        public override string ToString() => $"{Name},{Count}{string.Join("", People.Select(i => ',' + i.User.Name))}";
+        public override string ToString() => $"{Name},{Type},{ScoreGoal},{Count}{string.Join("", People.Select(i => ',' + i.User.Name))}";
     }
 }

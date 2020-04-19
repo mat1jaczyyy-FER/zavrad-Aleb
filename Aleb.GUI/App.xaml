@@ -11,16 +11,16 @@
     <StyleInclude Source="resm:Avalonia.Themes.Default.DefaultTheme.xaml?assembly=Avalonia.Themes.Default" />
 
     <Style Selector="Window">
+      <Setter Property="FontFamily" Value="{DynamicResource Font}" />
       <Setter Property="HasSystemDecorations" Value="false" />
       <Setter Property="Topmost" Value="false" />
     </Style>
 
-    <Style Selector="TextBlock">
-      <Setter Property="FontFamily" Value="{DynamicResource Font}" />
+    <Style Selector="TextBlock.heading">
+      <Setter Property="Foreground" Value="{DynamicResource ThemeControlHighlightMidBrush}" />
     </Style>
 
     <Style Selector="TextBox">
-      <Setter Property="FontFamily" Value="{DynamicResource Font}" />
       <Setter Property="BorderThickness" Value="0 0 0 1" />
       <Setter Property="BorderBrush" Value="{DynamicResource ThemeForegroundLowBrush}" />
       <Setter Property="CaretBrush" Value="{DynamicResource ThemeForegroundBrush}" />
@@ -31,6 +31,19 @@
     </Style>
     
     <Style Selector="TextBox:focus /template/ Border#border">
+      <Setter Property="BorderBrush" Value="{DynamicResource ThemeForegroundBrush}"/>
+    </Style>
+
+    <Style Selector="ComboBox">
+      <Setter Property="BorderThickness" Value="0 0 0 1" />
+      <Setter Property="BorderBrush" Value="{DynamicResource ThemeForegroundLowBrush}" />
+    </Style>
+
+    <Style Selector="ComboBox:pointerover /template/ Border#border">
+      <Setter Property="BorderBrush" Value="{DynamicResource ThemeControlHighlightMidBrush}"/>
+    </Style>
+
+    <Style Selector="ComboBox:focus /template/ Border#border">
       <Setter Property="BorderBrush" Value="{DynamicResource ThemeForegroundBrush}"/>
     </Style>
 

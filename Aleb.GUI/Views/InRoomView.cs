@@ -21,13 +21,14 @@ namespace Aleb.GUI.Views {
             AvaloniaXamlLoader.Load(this);
 
             NameText = this.Get<TextBlock>("NameText");
+            Settings = this.Get<TextBlock>("Settings");
             Users = this.Get<StackPanel>("Users").Children.OfType<UserInRoom>().ToList();
 
             ReadyButton = this.Get<Button>("ReadyButton");
             StartButton = this.Get<Button>("StartButton");
         }
 
-        TextBlock NameText;
+        TextBlock NameText, Settings;
         List<UserInRoom> Users;
         Button ReadyButton, StartButton;
 
@@ -42,6 +43,7 @@ namespace Aleb.GUI.Views {
             InitializeComponent();
 
             NameText.Text = room.Name;
+            Settings.Text = room.Settings;
                 
             for (int i = 0; i < 4; i++) {
                 Users[i].Text = room.Users[i]?.Name?? "";

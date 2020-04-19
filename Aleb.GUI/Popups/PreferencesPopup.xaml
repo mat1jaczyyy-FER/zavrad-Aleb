@@ -12,10 +12,6 @@
         <Setter Property="Height" Value="2" />
         <Setter Property="BorderThickness" Value="0 1 0 0" />
       </Style>
-
-      <Style Selector="TextBlock.heading">
-        <Setter Property="Foreground" Value="{DynamicResource ThemeControlHighlightMidBrush}" />
-      </Style>
     </StackPanel.Styles>
 
     <TextBlock Classes="heading" Text="Prikaz" />

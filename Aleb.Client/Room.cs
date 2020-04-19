@@ -8,6 +8,8 @@ using Aleb.Common;
 namespace Aleb.Client {
     public class Room {
         public readonly string Name;
+        public readonly GameType Type;
+        public readonly int Goal;
         public int Count;
 
         User[] _users = new User[4];
@@ -19,11 +21,17 @@ namespace Aleb.Client {
             }
         }
 
+        public string Settings => $"{Type}, {Goal}";
+
         public Room(string raw) {
             string[] args = raw.Split(',');
+
             Name = args[0];
-            Count = Convert.ToInt32(args[1]);
-            Users = args.Skip(2).Select(i => new User(i)).ToArray();
+            Type = args[1].ToEnum<GameType>().Value;
+            Goal = Convert.ToInt32(args[2]);
+            Count = Convert.ToInt32(args[3]);
+
+            Users = args.Skip(4).Select(i => new User(i)).ToArray();
         }
 
         public override bool Equals(object obj) {

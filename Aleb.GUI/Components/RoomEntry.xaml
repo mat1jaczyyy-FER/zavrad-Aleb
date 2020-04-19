@@ -4,12 +4,14 @@
              xmlns:Components="clr-namespace:Aleb.GUI.Components"
              DetachedFromVisualTree="Unloaded" Clicked="JoinRoom">
 
-  <Grid Margin="10" RowDefinitions="*,15,*" Background="Transparent"
+  <Grid Margin="10" RowDefinitions="*,5,*,15,*" Background="Transparent"
         PointerEnter="MouseEnter" PointerLeave="MouseLeave" PointerPressed="MouseDown" PointerReleased="MouseUp">
     
     <TextBlock Grid.Row="0" HorizontalAlignment="Center" FontWeight="Bold" x:Name="NameText" />
+    
+    <TextBlock Grid.Row="2" HorizontalAlignment="Center" Classes="heading" x:Name="Settings" />
 
-    <StackPanel Grid.Row="2" HorizontalAlignment="Center" Spacing="5" x:Name="Users">
+    <StackPanel Grid.Row="4" HorizontalAlignment="Center" Spacing="5" x:Name="Users">
       <Components:UserInList />
       <Components:UserInList />
       <Components:UserInList />

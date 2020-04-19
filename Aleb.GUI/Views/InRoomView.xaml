@@ -7,6 +7,8 @@
   <Grid>
     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="15">
       <TextBlock HorizontalAlignment="Center" FontWeight="Bold" x:Name="NameText" />
+      
+      <TextBlock Margin="0 -10 0 0" Classes="heading" HorizontalAlignment="Center" x:Name="Settings" />
 
       <StackPanel HorizontalAlignment="Center" Spacing="5" x:Name="Users">
         <StackPanel.Styles>
