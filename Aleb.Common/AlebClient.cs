@@ -5,8 +5,6 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
-using System.Text;
-using System.Threading;
 
 namespace Aleb.Common {
     public class AlebClient: IDisposable {

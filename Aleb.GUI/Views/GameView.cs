@@ -1,25 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.Shapes;
 using Avalonia.Input;
-using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
+using Avalonia.Styling;
 using Avalonia.Threading;
-using Avalonia.VisualTree;
 
 using Aleb.Client;
 using Aleb.Common;
 using Aleb.GUI.Components;
 using Aleb.GUI.Prompts;
-using Avalonia.Styling;
 
 namespace Aleb.GUI.Views {
     public class GameView: UserControl {

@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Input;
-using Avalonia.Layout;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 

@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.Primitives;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
-
-using Aleb.Client;
 
 namespace Aleb.GUI.Components {
     public class UserInGame: UserDisplay {

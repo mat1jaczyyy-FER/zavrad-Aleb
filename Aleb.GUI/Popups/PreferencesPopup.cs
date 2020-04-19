@@ -1,26 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.Shapes;
-using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
-using Avalonia.Media;
 using Avalonia.Threading;
-using Avalonia.VisualTree;
 
 using Humanizer;
 using Humanizer.Localisation;
-
-using Aleb.Client;
-using Aleb.Common;
-using Aleb.GUI.Components;
-using Aleb.GUI.Views;
 
 namespace Aleb.GUI.Popups {
     public class PreferencesPopup: UserControl {
