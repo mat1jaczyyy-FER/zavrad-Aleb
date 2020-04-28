@@ -112,7 +112,7 @@ namespace Aleb.Server {
             }
 
             if (Current == Dealer) {
-                Player maxPlayer = Players.Aggregate((a, b) => a.Calls.Gt(b.Calls)? a : b);
+                Player maxPlayer = Players.RotateWith(i => i == Dealer.Next).Aggregate((a, b) => a.Calls.Gt(b.Calls)? a : b);
                 int total = History.Last().ApplyCalls(maxPlayer);
 
                 int delay = total != 0? 1500 : 0;
