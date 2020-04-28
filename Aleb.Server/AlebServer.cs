@@ -39,7 +39,9 @@ namespace Aleb.Server {
             }
 
             TcpListener server = new TcpListener(
-                Dns.GetHostEntry(bind).AddressList.First(i => i.AddressFamily == AddressFamily.InterNetwork),
+                IPAddress.TryParse(bind, out IPAddress ip)
+                    ? ip
+                    : Dns.GetHostEntry(bind).AddressList.First(i => i.AddressFamily == AddressFamily.InterNetwork),
                 Protocol.Port
             );
 
