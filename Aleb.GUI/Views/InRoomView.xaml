@@ -27,9 +27,9 @@
       </StackPanel>
 
       <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Spacing="5">
-        <Button Content="Spreman!" x:Name="ReadyButton" Click="SetReady" />
-        <Button Content="Izlaz" Click="LeaveRoom" />
-        <Button Content="Započni igru!" IsVisible="False" IsEnabled="False" x:Name="StartButton" Click="Start" />
+        <Components:Leave Clicked="LeaveRoom" />
+        <Components:Ready x:Name="ReadyButton" Clicked="SetReady" />
+        <Components:Start IsVisible="False" Enabled="False" x:Name="StartButton" Clicked="Start" />
       </StackPanel>
     </StackPanel>
   </Grid>

@@ -21,20 +21,21 @@ namespace Aleb.GUI.Views {
             Users = this.Get<StackPanel>("Users").Children.OfType<UserInRoom>().ToList();
             Separator = this.Get<Border>("Separator");
 
-            ReadyButton = this.Get<Button>("ReadyButton");
-            StartButton = this.Get<Button>("StartButton");
+            ReadyButton = this.Get<Ready>("ReadyButton");
+            StartButton = this.Get<Start>("StartButton");
         }
 
         TextBlock NameText, Settings;
         List<UserInRoom> Users;
-        Button ReadyButton, StartButton;
         Border Separator;
+        Ready ReadyButton;
+        Start StartButton;
 
         int Count = 0;
 
         void EnableStartButton() {
             StartButton.IsVisible = Users[0].Text == App.User.Name;
-            StartButton.IsEnabled = StartButton.IsVisible && Users.All(i => i.Ready.State == true);
+            StartButton.Enabled = StartButton.IsVisible && Users.All(i => i.Ready.State == true);
         }
 
         public InRoomView() => throw new InvalidOperationException();
@@ -101,7 +102,7 @@ namespace Aleb.GUI.Views {
                 entry.Ready.State = user.Ready;
 
                 if (user == App.User)
-                    ReadyButton.Content = entry.Ready.State == true? "Nisam spreman!" : "Spreman!";
+                    ReadyButton.State = user.Ready;
             }
             
             EnableStartButton();
@@ -131,17 +132,15 @@ namespace Aleb.GUI.Views {
             EnableStartButton();
         }
 
-        void SetReady(object sender, RoutedEventArgs e)
-            => Requests.SetReady(!Users.First(i => i.Text == App.User.Name).Ready.State?? false);
+        void SetReady() => Requests.SetReady(!Users.First(i => i.Text == App.User.Name).Ready.State?? false);
 
-        void LeaveRoom(object sender, RoutedEventArgs e) {
+        void LeaveRoom() {
             Requests.LeaveRoom();
 
             App.MainWindow.View = new RoomListView();
         }
 
-        void Start(object sender, RoutedEventArgs e) 
-            => Requests.StartGame();
+        void Start() => Requests.StartGame();
 
         void GameStarted(int dealer, List<int> cards) {
             if (!Dispatcher.UIThread.CheckAccess()) {
