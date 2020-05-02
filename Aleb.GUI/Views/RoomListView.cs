@@ -36,6 +36,8 @@ namespace Aleb.GUI.Views {
             Network.RoomAdded += RoomAdded;
             Network.RoomUpdated += RoomUpdated;
             Network.RoomDestroyed += RoomDestroyed;
+
+            App.MainWindow.Title = "Popis soba";
         }
 
         void Unloaded(object sender, VisualTreeAttachmentEventArgs e) {

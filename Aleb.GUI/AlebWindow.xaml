@@ -25,7 +25,7 @@
           </Grid>
 
           <Grid Grid.Row="0">
-            <TextBlock Margin="0 7" IsHitTestVisible="false" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Aleb" x:Name="Title" />
+            <TextBlock Margin="0 7" IsHitTestVisible="false" HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="Title" />
           </Grid>
 
           <Border Grid.Row="1" BorderBrush="{DynamicResource ThemeBorderMidBrush}" BorderThickness="1 0 1 1">

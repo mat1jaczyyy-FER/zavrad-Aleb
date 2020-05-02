@@ -33,7 +33,8 @@ namespace Aleb.GUI.Views {
             Password.Validator = Validation.ValidatePassword;
         }
 
-        void Loaded(object sender, VisualTreeAttachmentEventArgs e) {}
+        void Loaded(object sender, VisualTreeAttachmentEventArgs e)
+            => App.MainWindow.Title = "Prijava";
 
         void Unloaded(object sender, VisualTreeAttachmentEventArgs e) {}
 

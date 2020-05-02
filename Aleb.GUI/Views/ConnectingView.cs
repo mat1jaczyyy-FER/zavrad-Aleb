@@ -33,9 +33,11 @@ namespace Aleb.GUI.Views {
         void Loaded(object sender, VisualTreeAttachmentEventArgs e) {
             if (AutoConnect) Connect(sender, null);
             else {
-                Status.Text = "Veza s serverom izgubljena!";
+                Status.Text = "Veza sa serverom izgubljena!";
                 Retry.IsVisible = true;
             }
+
+            App.MainWindow.Title = "";
         }
 
         void Unloaded(object sender, VisualTreeAttachmentEventArgs e) {}

@@ -35,8 +35,15 @@ namespace Aleb.GUI {
         Grid Root, ContentRoot;
         Canvas Canvas;
 
+        TextBlock TitleText;
+        PreferencesButton PreferencesButton;
+        public TextBlock PopupTitle;
+        public Close PopupClose;
+
+        Border view, popup;
+        Grid PopupContainer;
+
         double VirtualWidth {
-            get => Canvas.Width;
             set {
                 Canvas.Width = value;
                 ContentRoot.Width = value;
@@ -44,19 +51,11 @@ namespace Aleb.GUI {
         }
 
         double VirtualHeight {
-            get => Canvas.Height;
             set {
                 Canvas.Height = value;
                 ContentRoot.Height = value;
             }
         }
-
-        public TextBlock TitleText, PopupTitle;
-        PreferencesButton PreferencesButton;
-        public Close PopupClose;
-
-        Border view, popup;
-        Grid PopupContainer;
 
         public Control View {
             get => (Control)view.Child;
@@ -73,6 +72,10 @@ namespace Aleb.GUI {
                 PopupClose.IsEnabled = true;
                 PopupContainer.IsVisible = Popup != null;
             }
+        }
+
+        public new string Title {
+            set => TitleText.Text = base.Title = value == ""? "Aleb" : $"Aleb - {value}";
         }
 
         public AlebWindow() {

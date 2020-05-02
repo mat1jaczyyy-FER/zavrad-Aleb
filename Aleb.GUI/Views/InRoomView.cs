@@ -54,6 +54,8 @@ namespace Aleb.GUI.Views {
             Network.UserReady += UserReady;
             Network.UserLeft += UserLeft;
             Network.GameStarted += GameStarted;
+
+            App.MainWindow.Title = NameText.Text;
         }
 
         void Unloaded(object sender, VisualTreeAttachmentEventArgs e) {
