@@ -1,27 +1,11 @@
-﻿using Avalonia.Controls;
-using Avalonia.Controls.Shapes;
-using Avalonia.Markup.Xaml;
+﻿using Avalonia.Controls.Shapes;
 using Avalonia.Media;
 
 namespace Aleb.GUI.Components {
-    public class Create: IconButton {
-        void InitializeComponent() {
-            AvaloniaXamlLoader.Load(this);
-
-            Ellipse = this.Get<Ellipse>("Ellipse");
-        }
-
-        Ellipse Ellipse;
-
-        protected override IBrush Fill {
-            get => Ellipse.Fill;
-            set => Ellipse.Fill = value;
-        }
-
-        public Create(): base("ThemeControlMidHighBrush", "ThemeControlLowBrush", "ThemeControlVeryHighBrush", "ThemeControlHighBrush") {
-            InitializeComponent();
-
-            MouseLeave(this, null);
-        }
+    public class Create: CircleButton {
+        public Create(): base(new Path() {
+            StrokeThickness = 4,
+            Data = Geometry.Parse("M 16,25 L 34,25 M 25,16 L 25,34")
+        }) {}
     }
 }
