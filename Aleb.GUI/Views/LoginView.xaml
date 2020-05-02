@@ -7,11 +7,11 @@
   <Grid RowDefinitions="2*,*" ColumnDefinitions="3*,2*,3*">
     <StackPanel Grid.Row="1" Grid.Column="1" Spacing="10">
       <Grid HorizontalAlignment="Stretch" RowDefinitions="*,5,*" ColumnDefinitions="Auto,*">
-        <TextBlock Grid.Row="0" Grid.Column="0" Classes="heading" VerticalAlignment="Center" Text="Korisničko ime:  " />
+        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="Korisničko ime:  " />
         <Components:ValidationTextBox Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch"
                                       x:Name="Username" Validated="Username_Validated" Return="Return" />
         
-        <TextBlock Grid.Row="2" Grid.Column="0" Classes="heading" VerticalAlignment="Center" Text="Lozinka:  " />
+        <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="Lozinka:  " />
         <Components:ValidationTextBox Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" PasswordChar="•"
                                       x:Name="Password" Validated="Password_Validated" Return="Return" />
       </Grid>

@@ -3,7 +3,5 @@
              x:Class="Aleb.GUI.Components.UserInList"
              Opacity="0">
 
-  <Border HorizontalAlignment="Stretch" BorderBrush="{DynamicResource ThemeForegroundLowBrush}" BorderThickness="0 0 0 1">
-    <TextBlock Margin="5 3" x:Name="User" />
-  </Border>
+  <TextBlock Margin="5 3" x:Name="User" />
 </UserControl>

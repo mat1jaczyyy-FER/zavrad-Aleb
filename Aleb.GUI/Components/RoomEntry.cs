@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using Avalonia.Controls;
@@ -17,6 +18,7 @@ namespace Aleb.GUI.Components {
 
             NameText = this.Get<TextBlock>("NameText");
             Settings = this.Get<TextBlock>("Settings");
+            Separator = this.Get<Border>("Separator");
 
             Users = this.Get<StackPanel>("Users").Children.OfType<UserInList>().ToList();
         }
@@ -27,6 +29,7 @@ namespace Aleb.GUI.Components {
         }
 
         TextBlock NameText, Settings;
+        Border Separator;
         List<UserInList> Users;
 
         Room _room;
@@ -39,6 +42,8 @@ namespace Aleb.GUI.Components {
                 
                 for (int i = 0; i < 4; i++)
                     Users[i].Text = Room.Users[i]?.Name?? "";
+
+                Separator.Opacity = Convert.ToDouble(Room.Count > 2);
 
                 Enabled = Room.Count < 4;
             }

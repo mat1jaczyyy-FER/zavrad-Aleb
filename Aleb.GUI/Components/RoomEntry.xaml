@@ -12,10 +12,13 @@
     <TextBlock Grid.Row="2" HorizontalAlignment="Center" Classes="heading" x:Name="Settings" />
 
     <StackPanel Grid.Row="4" HorizontalAlignment="Center" Spacing="5" x:Name="Users">
-      <Components:UserInList />
-      <Components:UserInList />
-      <Components:UserInList />
-      <Components:UserInList />
+      <Components:UserInList Margin="15 0" HorizontalAlignment="Center" />
+      <Components:UserInList Margin="15 0" HorizontalAlignment="Center" />
+
+      <Border BorderBrush="{DynamicResource ThemeForegroundLowBrush}" BorderThickness="0 0 0 1" Height="2" Opacity="0" x:Name="Separator" />
+      
+      <Components:UserInList Margin="15 0" HorizontalAlignment="Center" />
+      <Components:UserInList Margin="15 0" HorizontalAlignment="Center" />
     </StackPanel>
   </Grid>
 </UserControl>

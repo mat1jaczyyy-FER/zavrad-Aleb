@@ -6,7 +6,7 @@ namespace Aleb.GUI.Components {
             User = this.Get<TextBlock>("User");
         }
 
-        TextBlock User;
+        protected TextBlock User;
 
         public string Text {
             get => User.Text;

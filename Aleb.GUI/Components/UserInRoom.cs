@@ -1,5 +1,6 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
 
 namespace Aleb.GUI.Components {
     public class UserInRoom: UserDisplay {
@@ -12,6 +13,11 @@ namespace Aleb.GUI.Components {
         }
 
         public Checkmark Ready { get; private set; }
+
+        public bool Weight {
+            get => User.FontWeight == FontWeight.Bold;
+            set => User.FontWeight = value? FontWeight.Bold : FontWeight.Regular;
+        }
 
         public UserInRoom() {
             InitializeComponent();

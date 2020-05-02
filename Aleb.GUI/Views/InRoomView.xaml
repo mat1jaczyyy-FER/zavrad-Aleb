@@ -19,6 +19,9 @@
         
         <Components:UserInRoom />
         <Components:UserInRoom />
+
+        <Border BorderBrush="{DynamicResource ThemeForegroundLowBrush}" BorderThickness="0 0 0 1" Height="2" Opacity="0" x:Name="Separator" />
+        
         <Components:UserInRoom />
         <Components:UserInRoom />
       </StackPanel>

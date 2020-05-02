@@ -19,6 +19,7 @@ namespace Aleb.GUI.Views {
             NameText = this.Get<TextBlock>("NameText");
             Settings = this.Get<TextBlock>("Settings");
             Users = this.Get<StackPanel>("Users").Children.OfType<UserInRoom>().ToList();
+            Separator = this.Get<Border>("Separator");
 
             ReadyButton = this.Get<Button>("ReadyButton");
             StartButton = this.Get<Button>("StartButton");
@@ -27,6 +28,9 @@ namespace Aleb.GUI.Views {
         TextBlock NameText, Settings;
         List<UserInRoom> Users;
         Button ReadyButton, StartButton;
+        Border Separator;
+
+        int Count = 0;
 
         void EnableStartButton() {
             StartButton.IsVisible = Users[0].Text == App.User.Name;
@@ -44,7 +48,11 @@ namespace Aleb.GUI.Views {
             for (int i = 0; i < 4; i++) {
                 Users[i].Text = room.Users[i]?.Name?? "";
                 Users[i].Ready.State = room.Users[i]?.Ready;
+                Users[i].Weight = room.Users[i] == App.User;
             }
+            
+            Count = room.Users.Count(i => i != null);
+            Separator.Opacity = Convert.ToDouble(Count > 2);
 
             EnableStartButton();
         }
@@ -75,6 +83,8 @@ namespace Aleb.GUI.Views {
             if (entry != null) {
                 entry.Text = user.Name;
                 entry.Ready.State = user.Ready;
+
+                Separator.Opacity = Convert.ToDouble(++Count > 2);
             }
             
             EnableStartButton();
@@ -108,10 +118,14 @@ namespace Aleb.GUI.Views {
                 for (int i = Users.IndexOf(entry); i < 3; i++) {
                     Users[i].Text = Users[i + 1].Text;
                     Users[i].Ready.State = Users[i + 1].Ready.State;
+                    Users[i].Weight = Users[i + 1].Weight;
                 }
                 
                 Users[3].Text = "";
                 Users[3].Ready.State = null;
+                Users[3].Weight = false;
+
+                Separator.Opacity = Convert.ToDouble(--Count > 2);
             }
             
             EnableStartButton();
