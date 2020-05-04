@@ -33,9 +33,13 @@ namespace Aleb.GUI.Views {
 
         int Count = 0;
 
-        void EnableStartButton() {
-            StartButton.IsVisible = Users[0].Text == App.User.Name;
-            StartButton.Enabled = StartButton.IsVisible && Users.All(i => i.Ready.State == true);
+        void UpdateRoomAdmin() {
+            bool isAdmin = Users[0].Text == App.User.Name;
+
+            StartButton.IsVisible = isAdmin;
+            StartButton.Enabled = isAdmin && Users.All(i => i.Ready.State == true);
+
+            UserInRoom.AllowDragDrop = isAdmin;
         }
 
         public InRoomView() => throw new InvalidOperationException();
@@ -55,13 +59,15 @@ namespace Aleb.GUI.Views {
             Count = room.Users.Count(i => i != null);
             Separator.Opacity = Convert.ToDouble(Count > 2);
 
-            EnableStartButton();
+            UpdateRoomAdmin();
         }
 
         void Loaded(object sender, VisualTreeAttachmentEventArgs e) {
             Network.UserJoined += UserJoined;
             Network.UserReady += UserReady;
             Network.UserLeft += UserLeft;
+            Network.UsersSwitched += UsersSwitched;
+
             Network.GameStarted += GameStarted;
 
             App.MainWindow.Title = NameText.Text;
@@ -71,6 +77,8 @@ namespace Aleb.GUI.Views {
             Network.UserJoined -= UserJoined;
             Network.UserReady -= UserReady;
             Network.UserLeft -= UserLeft;
+            Network.UsersSwitched -= UsersSwitched;
+
             Network.GameStarted -= GameStarted;
         }
 
@@ -86,9 +94,8 @@ namespace Aleb.GUI.Views {
                 entry.Ready.State = user.Ready;
 
                 Separator.Opacity = Convert.ToDouble(++Count > 2);
+                UpdateRoomAdmin();
             }
-            
-            EnableStartButton();
         }
 
         void UserReady(User user) {
@@ -103,9 +110,9 @@ namespace Aleb.GUI.Views {
 
                 if (user == App.User)
                     ReadyButton.State = user.Ready;
+                
+                UpdateRoomAdmin();
             }
-            
-            EnableStartButton();
         }
 
         void UserLeft(User user) {
@@ -127,9 +134,34 @@ namespace Aleb.GUI.Views {
                 Users[3].Weight = false;
 
                 Separator.Opacity = Convert.ToDouble(--Count > 2);
+                UpdateRoomAdmin();
+            }
+        }
+
+        void UsersSwitched(User user1, User user2) {
+            if (!Dispatcher.UIThread.CheckAccess()) {
+                Dispatcher.UIThread.InvokeAsync(() => UsersSwitched(user1, user2));
+                return;
             }
             
-            EnableStartButton();
+            UserInRoom entry1 = Users.FirstOrDefault(i => i.Text == user1.Name);
+            UserInRoom entry2 = Users.FirstOrDefault(i => i.Text == user2.Name);
+
+            if (entry1 != null && entry2 != null) {
+                string temptext = entry1.Text;
+                bool? tempready = entry1.Ready.State;
+                bool tempweight = entry1.Weight;
+
+                entry1.Text = entry2.Text;
+                entry1.Ready.State = entry2.Ready.State;
+                entry1.Weight = entry2.Weight;
+
+                entry2.Text = temptext;
+                entry2.Ready.State = tempready;
+                entry2.Weight = tempweight;
+
+                UpdateRoomAdmin();
+            }
         }
 
         void SetReady() => Requests.SetReady(!Users.First(i => i.Text == App.User.Name).Ready.State?? false);

@@ -56,6 +56,9 @@ namespace Aleb.Client {
         public static void SetReady(bool state)
             => Network.Send(new Message("SetReady", state));
 
+        public static void SwitchUsers(string user1, string user2)
+            => Network.Send(new Message("SwitchUsers", user1, user2));
+
         public static void StartGame()
             => Network.Send(new Message("StartGame"));
 

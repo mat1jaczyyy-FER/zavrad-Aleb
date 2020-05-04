@@ -65,6 +65,9 @@ namespace Aleb.Client {
         public delegate void UserEventHandler(User user);
         public static event UserEventHandler UserJoined, UserLeft, UserReady;
 
+        public delegate void UsersSwitchedEventHandler(User user1, User user2);
+        public static event UsersSwitchedEventHandler UsersSwitched;
+
         public delegate void GameStartedEventHandler(int dealer, List<int> yourCards);
         public static event GameStartedEventHandler GameStarted;
 
@@ -121,6 +124,7 @@ namespace Aleb.Client {
             else if (msg.Command == "UserJoined") UserJoined?.Invoke(new User(msg.Args[0]));
             else if (msg.Command == "UserLeft") UserLeft?.Invoke(new User(msg.Args[0]));
             else if (msg.Command == "UserReady") UserReady?.Invoke(new User(msg.Args[0]) { Ready = Convert.ToBoolean(msg.Args[1]) });
+            else if (msg.Command == "UsersSwitched") UsersSwitched?.Invoke(new User(msg.Args[0]), new User(msg.Args[1]));
 
             else if (msg.Command == "GameStarted") GameStarted?.Invoke(Convert.ToInt32(msg.Args[0]), msg.Args[1].ToIntList());
 

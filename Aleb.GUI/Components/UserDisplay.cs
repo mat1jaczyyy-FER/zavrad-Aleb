@@ -10,16 +10,7 @@ namespace Aleb.GUI.Components {
 
         public string Text {
             get => User.Text;
-            set {
-                if (value.Length > 0 && value != " ") {
-                    User.Text = value;
-                    Opacity = 1;
-
-                } else {
-                    User.Text = " ";
-                    Opacity = 0;
-                }
-            }
+            set => User.Text = (value.Length > 0 && value != " ")? value : " ";
         }
     }
 }

@@ -27,6 +27,8 @@ namespace Aleb.GUI {
         
         public static readonly KeyModifiers ControlKey = RuntimeInformation.IsOSPlatform(OSPlatform.OSX)? KeyModifiers.Meta : KeyModifiers.Control;
 
+        public static bool Dragging;
+
         public static string[] Args;
 
         public static CultureInfo Culture = new CultureInfo("hr-HR");

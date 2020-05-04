@@ -109,6 +109,18 @@ namespace Aleb.Server {
                         Broadcast(room.Users, "UserReady", Name, value);
                     }
 
+                } else if (msg.Command == "SwitchUsers") {
+                    Room room = (msg.Args.Length == 2)? Room.Rooms.FirstOrDefault(i => i.Users.Contains(this)) : null;
+
+                    if (room != null) {
+                        User[] switching = Enumerable.Range(0, 2).Select(i => room.Users.FirstOrDefault(j => j.Name == msg.Args[i])).ToArray();
+
+                        if (room.Switch(switching)) {
+                            Client.Send("UsersSwitched", switching[0].Name, switching[1].Name);
+                            Broadcast(room.Users, "UsersSwitched", switching[0].Name, switching[1].Name);
+                        }
+                    }
+
                 } else if (msg.Command == "StartGame") {
                     Room room = Room.Rooms.FirstOrDefault(i => i.Users.Contains(this));
 

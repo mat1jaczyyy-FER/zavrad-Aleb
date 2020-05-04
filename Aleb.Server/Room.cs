@@ -62,6 +62,17 @@ namespace Aleb.Server {
             return true;
         }
 
+        public bool Switch(User[] switching) {
+            if (Game != null) return false;
+            if (switching == null || switching.Length != 2) return false;
+            if (!switching.All(Users.Contains)) return false;
+            if (switching[0] == switching[1]) return false;
+
+            People.Swap(Users.IndexOf(switching[0]), Users.IndexOf(switching[1]));
+
+            return true;
+        }
+
         public bool SetReady(User user, bool state) {
             Person person = People.FirstOrDefault(i => i.User == user);
 

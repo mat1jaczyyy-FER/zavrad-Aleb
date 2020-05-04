@@ -10,7 +10,7 @@ using Avalonia;
 
 namespace Aleb.GUI {
     static class Program {
-        public static readonly string Version = "Alpha Build 2";
+        public static readonly string Version = "Alpha Build 3";
 
         public static Stopwatch TimeSpent = new Stopwatch();
 
