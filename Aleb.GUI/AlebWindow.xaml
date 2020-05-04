@@ -3,8 +3,8 @@
         x:Class="Aleb.GUI.AlebWindow"
         xmlns:Components="clr-namespace:Aleb.GUI.Components"
         WindowStartupLocation="CenterScreen"
-        Width="960" MinWidth="960"
-        Height="540" MinHeight="540"
+        Width="960" MinWidth="480"
+        Height="540" MinHeight="270"
         Opened="Loaded" Closing="Unloaded"
         KeyDown="Window_KeyDown">
 
