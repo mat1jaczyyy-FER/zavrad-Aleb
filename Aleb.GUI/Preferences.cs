@@ -34,7 +34,7 @@ namespace Aleb.GUI {
             }
         }
 
-        static bool _Top = true;
+        static bool _Top = false;
         public static bool Topmost {
             get => _Top;
             set {
@@ -122,7 +122,7 @@ namespace Aleb.GUI {
                 writer.Write(Topmost);
             });
 
-            Encode(StatsPath, writer => writer.Write(Preferences.Time));
+            Encode(StatsPath, writer => writer.Write(Time));
         }
     }
 }
