@@ -308,11 +308,16 @@ namespace Aleb.GUI.Views {
             for (int i = 0; i < 4; i++)
                 UserText[i].Playing = i == playing;
 
-            if (State == GameState.Bidding)
-                Prompt = (playing == You)? new BidPrompt(playing == Dealer) : null;
+            if (playing == You) {
+                Audio.YourTurn();
+                
+                if (State == GameState.Bidding)
+                    Prompt = new BidPrompt(playing == Dealer);
 
-            else if (State == GameState.Declaring)
-                Prompt = (playing == You)? new DeclarePrompt(DeclareSelected) : null;
+                else if (State == GameState.Declaring)
+                    Prompt = new DeclarePrompt(DeclareSelected);
+
+            } else Prompt = null;
         }
 
         void NextPlaying() => SetPlaying(Utilities.Modulo(lastPlaying + 1, 4));

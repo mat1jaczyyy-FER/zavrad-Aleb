@@ -21,17 +21,24 @@
       <NoWarn>NU1701</NoWarn>
     </PackageReference>
     <PackageReference Include="Humanizer.Core.hr" Version="2.7.9" />
+    <PackageReference Include="NetCoreAudio" Version="1.5.0" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Update="**/*.cs">
       <DependentUpon>%(Filename).xaml</DependentUpon>
     </Compile>
+    
     <AvaloniaResource Include="**/*.xaml">
       <SubType>Designer</SubType>
     </AvaloniaResource>
+    
     <AvaloniaResource Include="Fonts/*" />
     <AvaloniaResource Include="Assets/**/*" />
+
+    <None Update="Audio/YourTurn.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
