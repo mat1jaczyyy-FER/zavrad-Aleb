@@ -13,7 +13,10 @@
       <Canvas Width="960" Height="540" HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="Canvas">
         <Grid Width="960" Height="540" RowDefinitions="Auto,*" x:Name="ContentRoot">
           <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Background="{DynamicResource ThemeBorderMidBrush}">
-            <Components:PreferencesButton Grid.Column="0" Margin="5 5" x:Name="PreferencesButton" />
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="5 5" Spacing="5">
+              <Components:PreferencesButton x:Name="PreferencesButton" />
+              <Components:PinButton x:Name="PinButton" />
+            </StackPanel>
 
             <Grid Grid.Column="1" Background="Transparent" PointerPressed="MoveWindow" />
 

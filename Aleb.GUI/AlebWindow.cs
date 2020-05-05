@@ -24,6 +24,7 @@ namespace Aleb.GUI {
             PopupTitle = this.Get<TextBlock>("PopupTitle");
             
             PreferencesButton = this.Get<PreferencesButton>("PreferencesButton");
+            PinButton = this.Get<PinButton>("PinButton");
             PopupClose = this.Get<Close>("PopupClose");
 
             view = this.Get<Border>("View");
@@ -36,8 +37,10 @@ namespace Aleb.GUI {
         Canvas Canvas;
 
         TextBlock TitleText;
-        PreferencesButton PreferencesButton;
         public TextBlock PopupTitle;
+
+        PreferencesButton PreferencesButton;
+        PinButton PinButton;
         public Close PopupClose;
 
         Border view, popup;
@@ -68,6 +71,7 @@ namespace Aleb.GUI {
                 popup.Child = value;
 
                 PreferencesButton.Enabled = Popup == null;
+                PinButton.Enabled = Popup == null;
 
                 PopupClose.IsEnabled = true;
                 PopupContainer.IsVisible = Popup != null;
@@ -83,6 +87,8 @@ namespace Aleb.GUI {
             #if DEBUG
                 this.AttachDevTools();
             #endif
+            
+            BringToTop();
         }
 
         IDisposable observable;
@@ -114,9 +120,9 @@ namespace Aleb.GUI {
 
         }
 
-        void BringToTop() {
+        public void BringToTop() {
             Topmost = true;
-            Topmost = false;
+            Topmost = Preferences.Topmost;
             Activate();
         }
 

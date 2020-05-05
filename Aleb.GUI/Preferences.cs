@@ -4,7 +4,7 @@ using System.IO;
 
 namespace Aleb.GUI {
     static class Preferences {
-        const int Version = 0;
+        const int Version = 1;
         static readonly char[] Header = new char[] {'A', 'L', 'E', 'B'};
 
         static readonly string FilePath = Path.Combine(Program.UserPath, "Aleb.config");
@@ -30,6 +30,19 @@ namespace Aleb.GUI {
             set {
                 _MiVi = value;
                 MiViChanged?.Invoke(MiVi);
+                Save();
+            }
+        }
+
+        static bool _Top = true;
+        public static bool Topmost {
+            get => _Top;
+            set {
+                _Top = value;
+
+                if (App.MainWindow != null)
+                    App.MainWindow.Topmost = _Top;
+
                 Save();
             }
         }
@@ -90,6 +103,9 @@ namespace Aleb.GUI {
                 DiscordPresence = reader.ReadBoolean();
 
                 MiVi = reader.ReadBoolean();
+
+                if (version >= 1)
+                    Topmost = reader.ReadBoolean();
             });
 
             Decode(StatsPath, reader => BaseTime = reader.ReadInt64());
@@ -102,6 +118,8 @@ namespace Aleb.GUI {
                 writer.Write(DiscordPresence);
 
                 writer.Write(MiVi);
+
+                writer.Write(Topmost);
             });
 
             Encode(StatsPath, writer => writer.Write(Preferences.Time));
