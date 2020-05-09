@@ -4,7 +4,7 @@ using System.IO;
 
 namespace Aleb.GUI {
     static class Preferences {
-        const int Version = 1;
+        const int Version = 2;
         static readonly char[] Header = new char[] {'A', 'L', 'E', 'B'};
 
         static readonly string FilePath = Path.Combine(Program.UserPath, "Aleb.config");
@@ -43,6 +43,22 @@ namespace Aleb.GUI {
                 if (App.MainWindow != null)
                     App.MainWindow.Topmost = _Top;
 
+                Save();
+            }
+        }
+
+        public enum NotificationType {
+            Never, Unfocused, Always
+        }
+
+        public static bool ShouldNotify(this NotificationType o)
+            => o == NotificationType.Always || (o == NotificationType.Unfocused && !App.MainWindow.IsActive);
+
+        static NotificationType _Notify = NotificationType.Unfocused;
+        public static NotificationType Notify {
+            get => _Notify;
+            set {
+                _Notify = value;
                 Save();
             }
         }
@@ -106,6 +122,9 @@ namespace Aleb.GUI {
 
                 if (version >= 1)
                     Topmost = reader.ReadBoolean();
+
+                if (version >= 2)
+                    Notify = (NotificationType)reader.ReadInt32();
             });
 
             Decode(StatsPath, reader => BaseTime = reader.ReadInt64());
@@ -120,6 +139,8 @@ namespace Aleb.GUI {
                 writer.Write(MiVi);
 
                 writer.Write(Topmost);
+
+                writer.Write((int)Notify);
             });
 
             Encode(StatsPath, writer => writer.Write(Time));

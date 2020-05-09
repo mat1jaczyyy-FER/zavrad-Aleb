@@ -5,7 +5,7 @@ namespace Aleb.GUI {
         static Player Player = new Player();
 
         public static void YourTurn() {
-            if (!App.MainWindow.IsActive)
+            if (Preferences.Notify.ShouldNotify())
                 Player.Play("Audio/YourTurn.wav");
         }
     }

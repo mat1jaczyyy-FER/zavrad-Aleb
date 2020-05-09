@@ -17,8 +17,8 @@ namespace Aleb.GUI.Popups {
 
             App.MainWindow.PopupTitle.Text = "Postavke";
 
-            MiVi = this.Get<RadioButton>("MiVi");
-            ViOni = this.Get<RadioButton>("ViOni");
+            MiVi = this.Get<ComboBox>("MiVi");
+            Notify = this.Get<ComboBox>("Notify");
 
             DiscordPresence = this.Get<CheckBox>("DiscordPresence");
 
@@ -28,7 +28,7 @@ namespace Aleb.GUI.Popups {
             Version = this.Get<TextBlock>("Version");
         }
 
-        RadioButton MiVi, ViOni;
+        ComboBox MiVi, Notify;
         CheckBox DiscordPresence;
 
         TextBlock CurrentSession, AllTime, Version;
@@ -59,14 +59,14 @@ namespace Aleb.GUI.Popups {
 
             DiscordPresence.IsChecked = Preferences.DiscordPresence;
 
-            MiVi.IsChecked = Preferences.MiVi;
-            ViOni.IsChecked = !Preferences.MiVi;
+            MiVi.SelectedIndex = Convert.ToInt32(Preferences.MiVi);
+            Notify.SelectedIndex = Convert.ToInt32(Preferences.Notify);
         }
 
         void DiscordPresence_Changed(object sender, RoutedEventArgs e) => Preferences.DiscordPresence = DiscordPresence.IsChecked.Value;
         
-        void MiVi_Changed(object sender, RoutedEventArgs e) => Preferences.MiVi = true;
-        void ViOni_Changed(object sender, RoutedEventArgs e) => Preferences.MiVi = false;
+        void MiVi_Changed(object sender, SelectionChangedEventArgs e) => Preferences.MiVi = MiVi.SelectedIndex != 0;
+        void Notify_Changed(object sender, SelectionChangedEventArgs e) => Preferences.Notify = (Preferences.NotificationType)Notify.SelectedIndex;
 
         void OpenCrashesFolder(object sender, RoutedEventArgs e) {
             if (!Directory.Exists(Program.UserPath)) Directory.CreateDirectory(Program.UserPath);
