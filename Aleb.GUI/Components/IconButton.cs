@@ -50,11 +50,13 @@ namespace Aleb.GUI.Components {
 
         protected void MouseLeave(object sender, PointerEventArgs e) {
             if (Enabled) Fill = (IBrush)Application.Current.Styles.FindResource(EnabledBrush);
-            mouseHeld = mouseOver = false;
+            mouseOver = false;
         }
 
         protected void MouseDown(object sender, PointerPressedEventArgs e) {
             PointerUpdateKind MouseButton = e.GetCurrentPoint(this).Properties.PointerUpdateKind;
+
+            e.Pointer.Capture(null);
 
             if (MouseButton == PointerUpdateKind.LeftButtonPressed || (AllowRightClick && MouseButton == PointerUpdateKind.RightButtonPressed)) {
                 mouseHeld = true;
