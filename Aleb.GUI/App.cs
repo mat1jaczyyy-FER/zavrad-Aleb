@@ -55,7 +55,7 @@ namespace Aleb.GUI {
             if (!(ApplicationLifetime is IClassicDesktopStyleApplicationLifetime lifetime)) throw new ApplicationException("Invalid ApplicationLifetime");
 
             #if !DEBUG
-                Host = "aleb.mat1jaczyyy.com";
+                Host = "40.114.147.48";
             #endif
 
             if (Args.Length == 2 && Args[0] == "--host") Host = Args[1];
