@@ -70,5 +70,7 @@
 
       <Components:RoundRow Header="True" Legend="Σ" IsVisible="False" x:Name="Total" />
     </StackPanel>
+
+    <TextBlock HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0 0 20 5" x:Name="TimeElapsed" />
   </Grid>
 </UserControl>

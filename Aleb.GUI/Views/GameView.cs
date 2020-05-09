@@ -15,6 +15,7 @@ using Aleb.Client;
 using Aleb.Common;
 using Aleb.GUI.Components;
 using Aleb.GUI.Prompts;
+using System.Diagnostics;
 
 namespace Aleb.GUI.Views {
     public class GameView: UserControl {
@@ -39,6 +40,8 @@ namespace Aleb.GUI.Views {
             alert = this.Get<StackPanel>("Alert");
             prompt = this.Get<Border>("Prompt");
             trump = this.Get<Border>("Trump");
+
+            TimeElapsed = this.Get<TextBlock>("TimeElapsed");
         }
 
         List<UserInGame> UserText;
@@ -50,6 +53,13 @@ namespace Aleb.GUI.Views {
         
         StackPanel alert;
         Border prompt, trump;
+
+        Stopwatch timer = new Stopwatch();
+        DispatcherTimer Timer;
+        TextBlock TimeElapsed;
+
+        void UpdateTime(object sender, EventArgs e)
+            => TimeElapsed.Text = $"{((int)timer.Elapsed.TotalHours > 0? $"{(int)timer.Elapsed.TotalHours}:" : "")}{timer.Elapsed.Minutes:00}:{timer.Elapsed.Seconds:00}";
 
         Control Prompt {
             get => (Control)prompt.Child;
@@ -226,6 +236,15 @@ namespace Aleb.GUI.Views {
 
             UpdateTitleRow(Preferences.MiVi);
             Preferences.MiViChanged += UpdateTitleRow;
+            
+            timer.Start();
+
+            UpdateTime(null, EventArgs.Empty);
+            Timer = new DispatcherTimer() {
+                Interval = new TimeSpan(0, 0, 0, 0, 500)
+            };
+            Timer.Tick += UpdateTime;
+            Timer.Start();
 
             GameStarted(dealer, cards);
         }
@@ -280,6 +299,10 @@ namespace Aleb.GUI.Views {
             Network.TotalScore -= TotalScore;
 
             Network.GameFinished -= GameFinished;
+
+            timer.Stop();
+            Timer.Stop();
+            Timer.Tick -= UpdateTime;
         }
 
         GameState State;
