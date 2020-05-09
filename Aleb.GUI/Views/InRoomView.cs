@@ -39,7 +39,7 @@ namespace Aleb.GUI.Views {
             StartButton.IsVisible = isAdmin;
             StartButton.Enabled = isAdmin && Users.All(i => i.Ready.State == true);
 
-            UserInRoom.AllowDragDrop = isAdmin;
+            UserInRoom.AllowAdminActions = isAdmin;
         }
 
         public InRoomView() => throw new InvalidOperationException();
@@ -67,6 +67,7 @@ namespace Aleb.GUI.Views {
             Network.UserReady += UserReady;
             Network.UserLeft += UserLeft;
             Network.UsersSwitched += UsersSwitched;
+            Network.Kicked += Kicked;
 
             Network.GameStarted += GameStarted;
 
@@ -78,6 +79,7 @@ namespace Aleb.GUI.Views {
             Network.UserReady -= UserReady;
             Network.UserLeft -= UserLeft;
             Network.UsersSwitched -= UsersSwitched;
+            Network.Kicked -= Kicked;
 
             Network.GameStarted -= GameStarted;
         }
@@ -165,6 +167,15 @@ namespace Aleb.GUI.Views {
 
                 UpdateRoomAdmin();
             }
+        }
+
+        void Kicked() {
+            if (!Dispatcher.UIThread.CheckAccess()) {
+                Dispatcher.UIThread.InvokeAsync(Kicked);
+                return;
+            }
+
+            App.MainWindow.View = new RoomListView(); // todo notification in corner
         }
 
         void SetReady() => Requests.SetReady(!Users.First(i => i.Text == App.User.Name).Ready.State?? false);

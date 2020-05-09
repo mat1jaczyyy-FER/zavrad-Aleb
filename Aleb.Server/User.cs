@@ -112,12 +112,27 @@ namespace Aleb.Server {
                 } else if (msg.Command == "SwitchUsers") {
                     Room room = (msg.Args.Length == 2)? Room.Rooms.FirstOrDefault(i => i.Users.Contains(this)) : null;
 
-                    if (room != null) {
+                    if (room != null && room.Users[0] == this) {
                         User[] switching = Enumerable.Range(0, 2).Select(i => room.Users.FirstOrDefault(j => j.Name == msg.Args[i])).ToArray();
 
                         if (room.Switch(switching)) {
                             Client.Send("UsersSwitched", switching[0].Name, switching[1].Name);
                             Broadcast(room.Users, "UsersSwitched", switching[0].Name, switching[1].Name);
+                        }
+                    }
+                
+                } else if (msg.Command == "KickUser") {
+                    Room room = (msg.Args.Length == 1)? Room.Rooms.FirstOrDefault(i => i.Users.Contains(this)) : null;
+
+                    if (room != null && room.Users[0] == this) {
+                        User kicking = room.Users.FirstOrDefault(i => i.Name == msg.Args[0]);
+
+                        if (room?.Leave(kicking) == true) {
+                            kicking.Client.Send("Kicked");
+                            kicking.Client.Flush();
+
+                            BroadcastIdle("RoomUpdated", room.ToString());
+                            kicking.Broadcast(room.Users, "UserLeft", kicking.Name);
                         }
                     }
 

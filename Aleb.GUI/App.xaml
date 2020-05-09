@@ -15,6 +15,10 @@
       <Setter Property="HasSystemDecorations" Value="false" />
     </Style>
 
+    <Style Selector="MenuItem">
+      <Setter Property="Focusable" Value="false" />
+    </Style>
+
     <Style Selector="TextBlock.heading">
       <Setter Property="Foreground" Value="{DynamicResource ThemeControlHighlightMidBrush}" />
     </Style>

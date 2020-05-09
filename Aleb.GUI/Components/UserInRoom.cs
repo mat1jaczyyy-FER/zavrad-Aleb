@@ -17,6 +17,7 @@ namespace Aleb.GUI.Components {
             base.InitializeComponent();
             
             Ready = this.Get<Checkmark>("Ready");
+            Menu = (AlebContextMenu)this.Resources["Menu"];
         }
 
         public Checkmark Ready { get; private set; }
@@ -25,6 +26,8 @@ namespace Aleb.GUI.Components {
             get => User.FontWeight == FontWeight.Bold;
             set => User.FontWeight = value? FontWeight.Bold : FontWeight.Regular;
         }
+
+        AlebContextMenu Menu;
 
         public UserInRoom() {
             InitializeComponent();
@@ -40,8 +43,8 @@ namespace Aleb.GUI.Components {
 
         const string DragFormat = "aleb-user";
 
-        public static bool AllowDragDrop;
-        public bool CanDragDrop => AllowDragDrop && Text != " ";
+        public static bool AllowAdminActions;
+        public bool CanDragDrop => AllowAdminActions && Text != " ";
 
         bool CanDrag(PointerPressedEventArgs e)
             => CanDragDrop && e.GetCurrentPoint(this).Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonPressed;
@@ -74,6 +77,24 @@ namespace Aleb.GUI.Components {
                 Requests.SwitchUsers(Text, dragged.Text);
                 e.Handled = true;
             }
+        }
+
+        void MenuOpen(object sender, PointerReleasedEventArgs e) {
+            if (e.GetCurrentPoint(this).Properties.PointerUpdateKind != PointerUpdateKind.RightButtonReleased) return;
+
+            e.Handled = true;
+
+            Menu.Open(
+                this,
+                AllowAdminActions && App.User.Name != Text
+                    ? null
+                    : new string[] { "Izbaci" }
+            );
+        }
+
+        void MenuAction(string action) {
+            if (action == "Izbaci" && AllowAdminActions)
+                Requests.KickUser(Text);
         }
     }
 }

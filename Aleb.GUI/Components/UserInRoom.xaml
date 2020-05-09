@@ -3,9 +3,15 @@
              x:Class="Aleb.GUI.Components.UserInRoom"
              xmlns:Components="clr-namespace:Aleb.GUI.Components"
              Background="Transparent" DragDrop.AllowDrop="True"
-             DetachedFromVisualTree="Unloaded" PointerPressed="Drag">
+             DetachedFromVisualTree="Unloaded" PointerPressed="Drag" PointerReleased="MenuOpen">
 
-  <StackPanel Margin="5 3" Orientation="Horizontal" Spacing="5" >
+  <UserControl.Resources>
+    <Components:AlebContextMenu x:Key="Menu" MenuAction="MenuAction">
+      <MenuItem Header="Izbaci" />
+    </Components:AlebContextMenu>
+  </UserControl.Resources>
+
+  <StackPanel Margin="5 3" Orientation="Horizontal" Spacing="5">
     <TextBlock VerticalAlignment="Center" x:Name="User" />
     <Components:Checkmark VerticalAlignment="Center" x:Name="Ready" />
   </StackPanel>
