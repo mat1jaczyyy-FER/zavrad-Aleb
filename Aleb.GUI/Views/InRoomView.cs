@@ -149,15 +149,18 @@ namespace Aleb.GUI.Views {
 
             if (entry1 != null && entry2 != null) {
                 string temptext = entry1.Text;
-                bool? tempready = entry1.Ready.State;
                 bool tempweight = entry1.Weight;
 
                 entry1.Text = entry2.Text;
-                entry1.Ready.State = entry2.Ready.State;
+                entry1.Ready.State = false;
+                if (user1 == App.User)
+                    ReadyButton.State = false;
                 entry1.Weight = entry2.Weight;
 
                 entry2.Text = temptext;
-                entry2.Ready.State = tempready;
+                entry2.Ready.State = false;
+                if (user2 == App.User)
+                    ReadyButton.State = false;
                 entry2.Weight = tempweight;
 
                 UpdateRoomAdmin();

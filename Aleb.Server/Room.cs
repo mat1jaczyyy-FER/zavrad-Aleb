@@ -68,8 +68,11 @@ namespace Aleb.Server {
             if (!switching.All(Users.Contains)) return false;
             if (switching[0] == switching[1]) return false;
 
-            People.Swap(Users.IndexOf(switching[0]), Users.IndexOf(switching[1]));
+            List<int> indexes = switching.Select(i => Users.IndexOf(i)).ToList();
+            indexes.ForEach(i => People[i].Ready = false);
 
+            People.Swap(indexes[0], indexes[1]);
+            
             return true;
         }
 
