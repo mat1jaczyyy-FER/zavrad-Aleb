@@ -26,6 +26,8 @@ namespace Aleb.Common {
                 _client = value;
 
                 if (Client != null) {
+                    _client.NoDelay = true;
+
                     Reader = new StreamReader(Client.GetStream());
                     Writer = new StreamWriter(Client.GetStream());
 
