@@ -261,7 +261,6 @@ namespace Aleb.GUI.Views {
             Network.WinningDeclaration += WinningDeclaration;
             Network.StartPlayingCards += StartPlayingCards;
 
-            Network.YouPlayed += YouPlayed;
             Network.AskBela += AskBela;
             Network.CardPlayed += CardPlayed;
 
@@ -288,7 +287,6 @@ namespace Aleb.GUI.Views {
             Network.WinningDeclaration -= WinningDeclaration;
             Network.StartPlayingCards -= StartPlayingCards;
 
-            Network.YouPlayed -= YouPlayed;
             Network.AskBela -= AskBela;
             Network.CardPlayed -= CardPlayed;
 
@@ -345,7 +343,9 @@ namespace Aleb.GUI.Views {
 
         void NextPlaying() => SetPlaying(Utilities.Modulo(lastPlaying + 1, 4));
 
-        void CardClicked(CardImage sender) {
+        bool playWaiting;
+
+        async void CardClicked(CardImage sender) {
             int index = Cards.Children.IndexOf(sender);
 
             if (State == GameState.Bidding && lastPlaying == You && index >= 6) {
@@ -359,8 +359,24 @@ namespace Aleb.GUI.Views {
             
             } else if (State == GameState.Playing && Prompt == null) {
                 if (lastPlaying == You) {
+                    if (playWaiting) return;
+                    playWaiting = true;
+
                     lastPlayed = sender;
-                    Requests.PlayCard(index);
+                    int played = await Requests.PlayCard(index);
+
+                    playWaiting = false;
+
+                    if (State != GameState.Playing) return;
+
+                    if (played != -1) {
+                        Cards.Children.RemoveAt(played);
+                
+                        if (!Cards.Children.Any()) Cards.Parent.Opacity = 0;
+
+                        Prompt = null;
+
+                    } else Table(You, new TextOverlay("Neispravna karta", 3000));
 
                 } else Table(You, new TextOverlay("Niste na potezu", 3000));
             }
@@ -491,24 +507,6 @@ namespace Aleb.GUI.Views {
 
             SetPlaying(Utilities.Modulo(Dealer + 1, 4));
             lastInTable = Utilities.Modulo(lastPlaying - 1, 4);
-        }
-
-        void YouPlayed(int index) {
-            if (!Dispatcher.UIThread.CheckAccess()) {
-                Dispatcher.UIThread.InvokeAsync(() => YouPlayed(index));
-                return;
-            }
-
-            if (State != GameState.Playing) return;
-
-            if (index != -1) {
-                Cards.Children.RemoveAt(index);
-                
-                if (!Cards.Children.Any()) Cards.Parent.Opacity = 0;
-
-                Prompt = null;
-
-            } else Table(You, new TextOverlay("Neispravna karta", 3000));
         }
 
         void AskBela() {

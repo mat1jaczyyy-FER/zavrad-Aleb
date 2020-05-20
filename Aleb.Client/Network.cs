@@ -89,8 +89,6 @@ namespace Aleb.Client {
         public static event WinningDeclarationEventHandler WinningDeclaration;
 
         public static event NothingEventHandler StartPlayingCards;
-
-        public static event SimpleIntEventHandler YouPlayed;
         
         public static event NothingEventHandler AskBela;
         
@@ -140,7 +138,6 @@ namespace Aleb.Client {
             else if (msg.Command == "WinningDeclaration") WinningDeclaration?.Invoke(Convert.ToInt32(msg.Args[0]), Convert.ToInt32(msg.Args[1]), msg.Args[2].ToIntList(), msg.Args[3].ToIntList());
             else if (msg.Command == "StartPlayingCards") StartPlayingCards?.Invoke();
 
-            else if (msg.Command == "YouPlayed") YouPlayed?.Invoke(Convert.ToInt32(msg.Args[0]));
             else if (msg.Command == "AskBela") AskBela?.Invoke();
             else if (msg.Command == "CardPlayed") CardPlayed?.Invoke(Convert.ToInt32(msg.Args[0]), Convert.ToBoolean(msg.Args[1]));
 
