@@ -5,18 +5,16 @@ using Aleb.Common;
 
 namespace Aleb.Server {
     class Room {
-        public static readonly List<int> ScoreGoals = new List<int>() { 501, 701, 1001 };
-
         public static List<Room> Rooms { get; private set; } = new List<Room>();
 
         public static Room Create(string name, GameType? type, int goal, User creator) {
             if (!Validation.ValidateRoomName(name)) return null;
             if (type == null) return null;
-            if (goal < 0 || ScoreGoals.Count < goal) return null;
+            if (!Validation.ValidateRoomGoal(goal)) return null;
 
             if (Rooms.Any(i => i.Name == name || i.Users.Contains(creator))) return null;
 
-            Room room = new Room(name, type.Value, ScoreGoals[goal], creator);
+            Room room = new Room(name, type.Value, goal, creator);
             Rooms.Add(room);
 
             return room;

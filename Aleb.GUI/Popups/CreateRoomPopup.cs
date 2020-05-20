@@ -1,4 +1,6 @@
-﻿using Avalonia;
+﻿using System.Linq;
+
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
@@ -17,31 +19,49 @@ namespace Aleb.GUI.Popups {
 
             RoomName = this.Get<ValidationTextBox>("RoomName");
             Type = this.Get<ComboBox>("Type");
-            Goal = this.Get<ComboBox>("Goal");
+            Goal = this.Get<ValidationTextBox>("Goal");
 
             CreateButton = this.Get<Button>("CreateButton");
             Status = this.Get<TextBlock>("Status");
         }
 
-        ValidationTextBox RoomName;
-        ComboBox Type, Goal;
+        ValidationTextBox RoomName, Goal;
+        ComboBox Type;
 
         Button CreateButton;
         TextBlock Status;
+
+        bool[] Valid = new bool[2];
+
+        int RoomGoalInt(string text)
+            => int.TryParse(text, out int result)? result : 0;
 
         public CreateRoomPopup() {
             InitializeComponent();
 
             RoomName.Validator = Validation.ValidateRoomName;
             Type.SelectedItem = GameType.Prolaz;
-            Goal.SelectedIndex = 2;
+            Goal.Validator = x => Validation.ValidateRoomGoal(RoomGoalInt(x));
         }
 
         void Loaded(object sender, VisualTreeAttachmentEventArgs e) {}
 
         void Unloaded(object sender, VisualTreeAttachmentEventArgs e) {}
 
-        void RoomName_Validated(bool state) => CreateButton.IsEnabled = state;
+        void Validate() {
+            if (CreateButton != null)
+                CreateButton.IsEnabled = Valid.All(i => i);
+        }
+
+        void RoomName_Validated(bool state) {
+            Valid[0] = state;
+            Validate();
+        }
+
+        void Goal_Validated(bool state) {
+            Valid[1] = state;
+            Validate();
+        }
 
         void Return() => Create(null, null);
 
@@ -50,7 +70,7 @@ namespace Aleb.GUI.Popups {
             Status.Text = " ";
             Focus();
             
-            Room room = await Requests.CreateRoom(RoomName.Text, (GameType)Type.SelectedItem, Goal.SelectedIndex);
+            Room room = await Requests.CreateRoom(RoomName.Text, (GameType)Type.SelectedItem, RoomGoalInt(Goal.Text));
 
             if (room == null) {
                 RoomName.IsEnabled = true;

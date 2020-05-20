@@ -26,7 +26,7 @@ namespace Aleb.GUI.Components {
                 MenuAction?.Invoke((string)menuItem.Header);
         }
 
-        public new void Open(Control control, string[] hide = null) {
+        public void Open(Control control, string[] hide = null) {
             hide = hide?? new string[0];
 
             foreach (MenuItem item in Items.OfType<MenuItem>())

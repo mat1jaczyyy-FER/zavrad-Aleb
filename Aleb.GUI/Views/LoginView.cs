@@ -38,7 +38,10 @@ namespace Aleb.GUI.Views {
 
         void Unloaded(object sender, VisualTreeAttachmentEventArgs e) {}
 
-        void Validate() => LoginButton.IsEnabled = Valid.All(i => i);
+        void Validate() {
+            if (LoginButton != null)
+                LoginButton.IsEnabled = Valid.All(i => i);
+        }
 
         void Username_Validated(bool state) {
             Valid[0] = state;
