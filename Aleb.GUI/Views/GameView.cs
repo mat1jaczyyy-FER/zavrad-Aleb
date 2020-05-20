@@ -241,7 +241,7 @@ namespace Aleb.GUI.Views {
 
             UpdateTime(null, EventArgs.Empty);
             Timer = new DispatcherTimer() {
-                Interval = new TimeSpan(0, 0, 0, 0, 500)
+                Interval = new TimeSpan(0, 0, 0, 0, 100)
             };
             Timer.Tick += UpdateTime;
             Timer.Start();
