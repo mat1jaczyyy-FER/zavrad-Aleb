@@ -348,7 +348,10 @@ namespace Aleb.GUI.Views {
         void CardClicked(CardImage sender) {
             int index = Cards.Children.IndexOf(sender);
 
-            if (State == GameState.Declaring && DeclareSelected != null) {
+            if (State == GameState.Bidding && lastPlaying == You && index >= 6) {
+                Requests.TalonBid(index - 6);
+
+            } if (State == GameState.Declaring && DeclareSelected != null) {
                 DeclareSelected[index] = !DeclareSelected[index];
 
                 int margin = 15 * Convert.ToInt32(DeclareSelected[index]);
