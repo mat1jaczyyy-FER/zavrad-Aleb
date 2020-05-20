@@ -20,18 +20,20 @@ namespace Aleb.GUI.Popups {
             RoomName = this.Get<ValidationTextBox>("RoomName");
             Type = this.Get<ComboBox>("Type");
             Goal = this.Get<ValidationTextBox>("Goal");
+            Password = this.Get<ValidationTextBox>("Password");
 
             CreateButton = this.Get<Button>("CreateButton");
             Status = this.Get<TextBlock>("Status");
         }
 
-        ValidationTextBox RoomName, Goal;
+        ValidationTextBox RoomName, Goal, Password;
         ComboBox Type;
 
         Button CreateButton;
         TextBlock Status;
 
-        bool[] Valid = new bool[2];
+        // TODO REWRITE GROUPS
+        bool[] Valid = new bool[3];
 
         int RoomGoalInt(string text)
             => int.TryParse(text, out int result)? result : 0;
@@ -42,6 +44,7 @@ namespace Aleb.GUI.Popups {
             RoomName.Validator = Validation.ValidateRoomName;
             Type.SelectedItem = GameType.Prolaz;
             Goal.Validator = x => Validation.ValidateRoomGoal(RoomGoalInt(x));
+            Password.Validator = Validation.ValidateRoomPassword;
         }
 
         void Loaded(object sender, VisualTreeAttachmentEventArgs e) {}
@@ -63,23 +66,28 @@ namespace Aleb.GUI.Popups {
             Validate();
         }
 
+        void Password_Validated(bool state) {
+            Valid[2] = state;
+            Validate();
+        }
+
         void Return() => Create(null, null);
 
         async void Create(object sender, RoutedEventArgs e) {
-            RoomName.IsEnabled = CreateButton.IsEnabled = App.MainWindow.PopupClose.IsEnabled = false;
+            RoomName.IsEnabled = Type.IsEnabled = Goal.IsEnabled = Password.IsEnabled = CreateButton.IsEnabled = App.MainWindow.PopupClose.IsEnabled = false;
             Status.Text = " ";
             Focus();
             
-            Room room = await Requests.CreateRoom(RoomName.Text, (GameType)Type.SelectedItem, RoomGoalInt(Goal.Text));
+            Room room = await Requests.CreateRoom(RoomName.Text, (GameType)Type.SelectedItem, RoomGoalInt(Goal.Text), Password.Text);
 
             if (room == null) {
-                RoomName.IsEnabled = true;
-                CreateButton.IsEnabled = false;
-                App.MainWindow.PopupClose.IsEnabled = true;
+                RoomName.IsEnabled = Type.IsEnabled = Goal.IsEnabled = Password.IsEnabled = CreateButton.IsEnabled = App.MainWindow.PopupClose.IsEnabled = true;
 
                 Status.Text = "Nije moguće stvoriti sobu.";
                 return;
             }
+
+            room.Password = Password.Text;
 
             App.MainWindow.Popup = null;
             App.MainWindow.View = new InRoomView(room);

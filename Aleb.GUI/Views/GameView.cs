@@ -603,13 +603,15 @@ namespace Aleb.GUI.Views {
             Total.IsVisible = true;
         }
 
-        void GameFinished(List<int> score, Room room) {
+        void GameFinished(List<int> score, Room room, string password) {
             if (!Dispatcher.UIThread.CheckAccess()) {
-                Dispatcher.UIThread.InvokeAsync(() => GameFinished(score, room));
+                Dispatcher.UIThread.InvokeAsync(() => GameFinished(score, room, password));
                 return;
             }
 
             if (State != GameState.Playing) return;
+
+            room.Password = password;
             
             App.MainWindow.View = new ResultsView(score, room);
         }

@@ -65,8 +65,8 @@ namespace Aleb.Server {
                     Client.Send("RoomList", Room.Rooms.Select(i => i.ToString()).ToArray());
                     
                 } else if (msg.Command == "CreateRoom") {
-                    Room room = (msg.Args.Length == 3)
-                        ? Room.Create(msg.Args[0], msg.Args[1].ToEnum<GameType>(), Convert.ToInt32(msg.Args[2]), this)
+                    Room room = (msg.Args.Length == 4)
+                        ? Room.Create(msg.Args[0], msg.Args[1].ToEnum<GameType>(), Convert.ToInt32(msg.Args[2]), msg.Args[3], this)
                         : null;
 
                     if (room != null) {
@@ -77,9 +77,9 @@ namespace Aleb.Server {
                     } else Client.Send("RoomFailed");
                 
                 } else if (msg.Command == "JoinRoom") {
-                    Room room = (msg.Args.Length == 1)? Room.Rooms.FirstOrDefault(i => i.Name == msg.Args[0]) : null;
+                    Room room = (msg.Args.Length == 2)? Room.Rooms.FirstOrDefault(i => i.Name == msg.Args[0]) : null;
 
-                    if (room?.Join(this) == true) {
+                    if (room?.Join(this, msg.Args[1]) == true) {
                         Client.Send("RoomJoined", room.ToString(), string.Join(',', room.People.Select(i => i.Ready)));
 
                         BroadcastIdle("RoomUpdated", room.ToString());

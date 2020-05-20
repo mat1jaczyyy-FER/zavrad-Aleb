@@ -7,6 +7,7 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 
 using Aleb.Client;
+using Aleb.GUI.Popups;
 
 namespace Aleb.GUI.Components {
     public class RoomEntry: IconButton {
@@ -17,6 +18,7 @@ namespace Aleb.GUI.Components {
             AvaloniaXamlLoader.Load(this);
 
             NameText = this.Get<TextBlock>("NameText");
+            PasswordIcon = this.Get<LockIcon>("PasswordIcon");
             Settings = this.Get<TextBlock>("Settings");
             Separator = this.Get<Border>("Separator");
 
@@ -29,6 +31,7 @@ namespace Aleb.GUI.Components {
         }
 
         TextBlock NameText, Settings;
+        LockIcon PasswordIcon;
         Border Separator;
         List<UserInList> Users;
 
@@ -39,6 +42,8 @@ namespace Aleb.GUI.Components {
                 _room = value;
                 NameText.Text = Room.Name;
                 Settings.Text = Room.Settings;
+
+                PasswordIcon.IsVisible = Room.HasPassword;
                 
                 for (int i = 0; i < 4; i++)
                     Users[i].Text = Room.Users[i]?.Name?? "";
@@ -49,10 +54,12 @@ namespace Aleb.GUI.Components {
             }
         }
 
-        public RoomEntry(): base("ThemeBackgroundBrush", "ThemeControlLowBrush", "ThemeControlHighBrush", "ThemeControlMidHighBrush") {
-            InitializeComponent();
-        }
+        public RoomEntry(): base("ThemeBackgroundBrush", "ThemeControlLowBrush", "ThemeControlHighBrush", "ThemeControlMidHighBrush")
+            => InitializeComponent();
 
-        void JoinRoom() => RoomJoined?.Invoke(Room);
+        void JoinRoom() {
+            if (Room.HasPassword) App.MainWindow.Popup = new PasswordEntryPopup(Room);
+            else RoomJoined?.Invoke(Room);
+        }
     }
 }

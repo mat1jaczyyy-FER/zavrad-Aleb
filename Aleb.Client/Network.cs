@@ -106,7 +106,7 @@ namespace Aleb.Client {
         public delegate void TotalScoreEventHandler(List<int> final, bool fail, List<int> total);
         public static event TotalScoreEventHandler TotalScore;
 
-        public delegate void GameFinishedEventHandler(List<int> score, Room room);
+        public delegate void GameFinishedEventHandler(List<int> score, Room room, string password);
         public static event GameFinishedEventHandler GameFinished;
 
         static void Received(AlebClient sender, Message msg) {
@@ -147,7 +147,7 @@ namespace Aleb.Client {
             else if (msg.Command == "FinalScores") FinalScores?.Invoke(msg.Args[0].ToIntList(), Convert.ToBoolean(msg.Args[1]));
             else if (msg.Command == "TotalScore") TotalScore?.Invoke(msg.Args[0].ToIntList(), Convert.ToBoolean(msg.Args[1]), msg.Args[2].ToIntList());
 
-            else if (msg.Command == "GameFinished") GameFinished?.Invoke(msg.Args[0].ToIntList(), new Room(msg.Args[1]));
+            else if (msg.Command == "GameFinished") GameFinished?.Invoke(msg.Args[0].ToIntList(), new Room(msg.Args[1]), msg.Args[2]);
         }
 
         public static Task<Message> Register(params string[] expected) {

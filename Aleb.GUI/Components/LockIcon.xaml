@@ -1,0 +1,19 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Aleb.GUI.Components.LockIcon">
+
+  <UserControl.Resources>
+    <SolidColorBrush x:Key="Brush" />
+  </UserControl.Resources>
+
+  <Canvas Width="12" Height="12" Background="Transparent"
+          PointerEnter="MouseEnter" PointerLeave="MouseLeave" PointerPressed="MouseDown" PointerReleased="MouseUp">
+
+    <Path Fill="{DynamicResource Brush}"
+          Data="F1 M 0,0 C -1.6,0 -3.04,1.28 -3.04,3.04 L -3.04,4 -1.92,4 -1.92,3.04 C -1.92,1.92 -1.12,0.96 0,0.96 1.12,0.96 2.08,1.92 2.08,3.04 L 2.08,3.52 -4.48,3.52 -4.48,9.92 4.48,9.92 4.48,3.52 3.04,3.52 3.04,3.04 C 3.04,1.28 1.6,0 0,0 Z">
+      <Path.RenderTransform>
+        <MatrixTransform Matrix="1,0,0,1,5.92,0.96" />
+      </Path.RenderTransform>
+    </Path>
+  </Canvas>
+</UserControl>

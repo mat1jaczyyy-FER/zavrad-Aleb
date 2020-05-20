@@ -23,21 +23,25 @@ namespace Aleb.Client {
         public static async Task<List<Room>> GetRoomList()
             => (await Network.Ask(new Message("GetRoomList"), "RoomList"))?.Args.Select(i => new Room(i)).ToList()?? new List<Room>();
 
-        public static async Task<Room> CreateRoom(string name, GameType type, int goal) {
+        public static async Task<Room> CreateRoom(string name, GameType type, int goal, string password) {
             name = name?? "";
+            password = password?? "";
 
             if (!Validation.ValidateRoomName(name)) return null;
+            if (!Validation.ValidateRoomPassword(password)) return null;
 
-            Message response = await Network.Ask(new Message("CreateRoom", name, type, goal), "RoomCreated", "RoomFailed");
+            Message response = await Network.Ask(new Message("CreateRoom", name, type, goal, password), "RoomCreated", "RoomFailed");
             return response.Command == "RoomCreated"? new Room(response.Args[0]) : null;
         }
 
-        public static async Task<Room> JoinRoom(string name) {
+        public static async Task<Room> JoinRoom(string name, string password) {
             name = name?? "";
+            password = password?? "";
 
             if (!Validation.ValidateRoomName(name)) return null;
+            if (!Validation.ValidateRoomPassword(password)) return null;
 
-            Message response = await Network.Ask(new Message("JoinRoom", name), "RoomJoined", "RoomJoinFailed");
+            Message response = await Network.Ask(new Message("JoinRoom", name, password), "RoomJoined", "RoomJoinFailed");
 
             if (response.Command != "RoomJoined") return null;
 

@@ -8,8 +8,12 @@
         PointerEnter="MouseEnter" PointerLeave="MouseLeave" PointerPressed="MouseDown" PointerReleased="MouseUp">
     
     <TextBlock Grid.Row="0" HorizontalAlignment="Center" FontWeight="Bold" x:Name="NameText" />
-    
-    <TextBlock Grid.Row="2" HorizontalAlignment="Center" Classes="heading" x:Name="Settings" />
+
+    <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
+      <Components:LockIcon Enabled="False" x:Name="PasswordIcon" />
+
+      <TextBlock Classes="heading" x:Name="Settings" />
+    </StackPanel>
 
     <StackPanel Grid.Row="4" HorizontalAlignment="Center" Spacing="5" x:Name="Users">
       <Components:UserInList Margin="15 0" HorizontalAlignment="Center" />

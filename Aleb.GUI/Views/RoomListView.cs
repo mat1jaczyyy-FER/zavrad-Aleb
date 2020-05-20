@@ -76,15 +76,14 @@ namespace Aleb.GUI.Views {
             RoomList.Children.RemoveAll(Rooms.Where(i => i.Room.Name == name).ToList());
         }
         
-        void CreateRoom() {
-            App.MainWindow.Popup = new CreateRoomPopup();
-        }
+        void CreateRoom()
+            => App.MainWindow.Popup = new CreateRoomPopup();
 
         async void JoinRoom(Room room) {
             RoomList.IsEnabled = Create.Enabled = false;
             Focus();
             
-            room = await Requests.JoinRoom(room.Name);
+            room = await Requests.JoinRoom(room.Name, "");
 
             if (room == null) {
                 RoomList.IsEnabled = Create.Enabled = true;

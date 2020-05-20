@@ -10,6 +10,9 @@ namespace Aleb.Client {
         public readonly int Goal;
         public int Count;
 
+        public bool HasPassword;
+        public string Password = "";
+
         User[] _users = new User[4];
         public User[] Users { 
             get => _users;
@@ -27,9 +30,10 @@ namespace Aleb.Client {
             Name = args[0];
             Type = args[1].ToEnum<GameType>().Value;
             Goal = Convert.ToInt32(args[2]);
-            Count = Convert.ToInt32(args[3]);
+            HasPassword = Convert.ToBoolean(args[3]);
+            Count = Convert.ToInt32(args[4]);
 
-            Users = args.Skip(4).Select(i => new User(i)).ToArray();
+            Users = args.Skip(5).Select(i => new User(i)).ToArray();
         }
 
         public override bool Equals(object obj) {

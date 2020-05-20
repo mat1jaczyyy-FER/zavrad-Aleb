@@ -18,6 +18,8 @@ namespace Aleb.GUI.Views {
 
             NameText = this.Get<TextBlock>("NameText");
             Settings = this.Get<TextBlock>("Settings");
+            PasswordIcon = this.Get<LockIcon>("PasswordIcon");
+
             Users = this.Get<StackPanel>("Users").Children.OfType<UserInRoom>().ToList();
             Separator = this.Get<Border>("Separator");
 
@@ -26,8 +28,11 @@ namespace Aleb.GUI.Views {
         }
 
         TextBlock NameText, Settings;
+        LockIcon PasswordIcon;
+
         List<UserInRoom> Users;
         Border Separator;
+
         Ready ReadyButton;
         Start StartButton;
 
@@ -41,6 +46,8 @@ namespace Aleb.GUI.Views {
 
             UserInRoom.AllowAdminActions = isAdmin;
         }
+
+        string Password;
 
         public InRoomView() => throw new InvalidOperationException();
             
@@ -58,6 +65,9 @@ namespace Aleb.GUI.Views {
             
             Count = room.Users.Count(i => i != null);
             Separator.Opacity = Convert.ToDouble(Count > 2);
+
+            PasswordIcon.IsVisible = room.HasPassword;
+            Password = room.Password;
 
             UpdateRoomAdmin();
         }
@@ -83,6 +93,9 @@ namespace Aleb.GUI.Views {
 
             Network.GameStarted -= GameStarted;
         }
+
+        async void CopyPassword()
+            => await Application.Current.Clipboard.SetTextAsync(Password);
 
         void UserJoined(User user) {
             if (!Dispatcher.UIThread.CheckAccess()) {
@@ -194,7 +207,10 @@ namespace Aleb.GUI.Views {
                 return;
             }
 
-            App.MainWindow.View = new GameView(Users.Select(i => i.Text).ToList(), dealer, cards);
+            GameView game = new GameView(Users.Select(i => i.Text).ToList());
+
+            App.MainWindow.View = game;
+            game.GameStarted(dealer, cards);
         }
     }
 }
