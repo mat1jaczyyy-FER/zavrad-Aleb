@@ -73,8 +73,24 @@ namespace Aleb.Server {
         public User User { get; private set; }
 
         public void SendMessage(int delay, string command, params dynamic[] args) {
+            Message msg = new Message(command, args);
+
             if (User?.Client?.Connected == true)
                 User.Client.Send(delay, new Message(command, args));
+
+            if (Record) TempRecords.Add(msg);
+        }
+
+        public void YouDeclared(bool result) {
+            Record = result;
+            SendMessage("YouDeclared", result);
+            Record = true;
+        }
+
+        public void YouPlayed(int result) {
+            Record = result != -1;
+            SendMessage("YouPlayed", result);
+            Record = true;
         }
 
         public void SendMessage(string command, params dynamic[] args)
@@ -83,6 +99,32 @@ namespace Aleb.Server {
         public void Flush() {
             if (User?.Client?.Connected == true)
                 User.Client.Flush();
+            
+            TempRecords.Reverse();
+            Records = Records.Concat(TempRecords).ToList();
+            TempRecords.Clear();
+        }
+
+        bool Record = true;
+        List<Message> Records = new List<Message>();
+        List<Message> TempRecords = new List<Message>();
+
+        public void ClearRecords() {
+            Records.Clear();
+            TempRecords.Clear();
+        }
+
+        public void ReplayRecords() {
+            if (User?.Client?.Connected == true) {
+                Records.Reverse();
+
+                foreach (Message msg in Records)
+                    User.Client.Send(0, msg);
+
+                User.Client.Flush();
+
+                Records.Reverse();
+            }
         }
 
         public Player(User user) => User = user;

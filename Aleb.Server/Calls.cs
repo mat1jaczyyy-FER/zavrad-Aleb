@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Aleb.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -54,7 +55,7 @@ namespace Aleb.Server {
             List<Card> cards = Cards.ToList();
             cards.Sort();
 
-            return string.Join(',', cards.Select(i => (int)i));
+            return cards.ToStr(); // todo check
         }
     }
 }

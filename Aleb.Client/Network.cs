@@ -74,6 +74,9 @@ namespace Aleb.Client {
         public delegate void GameStartedEventHandler(int dealer, List<int> yourCards);
         public static event GameStartedEventHandler GameStarted;
 
+        public delegate void ReconnectEventHandler(Room room, List<FinalizedRound> history);
+        public static event ReconnectEventHandler Reconnect;
+
         public static event NothingEventHandler TrumpNext;
 
         public delegate void TrumpChosenEventHandler(Suit trump, List<int> yourCards);
@@ -95,15 +98,15 @@ namespace Aleb.Client {
         public delegate void CardPlayedEventHandler(int card, bool bela);
         public static event CardPlayedEventHandler CardPlayed;
 
-        public delegate void TableCompleteEventHandler(List<int> calls, List<int> played, bool fail);
+        public delegate void TableCompleteEventHandler(List<int> calls, FinalizedRound played);
         public static event TableCompleteEventHandler TableComplete;
         
         public static event SimpleIntEventHandler ContinuePlayingCards;
 
-        public delegate void FinalScoresEventHandler(List<int> final, bool fail);
+        public delegate void FinalScoresEventHandler(FinalizedRound final);
         public static event FinalScoresEventHandler FinalScores;
 
-        public delegate void TotalScoreEventHandler(List<int> final, bool fail, List<int> total);
+        public delegate void TotalScoreEventHandler(FinalizedRound final, List<int> total);
         public static event TotalScoreEventHandler TotalScore;
 
         public delegate void GameFinishedEventHandler(List<int> score, Room room, string password);
@@ -128,6 +131,7 @@ namespace Aleb.Client {
             else if (msg.Command == "Kicked") Kicked?.Invoke();
 
             else if (msg.Command == "GameStarted") GameStarted?.Invoke(Convert.ToInt32(msg.Args[0]), msg.Args[1].ToIntList());
+            else if (msg.Command == "Reconnect") Reconnect?.Invoke(new Room(msg.Args[0]), msg.Args[1].ToList(i => new FinalizedRound(i)));
 
             else if (msg.Command == "TrumpNext") TrumpNext?.Invoke();
             else if (msg.Command == "TrumpChosen") TrumpChosen?.Invoke(msg.Args[0].ToEnum<Suit>().Value, msg.Args[1].ToIntList());
@@ -141,13 +145,13 @@ namespace Aleb.Client {
             else if (msg.Command == "AskBela") AskBela?.Invoke();
             else if (msg.Command == "CardPlayed") CardPlayed?.Invoke(Convert.ToInt32(msg.Args[0]), Convert.ToBoolean(msg.Args[1]));
 
-            else if (msg.Command == "TableComplete") TableComplete?.Invoke(msg.Args[0].ToIntList(), msg.Args[1].ToIntList(), Convert.ToBoolean(msg.Args[2]));
+            else if (msg.Command == "TableComplete") TableComplete?.Invoke(msg.Args[0].ToIntList(delimiter: ','), new FinalizedRound(msg.Args[1]));
             else if (msg.Command == "ContinuePlayingCards") ContinuePlayingCards?.Invoke(Convert.ToInt32(msg.Args[0]));
 
-            else if (msg.Command == "FinalScores") FinalScores?.Invoke(msg.Args[0].ToIntList(), Convert.ToBoolean(msg.Args[1]));
-            else if (msg.Command == "TotalScore") TotalScore?.Invoke(msg.Args[0].ToIntList(), Convert.ToBoolean(msg.Args[1]), msg.Args[2].ToIntList());
+            else if (msg.Command == "FinalScores") FinalScores?.Invoke(new FinalizedRound(msg.Args[0]));
+            else if (msg.Command == "TotalScore") TotalScore?.Invoke(new FinalizedRound(msg.Args[0]), msg.Args[1].ToIntList());
 
-            else if (msg.Command == "GameFinished") GameFinished?.Invoke(msg.Args[0].ToIntList(), new Room(msg.Args[1]), msg.Args[2]);
+            else if (msg.Command == "GameFinished") GameFinished?.Invoke(msg.Args[0].ToIntList(delimiter: ','), new Room(msg.Args[1]), msg.Args[2]);
         }
 
         public static Task<Message> Register(params string[] expected) {

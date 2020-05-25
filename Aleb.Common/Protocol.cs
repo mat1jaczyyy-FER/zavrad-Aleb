@@ -4,5 +4,6 @@
         public const int Port = 11252;
         public const int Version = 4;
         public const char Delimiter = ';';
+        public const char ListDelimiter = '|';
     }
 }

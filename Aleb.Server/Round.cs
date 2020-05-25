@@ -1,5 +1,7 @@
 ﻿using System.Linq;
 
+using Aleb.Common;
+
 namespace Aleb.Server {
     class Round {
         public int[] Calls { get; private set; } = new int[2];
@@ -55,8 +57,10 @@ namespace Aleb.Server {
             Finalized = true;
         }
 
+        string FinalizedString => $"{Played.ToStr(delimiter: ',')},{Fail}";
+
         public override string ToString() => Finalized
-            ? $"{string.Join(',', Played)};{Fail}"
-            : $"{string.Join(',', Calls)};{string.Join(',', Played)}";
+            ? FinalizedString
+            : $"{Calls.ToStr(delimiter: ',')};{FinalizedString}";
     }
 }

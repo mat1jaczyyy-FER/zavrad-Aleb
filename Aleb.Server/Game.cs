@@ -67,8 +67,10 @@ namespace Aleb.Server {
 
             Card.Distribute(Players);
 
-            foreach (Player player in Players)
-                player.SendMessage(delay, "GameStarted", Array.IndexOf(Players, Dealer), player.Cards.ToIntString());
+            foreach (Player player in Players) {
+                player.ClearRecords();
+                player.SendMessage(delay, "GameStarted", Array.IndexOf(Players, Dealer), player.Cards.ToStr());
+            }
         }
 
         public void Bid(Player sender, Suit? suit) {
@@ -92,7 +94,7 @@ namespace Aleb.Server {
                 Current = Dealer.Next;
 
                 foreach (Player player in Players)
-                    player.SendMessage("TrumpChosen", suit.ToString(), player.Cards.ToIntString());
+                    player.SendMessage("TrumpChosen", suit.ToString(), player.Cards.ToStr());
             }
         }
 
@@ -165,11 +167,11 @@ namespace Aleb.Server {
                     Start(3000);
 
                     Broadcast(2000, "FinalScores", current.ToString());
-                    Broadcast(3000, "TotalScore", current.ToString(), string.Join(',', Score));
+                    Broadcast(3000, "TotalScore", current.ToString(), Score.ToStr());
                 
                 } else Broadcast(2000, "ContinuePlayingCards", Array.IndexOf(Players, Current));
                 
-                Broadcast("TableComplete", round, current.Fail);
+                Broadcast("TableComplete", round);
 
             } else Current = Current.Next;
 
@@ -183,6 +185,13 @@ namespace Aleb.Server {
                 return;
 
             Table.Bela?.TrySetResult(bela);
+        }
+
+        public void Reconnect(Player player) {
+            player.User.Client.Send("Reconnect", Room.ToString(), History.Where(i => i.Finalized).ToStr());
+            player.Flush();
+
+            player.ReplayRecords();
         }
     }
 }

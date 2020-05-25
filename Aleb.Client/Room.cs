@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using Aleb.Common;
@@ -33,7 +34,7 @@ namespace Aleb.Client {
             HasPassword = Convert.ToBoolean(args[3]);
             Count = Convert.ToInt32(args[4]);
 
-            Users = args.Skip(5).Select(i => new User(i)).ToArray();
+            Users = args[5].ToList(i => new User(i)).ToArray();
         }
 
         public override bool Equals(object obj) {

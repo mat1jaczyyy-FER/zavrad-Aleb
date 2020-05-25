@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using Aleb.Common;
+
 namespace Aleb.Server {
     static class EnumUtil {
         public static IEnumerable<T> Values<T>() where T: Enum
@@ -28,7 +30,7 @@ namespace Aleb.Server {
             return Points[Index(value, trump) - (trump? 0 : 2)];
         }
 
-        public static string ToIntString(this List<Card> cards)
-            => string.Join(',', cards.Select(i => (int)i));
+        public static string ToStr(this List<Card> cards)
+            => cards.ToStr(i => ((int)i).ToString());
     }
 }

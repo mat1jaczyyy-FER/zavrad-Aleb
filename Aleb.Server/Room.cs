@@ -104,7 +104,7 @@ namespace Aleb.Server {
         }
 
         void DestroyGame(int delay = 0) {
-            Message msg = new Message("GameFinished", string.Join(',', Game.Score), ToString(), Password);
+            Message msg = new Message("GameFinished", Game.Score.ToStr(), ToString(), Password);
 
             foreach (User user in Users) {
                 user.CompletedGame();
@@ -138,6 +138,6 @@ namespace Aleb.Server {
             Join(owner, password);
         }
 
-        public override string ToString() => $"{Name},{Type},{ScoreGoal},{HasPassword},{Count}{string.Join("", People.Select(i => ',' + i.User.Name))}";
+        public override string ToString() => $"{Name},{Type},{ScoreGoal},{HasPassword},{Count},{People.ToStr(i => i.User.Name)}";
     }
 }

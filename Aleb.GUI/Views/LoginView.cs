@@ -4,6 +4,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
 
 using Aleb.Client;
 using Aleb.Common;
@@ -73,7 +74,8 @@ namespace Aleb.GUI.Views {
             if (App.User.State == UserState.Idle)
                 App.MainWindow.View = new RoomListView();
 
-            else if (App.User.State == UserState.InGame) {}
+            if (App.User.State == UserState.InGame)
+                App.MainWindow.View = new GameView();
         }
     }
 }

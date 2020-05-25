@@ -157,8 +157,8 @@ namespace Aleb.GUI.Views {
             Cards.Parent.Opacity = 1;  
         }
 
-        static List<string> FailScore(List<int> score, bool fail)
-            => score.Select(i => (fail && i == 0)? "—" : i.ToString()).ToList();
+        static List<string> FailScore(FinalizedRound score)
+            => score.Score.Select(i => (score.Fail && i == 0)? "—" : i.ToString()).ToList();
 
         static List<string> emptyRow = new List<string>() { "", "" };
 
@@ -186,10 +186,10 @@ namespace Aleb.GUI.Views {
             UpdateRow(TotalRound, calls.Zip(played).Select(t => t.First + t.Second).ToList());
         }
 
-        void UpdateCurrentRound(List<int> final, bool fail) {
+        void UpdateCurrentRound(FinalizedRound final) {
             UpdateRow(Declarations, emptyRow);
             UpdateRow(CurrentRound, emptyRow);
-            UpdateRow(TotalRound, FailScore(final, fail));
+            UpdateRow(TotalRound, FailScore(final));
         }
 
         void UpdateCurrentRound(int called, int team) {
@@ -212,11 +212,9 @@ namespace Aleb.GUI.Views {
         void ScoreEnter(object sender, PointerEventArgs e) => Rounds.IsVisible = true;
         void ScoreLeave(object sender, PointerEventArgs e) => Rounds.IsVisible = false;
 
-        public GameView() => throw new InvalidOperationException();
+        bool ShouldReconnect;
 
-        public GameView(List<string> names, int dealer, List<int> cards) {
-            InitializeComponent();
-
+        void InitNames(List<string> names) {
             UserText.Swap(1, 2);
             names.Swap(1, 2);
 
@@ -234,6 +232,12 @@ namespace Aleb.GUI.Views {
 
             You = UserText.IndexOf(UserText.First(i => i.Text == App.User.Name));
 
+            ShouldReconnect = false;
+        }
+
+        public GameView() {
+            InitializeComponent();
+
             UpdateTitleRow(Preferences.MiVi);
             Preferences.MiViChanged += UpdateTitleRow;
             
@@ -246,11 +250,14 @@ namespace Aleb.GUI.Views {
             Timer.Tick += UpdateTime;
             Timer.Start();
 
-            GameStarted(dealer, cards);
+            ShouldReconnect = true;
         }
+
+        public GameView(List<string> names): this() => InitNames(names);
 
         void Loaded(object sender, VisualTreeAttachmentEventArgs e) {
             Network.GameStarted += GameStarted;
+            Network.Reconnect += Reconnect;
 
             Network.TrumpNext += TrumpNext;
             Network.TrumpChosen += TrumpChosen;
@@ -271,12 +278,15 @@ namespace Aleb.GUI.Views {
             Network.TotalScore += TotalScore;
 
             Network.GameFinished += GameFinished;
+
+            if (ShouldReconnect) Requests.Reconnecting();
         }
 
         void Unloaded(object sender, VisualTreeAttachmentEventArgs e) {
             Preferences.MiViChanged -= UpdateTitleRow;
 
             Network.GameStarted -= GameStarted;
+            Network.Reconnect -= Reconnect;
             
             Network.TrumpNext -= TrumpNext;
             Network.TrumpChosen -= TrumpChosen;
@@ -382,7 +392,7 @@ namespace Aleb.GUI.Views {
             }
         }
 
-        void GameStarted(int dealer, List<int> cards) {
+        public void GameStarted(int dealer, List<int> cards) {
             if (!Dispatcher.UIThread.CheckAccess()) {
                 Dispatcher.UIThread.InvokeAsync(() => GameStarted(dealer, cards));
                 return;
@@ -540,17 +550,17 @@ namespace Aleb.GUI.Views {
             else NextPlaying();
         }
 
-        void TableComplete(List<int> calls, List<int> played, bool fail) {
+        void TableComplete(List<int> calls, FinalizedRound played) {
             if (!Dispatcher.UIThread.CheckAccess()) {
-                Dispatcher.UIThread.InvokeAsync(() => TableComplete(calls, played, fail));
+                Dispatcher.UIThread.InvokeAsync(() => TableComplete(calls, played));
                 return;
             }
 
             if (State != GameState.Playing) return;
 
-            UpdateCurrentRound(calls, played);
+            UpdateCurrentRound(calls, played.Score);
 
-            if (fail) Table(selectedTrump, new TextOverlay($"Pali {(Position(selectedTrump) % 2 == 0? "ste" : "su")}"));
+            if (played.Fail) Table(selectedTrump, new TextOverlay($"Pali {(Position(selectedTrump) % 2 == 0? "ste" : "su")}"));
         }
 
         void ContinuePlayingCards(int winner) {
@@ -567,9 +577,9 @@ namespace Aleb.GUI.Views {
             lastInTable = Utilities.Modulo(lastPlaying - 1, 4);
         }
 
-        void FinalScores(List<int> final, bool fail) {
+        void FinalScores(FinalizedRound final) {
             if (!Dispatcher.UIThread.CheckAccess()) {
-                Dispatcher.UIThread.InvokeAsync(() => FinalScores(final, fail));
+                Dispatcher.UIThread.InvokeAsync(() => FinalScores(final));
                 return;
             }
 
@@ -579,12 +589,12 @@ namespace Aleb.GUI.Views {
 
             SetPlaying(-1);
 
-            UpdateCurrentRound(final, fail);
+            UpdateCurrentRound(final);
         }
 
-        void TotalScore(List<int> final, bool fail, List<int> total) {
+        void TotalScore(FinalizedRound final, List<int> total) {
             if (!Dispatcher.UIThread.CheckAccess()) {
-                Dispatcher.UIThread.InvokeAsync(() => TotalScore(final, fail, total));
+                Dispatcher.UIThread.InvokeAsync(() => TotalScore(final, total));
                 return;
             }
 
@@ -596,7 +606,7 @@ namespace Aleb.GUI.Views {
             Rounds.IsVisible = false;
             Rounds.IsVisible = temp;
 
-            UpdateRow(row, FailScore(final, fail));
+            UpdateRow(row, FailScore(final));
             Rounds.Children.Add(row);
 
             UpdateRow(Total, total);
@@ -614,6 +624,25 @@ namespace Aleb.GUI.Views {
             room.Password = password;
             
             App.MainWindow.View = new ResultsView(score, room);
+        }
+
+        void Reconnect(Room room, List<FinalizedRound> history) {
+            if (!Dispatcher.UIThread.CheckAccess()) {
+                Dispatcher.UIThread.InvokeAsync(() => Reconnect(room, history));
+                return;
+            }
+
+            App.MainWindow.Title = room.Name;
+            InitNames(room.Users.Select(i => i.Name).ToList());
+
+            List<int> total = Enumerable.Range(0, 2).Select(i => history.Sum(j => j.Score[i])).ToList();
+
+            State = GameState.Playing;
+
+            foreach (FinalizedRound round in history)
+                TotalScore(round, total);
+
+            State = GameState.Bidding;
         }
     }
 }

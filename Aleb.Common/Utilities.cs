@@ -29,7 +29,13 @@ namespace Aleb.Common {
         public static T? ToEnum<T>(this string str) where T: struct, Enum
             => Enum.TryParse(str, false, out T value)? value : (T?)null;
 
-        public static List<int> ToIntList(this string str)
-            => (str == null || str == "")? new List<int>() : str.Split(',').Select(i => Convert.ToInt32(i)).ToList();
+        public static string ToStr<T>(this IEnumerable<T> list, Func<T, string> converter = null, char delimiter = Protocol.ListDelimiter)
+            => string.Join(delimiter, list.Select(converter?? (i => i.ToString())));
+
+        public static List<T> ToList<T>(this string str, Func<string, T> converter, char delimiter = Protocol.ListDelimiter)
+            => (str == null || str == "")? new List<T>() : str.Split(delimiter).Select(converter).ToList();
+
+        public static List<int> ToIntList(this string str, char delimiter = Protocol.ListDelimiter)
+            => str.ToList(i => Convert.ToInt32(i), delimiter);
     }
 }

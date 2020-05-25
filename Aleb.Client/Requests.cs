@@ -46,9 +46,9 @@ namespace Aleb.Client {
             if (response.Command != "RoomJoined") return null;
 
             Room ret = new Room(response.Args[0]);
-            bool[] ready = response.Args[1].Split(',').Select(i => Convert.ToBoolean(i)).ToArray();
+            List<bool> ready = response.Args[1].ToList(i => Convert.ToBoolean(i));
 
-            for (int i = 0; i < ready.Length; i++)
+            for (int i = 0; i < ready.Count; i++)
                 ret.Users[i].Ready = ready[i];
 
             return ret;
@@ -69,6 +69,9 @@ namespace Aleb.Client {
         public static void StartGame()
             => Network.Send(new Message("StartGame"));
 
+        public static void Reconnecting()
+            => Network.Send(new Message("Reconnecting"));
+
         public static void Bid(Suit? suit)
             => Network.Send(new Message("Bid", suit.ToString()));
 
@@ -76,7 +79,7 @@ namespace Aleb.Client {
             => Network.Send(new Message("TalonBid", index));
 
         public static void Declare(List<int> indexes)
-            => Network.Send(new Message("Declare", indexes != null? string.Join(',', indexes) : "null"));
+            => Network.Send(new Message("Declare", indexes != null? indexes.ToStr() : "null"));
 
         public static async Task<int> PlayCard(int index)
             => Convert.ToInt32((await Network.Ask(new Message("PlayCard", index), "YouPlayed")).Args[0]);

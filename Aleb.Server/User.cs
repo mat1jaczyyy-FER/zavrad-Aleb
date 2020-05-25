@@ -80,7 +80,7 @@ namespace Aleb.Server {
                     Room room = (msg.Args.Length == 2)? Room.Rooms.FirstOrDefault(i => i.Name == msg.Args[0]) : null;
 
                     if (room?.Join(this, msg.Args[1]) == true) {
-                        Client.Send("RoomJoined", room.ToString(), string.Join(',', room.People.Select(i => i.Ready)));
+                        Client.Send("RoomJoined", room.ToString(), room.People.ToStr(i => i.Ready.ToString()));
 
                         BroadcastIdle("RoomUpdated", room.ToString());
                         Broadcast(room.Users, "UserJoined", Name);
@@ -155,15 +155,18 @@ namespace Aleb.Server {
                 } else if (msg.Command == "Declare") {
                     if (msg.Args.Length == 1) {
                         List<int> indexes = msg.Args[0] != "null"? msg.Args[0].ToIntList() : null;
-                        Client.Send("YouDeclared", Game.Declare(Player, indexes));
+                        Player.YouDeclared(Game.Declare(Player, indexes));
                     }
 
                 } else if (msg.Command == "PlayCard") {
                     if (msg.Args.Length == 1)
-                        Client.Send("YouPlayed", Game.PlayCard(Player, Convert.ToInt32(msg.Args[0])));
+                        Player.YouPlayed(Game.PlayCard(Player, Convert.ToInt32(msg.Args[0])));
                 
                 } else if (msg.Command == "Bela")
                     Game.Bela(Player, Convert.ToBoolean(msg.Args[0]));
+
+                else if (msg.Command == "Reconnecting")
+                    Game.Reconnect(Player);
 
                 if (Game != null) Game.Flush();
                 else Room.Rooms.FirstOrDefault(i => i.Users.Contains(this))
