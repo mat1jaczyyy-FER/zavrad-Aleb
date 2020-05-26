@@ -146,7 +146,7 @@ namespace Aleb.Server {
 
                 current.Play(Table, last, out Current);
 
-                string round = current.ToString();
+                string round = current.ToStringNoFail();
 
                 bool dosta = false;
 
@@ -171,7 +171,7 @@ namespace Aleb.Server {
                 
                 } else Broadcast(2000, "ContinuePlayingCards", Array.IndexOf(Players, Current));
                 
-                Broadcast("TableComplete", round);
+                Broadcast("TableComplete", $"{round},{current.Fail}");
 
             } else Current = Current.Next;
 

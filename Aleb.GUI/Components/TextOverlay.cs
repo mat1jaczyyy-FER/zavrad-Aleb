@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
@@ -10,17 +11,21 @@ namespace Aleb.GUI.Components {
         void InitializeComponent() {
             AvaloniaXamlLoader.Load(this);
 
-            Text = this.Get<TextBlock>("Text");
+            Root = this.Get<StackPanel>("Root");
         }
 
-        TextBlock Text;
+        StackPanel Root;
 
         public TextOverlay() => throw new InvalidOperationException();
 
-        public TextOverlay(string text, int timeout = 0) {
+        public TextOverlay(string text, int timeout = 0)
+        : this(new TextBlock() { Text = text }, timeout) {}
+
+        public TextOverlay(Control control, int timeout = 0) {
             InitializeComponent();
 
-            Text.Text = text;
+            control.Margin = Thickness.Parse("40 20");
+            Root.Children.Add(control);
 
             if (timeout > 0)
                 Task.Delay(timeout).ContinueWith(_ => Dispatcher.UIThread.InvokeAsync(() => IsVisible = false));

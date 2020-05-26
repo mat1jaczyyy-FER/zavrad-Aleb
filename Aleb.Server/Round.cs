@@ -57,10 +57,12 @@ namespace Aleb.Server {
             Finalized = true;
         }
 
-        string FinalizedString => $"{Played.ToStr(delimiter: ',')},{Fail}";
+        string PlayedString => $"{Played.ToStr(delimiter: ',')}";
 
-        public override string ToString() => Finalized
-            ? FinalizedString
-            : $"{Calls.ToStr(delimiter: ',')};{FinalizedString}";
+        public string ToStringNoFail() => Finalized
+            ? PlayedString
+            : $"{Calls.ToStr(delimiter: ',')};{PlayedString}";
+
+        public override string ToString() => $"{ToStringNoFail()},{Fail}";
     }
 }

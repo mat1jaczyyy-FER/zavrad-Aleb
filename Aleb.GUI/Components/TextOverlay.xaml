@@ -3,7 +3,5 @@
              x:Class="Aleb.GUI.Components.TextOverlay"
              Background="{DynamicResource ThemeControlLowBrush}">
 
-  <StackPanel>
-    <TextBlock Margin="40 20" x:Name="Text" />
-  </StackPanel>
+  <StackPanel x:Name="Root" />
 </UserControl>
