@@ -114,12 +114,20 @@ namespace Aleb.Common {
             if (!Connected) return;
             
             lock (locker) {
-                while (buf.TryPop(out Message msg)) { 
-                    Log(false, msg.ToString());
-                    Writer.Write(msg);
-                }
+                try {
+                    while (buf.TryPop(out Message msg)) { 
+                        Log(false, msg.ToString());
+                        Writer.Write(msg);
+                    }
 
-                Writer.Flush();
+                    Writer.Flush();
+
+                } catch (IOException) {
+                    Client = null;
+                    buf.Clear();
+                    
+                    return;
+                }
             }
 
             ResetHeartbeat();
