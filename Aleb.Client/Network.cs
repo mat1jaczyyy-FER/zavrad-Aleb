@@ -151,7 +151,7 @@ namespace Aleb.Client {
             else if (msg.Command == "FinalScores") FinalScores?.Invoke(new FinalizedRound(msg.Args[0]));
             else if (msg.Command == "TotalScore") TotalScore?.Invoke(new FinalizedRound(msg.Args[0]), msg.Args[1].ToIntList());
 
-            else if (msg.Command == "GameFinished") GameFinished?.Invoke(msg.Args[0].ToIntList(delimiter: ','), new Room(msg.Args[1]), msg.Args[2]);
+            else if (msg.Command == "GameFinished") GameFinished?.Invoke(msg.Args[0].ToIntList(), new Room(msg.Args[1]), msg.Args[2]);
         }
 
         public static Task<Message> Register(params string[] expected) {
