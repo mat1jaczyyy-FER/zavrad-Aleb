@@ -78,6 +78,8 @@ namespace Aleb.Server {
 
             if (suit == null) {
                 if (Current == Dealer) return;
+
+                Current.RevealTalon();
                 Current = Current.Next;
 
                 foreach (Player player in Players)
@@ -88,13 +90,16 @@ namespace Aleb.Server {
                 History.Add(new Round(Current));
 
                 foreach (Player player in Players)
-                    player.RevealTalon();
+                    player.SendMessage("TrumpChosen", suit.ToString());
+
+                do {
+                    Current.RevealTalon();
+                    Current = Current.Next;
+
+                } while (Current != Dealer.Next);
 
                 State++;
                 Current = Dealer.Next;
-
-                foreach (Player player in Players)
-                    player.SendMessage("TrumpChosen", suit.ToString(), player.Cards.ToStr());
             }
         }
 

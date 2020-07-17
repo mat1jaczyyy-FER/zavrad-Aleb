@@ -261,6 +261,7 @@ namespace Aleb.GUI.Views {
 
             Network.TrumpNext += TrumpNext;
             Network.TrumpChosen += TrumpChosen;
+            Network.FullCards += FullCards;
 
             Network.YouDeclared += YouDeclared;
             Network.PlayerDeclared += PlayerDeclared;
@@ -291,6 +292,7 @@ namespace Aleb.GUI.Views {
             
             Network.TrumpNext -= TrumpNext;
             Network.TrumpChosen -= TrumpChosen;
+            Network.FullCards -= FullCards;
 
             Network.YouDeclared -= YouDeclared;
             Network.PlayerDeclared -= PlayerDeclared;
@@ -413,9 +415,9 @@ namespace Aleb.GUI.Views {
             NextPlaying();
         }
 
-        void TrumpChosen(Suit trump, List<int> cards) {
+        void TrumpChosen(Suit trump) {
             if (!Dispatcher.UIThread.CheckAccess()) {
-                Dispatcher.UIThread.InvokeAsync(() => TrumpChosen(trump, cards));
+                Dispatcher.UIThread.InvokeAsync(() => TrumpChosen(trump));
                 return;
             }
 
@@ -429,9 +431,18 @@ namespace Aleb.GUI.Views {
             DeclareSelected = new bool[8];
             State = GameState.Declaring;
 
-            CreateCards(cards);
-
             SetPlaying(Utilities.Modulo(Dealer + 1, 4));
+        }
+
+        void FullCards(List<int> cards) {
+            if (!Dispatcher.UIThread.CheckAccess()) {
+                Dispatcher.UIThread.InvokeAsync(() => FullCards(cards));
+                return;
+            }
+
+            if (State != GameState.Bidding) return;
+
+            CreateCards(cards);
         }
 
         void YouDeclared(bool result) {

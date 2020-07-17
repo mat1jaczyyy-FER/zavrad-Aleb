@@ -17,6 +17,8 @@ namespace Aleb.Server {
         public void RevealTalon() {
             Cards = Cards.Concat(Talon).ToList();
             Talon = null;
+            
+            SendMessage("FullCards", Cards.ToStr());
         }
 
         public Calls Calls { get; private set; }
