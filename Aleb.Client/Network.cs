@@ -94,6 +94,8 @@ namespace Aleb.Client {
         public static event NothingEventHandler StartPlayingCards;
         
         public static event NothingEventHandler AskBela;
+
+        public static event SimpleIntEventHandler YouPlayed;
         
         public delegate void CardPlayedEventHandler(int card, bool bela);
         public static event CardPlayedEventHandler CardPlayed;
@@ -143,6 +145,7 @@ namespace Aleb.Client {
             else if (msg.Command == "StartPlayingCards") StartPlayingCards?.Invoke();
 
             else if (msg.Command == "AskBela") AskBela?.Invoke();
+            else if (msg.Command == "YouPlayed") YouPlayed?.Invoke(Convert.ToInt32(msg.Args[0]));
             else if (msg.Command == "CardPlayed") CardPlayed?.Invoke(Convert.ToInt32(msg.Args[0]), Convert.ToBoolean(msg.Args[1]));
 
             else if (msg.Command == "TableComplete") TableComplete?.Invoke(msg.Args[0].ToIntList(delimiter: ','), new FinalizedRound(msg.Args[1]));

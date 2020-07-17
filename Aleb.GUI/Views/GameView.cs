@@ -269,6 +269,7 @@ namespace Aleb.GUI.Views {
             Network.StartPlayingCards += StartPlayingCards;
 
             Network.AskBela += AskBela;
+            Network.YouPlayed += YouPlayed;
             Network.CardPlayed += CardPlayed;
 
             Network.TableComplete += TableComplete;
@@ -298,6 +299,7 @@ namespace Aleb.GUI.Views {
             Network.StartPlayingCards -= StartPlayingCards;
 
             Network.AskBela -= AskBela;
+            Network.YouPlayed -= YouPlayed;
             Network.CardPlayed -= CardPlayed;
 
             Network.TableComplete -= TableComplete;
@@ -373,20 +375,7 @@ namespace Aleb.GUI.Views {
                     playWaiting = true;
 
                     lastPlayed = sender;
-                    int played = await Requests.PlayCard(index);
-
-                    playWaiting = false;
-
-                    if (State != GameState.Playing) return;
-
-                    if (played != -1) {
-                        Cards.Children.RemoveAt(played);
-                
-                        if (!Cards.Children.Any()) Cards.Parent.Opacity = 0;
-
-                        Prompt = null;
-
-                    } else Table(You, new TextOverlay("Neispravna karta", 3000));
+                    Requests.PlayCard(index);
 
                 } else Table(You, new TextOverlay("Niste na potezu", 3000));
             }
@@ -530,6 +519,26 @@ namespace Aleb.GUI.Views {
             lastPlayed.Margin = new Thickness(0, -15, 0, 15);
 
             Prompt = new BelaPrompt();
+        }
+
+        void YouPlayed(int card) {
+            if (!Dispatcher.UIThread.CheckAccess()) {
+                Dispatcher.UIThread.InvokeAsync(() => YouPlayed(card));
+                return;
+            }
+
+            if (State != GameState.Playing) return;
+
+            playWaiting = false;
+
+            if (card != -1) {
+                Cards.Children.RemoveAt(card);
+                
+                if (!Cards.Children.Any()) Cards.Parent.Opacity = 0;
+
+                Prompt = null;
+
+            } else Table(You, new TextOverlay("Neispravna karta", 3000));
         }
 
         void CardPlayed(int card, bool bela) {

@@ -81,8 +81,8 @@ namespace Aleb.Client {
         public static void Declare(List<int> indexes)
             => Network.Send(new Message("Declare", indexes != null? indexes.ToStr() : "null"));
 
-        public static async Task<int> PlayCard(int index)
-            => Convert.ToInt32((await Network.Ask(new Message("PlayCard", index), "YouPlayed")).Args[0]);
+        public static void PlayCard(int index)
+            => Network.Send(new Message("PlayCard", index));
 
         public static void Bela(bool bela)
             => Network.Send(new Message("Bela", bela));
