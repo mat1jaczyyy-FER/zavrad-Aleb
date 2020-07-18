@@ -7,6 +7,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
+using Avalonia.Platform;
 
 using Aleb.GUI.Components;
 using Aleb.GUI.Views;
@@ -138,6 +139,21 @@ namespace Aleb.GUI {
         void Maximize(PointerEventArgs e) {
             WindowState = (WindowState == WindowState.Maximized)? WindowState.Normal : WindowState.Maximized;
             
+            if (e.KeyModifiers == App.ControlKey && WindowState == WindowState.Maximized) {
+                Screen result = null;
+
+                foreach (Screen screen in Screens.All)
+                    if (screen.Bounds.Contains(Position)) {
+                        result = screen;
+                        break;
+                    }
+
+                if (result != null) {
+                    Width = result.Bounds.Width;
+                    Height = result.Bounds.Height;
+                }
+            }
+
             BringToTop();
         }
 
