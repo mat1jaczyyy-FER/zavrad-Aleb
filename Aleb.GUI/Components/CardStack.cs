@@ -32,6 +32,17 @@ namespace Aleb.GUI.Components {
             Contents.MaxHeight = Math.Min(Contents.MaxHeight, 155 - 8 * cards.Count);
         }
 
+        public CardStack(List<int> cards, List<int> talon): this(cards) {
+            Contents.Children.Add(new Border() {
+                BorderThickness = new Thickness(0),
+                Width = Contents.MaxHeight / 500 * 321,
+                Height = Contents.MaxHeight,
+            });
+
+            foreach (int card in talon)
+                Contents.Children.Add(new CardImage(card));
+        }
+
         void Unloaded(object sender, VisualTreeAttachmentEventArgs e) {}
     }
 }

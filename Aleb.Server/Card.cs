@@ -22,8 +22,6 @@ namespace Aleb.Server {
             for (int i = cards.Count - 1; i >= 0; i--)
                 cards.Swap(i, RNG.Next(i + 1));
 
-            //cards = new List<Card>() { new Card(0),new Card(1),new Card(2),new Card(8),new Card(9),new Card(10),new Card(11) }.Concat(cards.Skip(7)).ToList();
-
             for (int i = 0; i < 4; i++) {
                 players[i].Cards = cards.Skip(i * 8).Take(6).ToList();
                 players[i].Talon = cards.Skip(i * 8 + 6).Take(2).ToList();

@@ -14,7 +14,13 @@ namespace Aleb.Server {
 
         public List<Card> Talon;
 
+        public List<Card> OriginalCards { get; private set; }
+        public List<Card> OriginalTalon { get; private set; }
+
         public void RevealTalon() {
+            OriginalCards = Cards.ToList();
+            OriginalTalon = Talon.ToList();
+
             Cards = Cards.Concat(Talon).ToList();
             Talon = null;
             

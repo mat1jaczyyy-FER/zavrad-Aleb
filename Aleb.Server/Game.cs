@@ -174,14 +174,18 @@ namespace Aleb.Server {
                 
                 if (last || dosta) {
                     current.Finish(last);
-                    Start(3000);
+                    Start(5500);
+
+                    for (int i = 0; i < 4; i++)
+                        Broadcast(2000, "FinalCards", i, Players[i].OriginalCards.ToStr(), Players[i].OriginalTalon.ToStr());
 
                     Broadcast(2000, "FinalScores", current.ToString());
-                    Broadcast(3000, "TotalScore", current.ToString(), Score.ToStr());
+
+                    Broadcast(5500, "TotalScore", current.ToString(), Score.ToStr());
                 
                 } else Broadcast(2000, "ContinuePlayingCards", Array.IndexOf(Players, Current));
                 
-                Broadcast("TableComplete", $"{round},{current.Suit.ToString()},{current.Fail}");
+                Broadcast("TableComplete", $"{round},{current.Suit},{current.Fail}");
 
             } else Current = Current.Next;
 

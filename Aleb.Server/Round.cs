@@ -66,6 +66,6 @@ namespace Aleb.Server {
             ? PlayedString
             : $"{Calls.ToStr(delimiter: ',')};{PlayedString}";
 
-        public override string ToString() => $"{ToStringNoFail()},{Suit.ToString()},{Fail}";
+        public override string ToString() => $"{ToStringNoFail()},{Suit},{Fail}";
     }
 }

@@ -277,6 +277,7 @@ namespace Aleb.GUI.Views {
             Network.ContinuePlayingCards += ContinuePlayingCards;
 
             Network.FinalScores += FinalScores;
+            Network.FinalCards += FinalCards;
             Network.TotalScore += TotalScore;
 
             Network.GameFinished += GameFinished;
@@ -308,6 +309,7 @@ namespace Aleb.GUI.Views {
             Network.ContinuePlayingCards -= ContinuePlayingCards;
 
             Network.FinalScores -= FinalScores;
+            Network.FinalCards -= FinalCards;
             Network.TotalScore -= TotalScore;
 
             Network.GameFinished -= GameFinished;
@@ -398,6 +400,8 @@ namespace Aleb.GUI.Views {
 
             CreateCards(cards);
             Trump = null;
+
+            Score.Opacity = 1;
 
             SetPlaying(Utilities.Modulo(Dealer + 1, 4));
         }
@@ -613,6 +617,19 @@ namespace Aleb.GUI.Views {
             SetPlaying(-1);
 
             UpdateCurrentRound(final);
+        }
+
+        void FinalCards(int player, List<int> cards, List<int> talon) {
+            if (!Dispatcher.UIThread.CheckAccess()) {
+                Dispatcher.UIThread.InvokeAsync(() => FinalCards(player, cards, talon));
+                return;
+            }
+
+            if (State != GameState.Playing) return;
+
+            Score.Opacity = 0;
+
+            Table(player, new CardStack(cards, talon));
         }
 
         void TotalScore(FinalizedRound final, List<int> total) {
