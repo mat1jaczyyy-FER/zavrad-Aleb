@@ -6,6 +6,7 @@ namespace Aleb.Server {
     class Round {
         public int[] Calls { get; private set; } = new int[2];
         public int[] Played { get; private set; } = new int[2];
+        public int[] Taken { get; private set; } = new int[2];
 
         public int Team { get; private set; }
         public bool Fail { get; private set; }
@@ -24,6 +25,7 @@ namespace Aleb.Server {
 
         public void Play(Table table, bool last, out Player winner) {
             Played[table.Winner.Player.Team] += table.Points + (last? 10 : 0);
+            Taken[table.Winner.Player.Team]++;
 
             winner = table.Winner.Player;
             table.Clear();
@@ -34,7 +36,7 @@ namespace Aleb.Server {
 
             if (last)
                 for (int i = 0; i < 2; i++)
-                    if (Played[i] == 0) {
+                    if (Taken[i] == 0) {
                         Played[1 - i] += 90 + Calls.Sum();
                         capot = true;
                         break;
