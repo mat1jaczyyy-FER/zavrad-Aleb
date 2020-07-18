@@ -362,7 +362,7 @@ namespace Aleb.GUI.Views {
         void CardClicked(CardImage sender) {
             int index = Cards.Children.IndexOf(sender);
 
-            if (State == GameState.Bidding && lastPlaying == You && index >= 6) {
+            if (State == GameState.Bidding && lastPlaying == You && Dealer == You && index >= 6) {
                 Requests.TalonBid(index - 6);
 
             } if (State == GameState.Declaring && DeclareSelected != null) {

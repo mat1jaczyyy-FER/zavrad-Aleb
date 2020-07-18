@@ -150,7 +150,7 @@ namespace Aleb.Server {
                 
                 } else if (msg.Command == "TalonBid") {
                     if (msg.Args.Length == 1)
-                        Game.Bid(Player, Player.Talon[Convert.ToInt32(msg.Args[0])].Suit);
+                        Game.TalonBid(Player, Convert.ToInt32(msg.Args[0]));
 
                 } else if (msg.Command == "Declare") {
                     if (msg.Args.Length == 1) {
