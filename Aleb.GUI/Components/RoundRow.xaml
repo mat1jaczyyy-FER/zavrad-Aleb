@@ -3,7 +3,7 @@
              x:Class="Aleb.GUI.Components.RoundRow"
              Background="{DynamicResource ThemeControlLowBrush}" Margin="0 -2 0 0">
 
-  <Grid ColumnDefinitions="Auto,*,*" x:Name="Root">
+  <Grid ColumnDefinitions="Auto,*,*" MaxHeight="30" x:Name="Root">
     <Grid.Styles>
       <Style Selector="Border">
         <Setter Property="BorderThickness" Value="2 2 0 2" />
@@ -19,6 +19,10 @@
 
     <Border Grid.Column="0" Background="{DynamicResource ThemeForegroundBrush}" BorderThickness="2 2 0 2" IsVisible="False">
       <TextBlock HorizontalAlignment="Right" Foreground="{DynamicResource ThemeBorderMidBrush}" Text=" " />
+    </Border>
+
+    <Border Grid.Column="0" Background="{DynamicResource ThemeForegroundBrush}" BorderThickness="2 2 0 2" IsVisible="False">
+      <Image HorizontalAlignment="Right" Margin="2" />
     </Border>
       
     <Border Grid.Column="1" Classes="regular" MinWidth="52" MaxWidth="52">

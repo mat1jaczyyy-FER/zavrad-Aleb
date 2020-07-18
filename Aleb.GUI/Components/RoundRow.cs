@@ -13,10 +13,14 @@ namespace Aleb.GUI.Components {
         void InitializeComponent() {
             AvaloniaXamlLoader.Load(this);
 
-            Cells = this.Get<Grid>("Root").Children.OfType<Border>().Select(i => i.Child).OfType<TextBlock>().ToList();
+            IEnumerable<IControl> items = this.Get<Grid>("Root").Children.OfType<Border>().Select(i => i.Child);
+
+            Cells = items.OfType<TextBlock>().ToList();
+            Image = items.OfType<Image>().First();
         }
         
         List<TextBlock> Cells;
+        Image Image;
 
         public bool Header {
             set => Dispatcher.UIThread.InvokeAsync(() => {
@@ -43,6 +47,13 @@ namespace Aleb.GUI.Components {
             set {
                 Cells[0].Text = value;
                 Cells[0].Parent.IsVisible = Cells[0].Text != "";
+            }
+        }
+
+        public string Icon {
+            set {
+                Image.Source = (value?? "") != ""? App.GetImage(value) : null;
+                Image.Parent.IsVisible = (value?? "") != "";
             }
         }
 

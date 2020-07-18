@@ -87,10 +87,9 @@ namespace Aleb.Server {
 
             } else {
                 Table = new Table(suit.Value);
-                History.Add(new Round(Current));
+                History.Add(new Round(Current, suit.Value));
 
-                foreach (Player player in Players)
-                    player.SendMessage("TrumpChosen", suit.ToString());
+                Broadcast("TrumpChosen", suit.ToString());
 
                 do {
                     Current.RevealTalon();
@@ -176,7 +175,7 @@ namespace Aleb.Server {
                 
                 } else Broadcast(2000, "ContinuePlayingCards", Array.IndexOf(Players, Current));
                 
-                Broadcast("TableComplete", $"{round},{current.Fail}");
+                Broadcast("TableComplete", $"{round},{current.Suit.ToString()},{current.Fail}");
 
             } else Current = Current.Next;
 

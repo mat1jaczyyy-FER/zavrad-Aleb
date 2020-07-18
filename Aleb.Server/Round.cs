@@ -10,9 +10,12 @@ namespace Aleb.Server {
         public int Team { get; private set; }
         public bool Fail { get; private set; }
         public bool Finalized { get; private set; }
+        public Suit Suit { get; private set; }
 
-        public Round(Player bidder)
-            => Team = bidder.Team;
+        public Round(Player bidder, Suit suit) {
+            Team = bidder.Team;
+            Suit = suit;
+        }
 
         public int ApplyCalls(Player caller)
             => Calls[caller.Team] = caller.Calls.Total + caller.Teammate.Calls.Total;
@@ -63,6 +66,6 @@ namespace Aleb.Server {
             ? PlayedString
             : $"{Calls.ToStr(delimiter: ',')};{PlayedString}";
 
-        public override string ToString() => $"{ToStringNoFail()},{Fail}";
+        public override string ToString() => $"{ToStringNoFail()},{Suit.ToString()},{Fail}";
     }
 }

@@ -359,7 +359,7 @@ namespace Aleb.GUI.Views {
 
         bool playWaiting;
 
-        async void CardClicked(CardImage sender) {
+        void CardClicked(CardImage sender) {
             int index = Cards.Children.IndexOf(sender);
 
             if (State == GameState.Bidding && lastPlaying == You && index >= 6) {
@@ -623,7 +623,7 @@ namespace Aleb.GUI.Views {
 
             if (State != GameState.Playing) return;
             
-            RoundRow row = new RoundRow() { Legend = $"{++roundNum}." };
+            RoundRow row = new RoundRow() { Icon = $"Suits/{final.Suit}" };
             
             bool temp = Rounds.IsVisible;
             Rounds.IsVisible = false;
