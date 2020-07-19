@@ -7,10 +7,21 @@ namespace Aleb.GUI {
     static class Discord {
         static bool Initialized = false;
         static DiscordRpcClient Presence;
-        static Timestamps Time;
         
         static Timer courier = new Timer() { Interval = 1000 };
         static object locker = new object();
+
+        public static readonly Assets Logo = new Assets() { LargeImageKey = "logo" };
+
+        static RichPresence _info = new RichPresence();
+        public static RichPresence Info {
+            get => _info;
+            set {
+                _info = value;
+                Logo.SmallImageKey = null;
+                Logo.SmallImageText = null;
+            }
+        }
 
         static Discord() => courier.Elapsed += Refresh;
 
@@ -24,7 +35,6 @@ namespace Aleb.GUI {
 
             Presence = new DiscordRpcClient("696874859418091622");
             Presence.Initialize();
-            Time = new Timestamps(DateTime.UtcNow);
             Initialized = true;
 
             Refresh();
@@ -33,17 +43,8 @@ namespace Aleb.GUI {
 
         static void Refresh(object sender = null, EventArgs e = null) {
             lock (locker) {
-                if (Initialized) {
-                    RichPresence Info = new RichPresence()/* {
-                        Details = Program.Version,
-                        Timestamps = Time,
-                        Assets = new Assets() {
-                            LargeImageKey = "logo"
-                        }
-                    }*/;
-
-                    Presence.SetPresence(Info);
-                }
+                if (Initialized)
+                    Presence.SetPresence(Info.WithAssets(Logo));
             }
         }
 

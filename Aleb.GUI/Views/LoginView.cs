@@ -4,7 +4,6 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
-using Avalonia.Threading;
 
 using Aleb.Client;
 using Aleb.Common;
@@ -32,6 +31,10 @@ namespace Aleb.GUI.Views {
 
             Username.Validator = Validation.ValidateUsername;
             Password.Validator = Validation.ValidatePassword;
+
+            Discord.Info = new DiscordRPC.RichPresence() {
+                Details = "Prijava"
+            };
         }
 
         void Loaded(object sender, VisualTreeAttachmentEventArgs e)
@@ -70,6 +73,8 @@ namespace Aleb.GUI.Views {
                 Status.Text = "Prijava nije uspjela!";
                 return;
             }
+
+            Discord.Logo.LargeImageText = App.User.Name;
 
             if (App.User.State == UserState.Idle)
                 App.MainWindow.View = new RoomListView();

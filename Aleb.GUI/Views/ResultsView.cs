@@ -42,13 +42,19 @@ namespace Aleb.GUI.Views {
 
             int rotate = room.Users.Select(i => i.Name).ToList().IndexOf(App.User.Name) >> 1 & 1;
 
-            Victory.Text = $"{((score[rotate] > score[1 - rotate])? "Pobijedili" : "Izgubili")} ste"; //todo nerijeseno
+            string win = (score[rotate] > score[1 - rotate])? "Pobijedili" : "Izgubili";
+            Victory.Text = $"{win} ste"; //todo nerijeseno
 
             foreach (var (text, pts) in Score.Zip(score.Rotate(rotate)))
                 text.Text = pts.ToString();
 
             foreach (var (text, user) in Users.Zip(room.Users.Rotate(rotate * 2)))
                 text.Text = user.Name;
+
+            Discord.Info = new DiscordRPC.RichPresence() {
+                Details = win,
+                State = $"{Score[0].Text} - {Score[1].Text}"
+            };
         }
 
         void Loaded(object sender, VisualTreeAttachmentEventArgs e) {

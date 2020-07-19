@@ -162,6 +162,8 @@ namespace Aleb.GUI.Views {
 
         static List<string> emptyRow = new List<string>() { "", "" };
 
+        List<int> discScores = new List<int>() { 0, 0 };
+
         void UpdateRow<T>(RoundRow row, List<T> values, bool autoTeams = true) {
             int team = autoTeams? Team : 0;
             row.Left = values[team].ToString();
@@ -251,6 +253,10 @@ namespace Aleb.GUI.Views {
             Timer.Start();
 
             ShouldReconnect = true;
+
+            Discord.Info.Details = $"U igri - {Discord.Info.State}";
+            Discord.Info.Party = null;
+            Discord.Info.Timestamps = new DiscordRPC.Timestamps(DateTime.UtcNow);
         }
 
         public GameView(List<string> names): this() => InitNames(names);
@@ -319,7 +325,21 @@ namespace Aleb.GUI.Views {
             Timer.Tick -= UpdateTime;
         }
 
-        GameState State;
+        GameState _state;
+        GameState State {
+            get => _state;
+            set {
+                _state = value;
+
+                if (_state == GameState.Bidding) Discord.Info.State = "Bira aduta";
+                if (_state == GameState.Declaring) Discord.Info.State = "Zvanja";
+                if (_state == GameState.Playing) Discord.Info.State = "Karta";
+
+                if (Dealer == You) Discord.Info.State += " na musu";
+                Discord.Info.State += $" ({discScores[0]} - {discScores[1]})";
+            }
+        }
+
         int You;
         int Team => You % 2;
 
@@ -336,7 +356,7 @@ namespace Aleb.GUI.Views {
 
         bool[] DeclareSelected;
 
-        int lastPlaying, lastInTable, selectedTrump, roundNum;
+        int lastPlaying, lastInTable, selectedTrump;
         CardImage lastPlayed;
 
         void SetPlaying(int playing) {
@@ -398,6 +418,9 @@ namespace Aleb.GUI.Views {
 
             State = GameState.Bidding;
 
+            Discord.Logo.SmallImageKey = null;
+            Discord.Logo.SmallImageText = null;
+
             CreateCards(cards);
             Trump = null;
 
@@ -431,6 +454,9 @@ namespace Aleb.GUI.Views {
 
             Trump = new Trump(trump, UserText[lastPlaying].Text);
             selectedTrump = lastPlaying;
+
+            Discord.Logo.SmallImageKey = trump.ToString().ToLower();
+            Discord.Logo.SmallImageText = lastPlaying % 2 == Team? "Zvao": "Ruši";
 
             DeclareSelected = new bool[8];
             State = GameState.Declaring;
@@ -649,7 +675,7 @@ namespace Aleb.GUI.Views {
             UpdateRow(row, FailScore(final));
             Rounds.Children.Add(row);
 
-            UpdateRow(Total, total);
+            UpdateRow(Total, discScores = total);
             Total.IsVisible = true;
         }
 
@@ -673,6 +699,8 @@ namespace Aleb.GUI.Views {
             }
 
             App.MainWindow.Title = room.Name;
+            Discord.Info.Details = $"U igri - {room.Name}";
+
             InitNames(room.Users.Select(i => i.Name).ToList());
 
             List<int> total = Enumerable.Range(0, 2).Select(i => history.Sum(j => j.Score[i])).ToList();
