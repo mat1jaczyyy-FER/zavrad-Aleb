@@ -280,6 +280,7 @@ namespace Aleb.GUI.Views {
             Network.Reconnect += Reconnect;
 
             Network.TrumpNext += TrumpNext;
+            Network.TalonChosen += TalonChosen;
             Network.TrumpChosen += TrumpChosen;
             Network.FullCards += FullCards;
 
@@ -312,6 +313,7 @@ namespace Aleb.GUI.Views {
             Network.Reconnect -= Reconnect;
             
             Network.TrumpNext -= TrumpNext;
+            Network.TalonChosen -= TalonChosen;
             Network.TrumpChosen -= TrumpChosen;
             Network.FullCards -= FullCards;
 
@@ -454,6 +456,17 @@ namespace Aleb.GUI.Views {
             Table(lastPlaying, new TextOverlay("Dalje"));
 
             NextPlaying();
+        }
+
+        void TalonChosen(int card) {
+            if (!Dispatcher.UIThread.CheckAccess()) {
+                Dispatcher.UIThread.InvokeAsync(() => TalonChosen(card));
+                return;
+            }
+
+            if (State != GameState.Declaring) return;
+
+            Table(Dealer, new CardImage(card) { MaxHeight = 80 });
         }
 
         void TrumpChosen(Suit trump) {

@@ -78,6 +78,9 @@ namespace Aleb.Client {
         public static event ReconnectEventHandler Reconnect;
 
         public static event NothingEventHandler TrumpNext;
+        
+        public delegate void SimpleIntEventHandler(int value);
+        public static event SimpleIntEventHandler TalonChosen;
 
         public delegate void TrumpChosenEventHandler(Suit trump);
         public static event TrumpChosenEventHandler TrumpChosen;
@@ -88,7 +91,6 @@ namespace Aleb.Client {
         public delegate void YouDeclaredEventHandler(bool result);
         public static event YouDeclaredEventHandler YouDeclared;
         
-        public delegate void SimpleIntEventHandler(int value);
         public static event SimpleIntEventHandler PlayerDeclared;
 
         public delegate void WinningDeclarationEventHandler(int player, int value, List<int> calls, List<int> teammateCalls);
@@ -142,6 +144,7 @@ namespace Aleb.Client {
             else if (msg.Command == "Reconnect") Reconnect?.Invoke(new Room(msg.Args[0]), msg.Args[1].ToList(i => new FinalizedRound(i)));
 
             else if (msg.Command == "TrumpNext") TrumpNext?.Invoke();
+            else if (msg.Command == "TalonChosen") TalonChosen?.Invoke(Convert.ToInt32(msg.Args[0]));
             else if (msg.Command == "TrumpChosen") TrumpChosen?.Invoke(msg.Args[0].ToEnum<Suit>().Value);
             else if (msg.Command == "FullCards") FullCards?.Invoke(msg.Args[0].ToIntList());
             

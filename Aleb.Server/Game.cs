@@ -105,6 +105,8 @@ namespace Aleb.Server {
         public void TalonBid(Player sender, int index) {
             if (State != GameState.Bidding || sender != Current || sender != Dealer) return;
 
+            Broadcast("TalonChosen", (int)sender.Talon[index]);
+
             Bid(sender, sender.Talon[index].Suit);
         }
 
