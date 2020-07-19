@@ -176,7 +176,7 @@ namespace Aleb.Server {
                 
                 if (last || dosta) {
                     current.Finish(last);
-                    Start(5500);
+                    Start(3000);
 
                     for (int i = 0; i < 4; i++)
                         Broadcast("FinalCards", i, Players[i].OriginalCards.ToStr(), Players[i].OriginalTalon.ToStr());

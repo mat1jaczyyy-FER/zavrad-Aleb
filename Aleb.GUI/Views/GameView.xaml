@@ -74,10 +74,10 @@
     <TextBlock HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0 0 20 5" x:Name="TimeElapsed" />
 
     <DockPanel x:Name="FinalCard">
-      <Components:TextOverlay DockPanel.Dock="Bottom" HorizontalAlignment="Center" PointerEnter="FinalCardsEnter" PointerLeave="FinalCardsLeave" />
-      <Components:TextOverlay DockPanel.Dock="Top" HorizontalAlignment="Center" PointerEnter="FinalCardsEnter" PointerLeave="FinalCardsLeave" />
-      <Components:TextOverlay DockPanel.Dock="Right" VerticalAlignment="Center" PointerEnter="FinalCardsEnter" PointerLeave="FinalCardsLeave" />
-      <Components:TextOverlay DockPanel.Dock="Left" VerticalAlignment="Center" PointerEnter="FinalCardsEnter" PointerLeave="FinalCardsLeave" />
+      <Components:TextOverlay DockPanel.Dock="Bottom" HorizontalAlignment="Center" PointerEnter="FinalCardsEnter" PointerLeave="FinalCardsLeave" IsVisible="False" />
+      <Components:TextOverlay DockPanel.Dock="Top" HorizontalAlignment="Center" PointerEnter="FinalCardsEnter" PointerLeave="FinalCardsLeave" IsVisible="False" />
+      <Components:TextOverlay DockPanel.Dock="Right" VerticalAlignment="Center" PointerEnter="FinalCardsEnter" PointerLeave="FinalCardsLeave" IsVisible="False" />
+      <Components:TextOverlay DockPanel.Dock="Left" VerticalAlignment="Center" PointerEnter="FinalCardsEnter" PointerLeave="FinalCardsLeave" IsVisible="False" />
       <Border BorderThickness="0" />
     </DockPanel>
   </Grid>
