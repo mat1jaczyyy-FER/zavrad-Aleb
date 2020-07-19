@@ -350,7 +350,7 @@ namespace Aleb.GUI.Views {
                 if (_state == GameState.Playing) Discord.Info.State = "Karta";
 
                 if (Dealer == You) Discord.Info.State += " na musu";
-                Discord.Info.State += $" ({discScores[0]} - {discScores[1]})";
+                Discord.Info.State += $" ({discScores[Team]} - {discScores[1 - Team]})";
             }
         }
 
@@ -666,8 +666,6 @@ namespace Aleb.GUI.Views {
             }
 
             if (State != GameState.Playing) return;
-
-            Score.Opacity = 0;
 
             FinalCard[player].SetControl(new CardStack(cards, talon));
         }
