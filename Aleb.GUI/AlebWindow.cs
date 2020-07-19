@@ -139,7 +139,7 @@ namespace Aleb.GUI {
         void Maximize(PointerEventArgs e) {
             WindowState = (WindowState == WindowState.Maximized)? WindowState.Normal : WindowState.Maximized;
             
-            if (e.KeyModifiers == App.ControlKey && WindowState == WindowState.Maximized) {
+            if (e?.KeyModifiers == App.ControlKey && WindowState == WindowState.Maximized) {
                 Screen result = null;
 
                 foreach (Screen screen in Screens.All)
