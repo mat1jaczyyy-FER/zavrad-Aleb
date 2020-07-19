@@ -41,6 +41,8 @@ namespace Aleb.GUI.Views {
             prompt = this.Get<Border>("Prompt");
             trump = this.Get<Border>("Trump");
 
+            FinalCard = this.Get<DockPanel>("FinalCard").Children.OfType<TextOverlay>().ToList();
+
             TimeElapsed = this.Get<TextBlock>("TimeElapsed");
         }
 
@@ -53,6 +55,8 @@ namespace Aleb.GUI.Views {
         
         StackPanel alert;
         Border prompt, trump;
+
+        List<TextOverlay> FinalCard;
 
         Stopwatch timer = new Stopwatch();
         DispatcherTimer Timer;
@@ -213,6 +217,16 @@ namespace Aleb.GUI.Views {
 
         void ScoreEnter(object sender, PointerEventArgs e) => Rounds.IsVisible = true;
         void ScoreLeave(object sender, PointerEventArgs e) => Rounds.IsVisible = false;
+        
+        void FinalCardsEnter(object sender, PointerEventArgs e) => FinalCardsUpdate(sender, true);
+        void FinalCardsLeave(object sender, PointerEventArgs e) => FinalCardsUpdate(sender, false);
+        
+        void FinalCardsUpdate(object sender, bool visible) {
+            if (!(sender is Control source)) return;
+            if (!(source.Parent is DockPanel parent)) return;
+
+            FinalCard[parent.Children.IndexOf(source)].IsVisible = visible;
+        }
 
         bool ShouldReconnect;
 
@@ -655,7 +669,7 @@ namespace Aleb.GUI.Views {
 
             Score.Opacity = 0;
 
-            Table(player, new CardStack(cards, talon));
+            FinalCard[player].SetControl(new CardStack(cards, talon));
         }
 
         void TotalScore(FinalizedRound final, List<int> total) {

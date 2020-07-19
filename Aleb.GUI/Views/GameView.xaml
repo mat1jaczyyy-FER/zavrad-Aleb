@@ -6,10 +6,10 @@
 
   <Grid>
     <DockPanel x:Name="Root">
-      <Components:UserInGame DockPanel.Dock="Bottom" HorizontalAlignment="Center" />
-      <Components:UserInGame DockPanel.Dock="Top" HorizontalAlignment="Center" />
-      <Components:UserInGame DockPanel.Dock="Right" VerticalAlignment="Center" VerticalText="True" />
-      <Components:UserInGame DockPanel.Dock="Left" VerticalAlignment="Center" VerticalText="True" />
+      <Components:UserInGame DockPanel.Dock="Bottom" HorizontalAlignment="Center" PointerEnter="FinalCardsEnter" PointerLeave="FinalCardsLeave" />
+      <Components:UserInGame DockPanel.Dock="Top" HorizontalAlignment="Center" PointerEnter="FinalCardsEnter" PointerLeave="FinalCardsLeave" />
+      <Components:UserInGame DockPanel.Dock="Right" VerticalAlignment="Center" PointerEnter="FinalCardsEnter" PointerLeave="FinalCardsLeave" VerticalText="True" />
+      <Components:UserInGame DockPanel.Dock="Left" VerticalAlignment="Center" PointerEnter="FinalCardsEnter" PointerLeave="FinalCardsLeave" VerticalText="True" />
 
       <Grid Margin="15" RowDefinitions="*,10,Auto">
         <Grid Grid.Row="0" RowDefinitions="*,3*,*" ColumnDefinitions="2*,3*,2*">
@@ -72,5 +72,13 @@
     </StackPanel>
 
     <TextBlock HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0 0 20 5" x:Name="TimeElapsed" />
+
+    <DockPanel x:Name="FinalCard">
+      <Components:TextOverlay DockPanel.Dock="Bottom" HorizontalAlignment="Center" PointerEnter="FinalCardsEnter" PointerLeave="FinalCardsLeave" />
+      <Components:TextOverlay DockPanel.Dock="Top" HorizontalAlignment="Center" PointerEnter="FinalCardsEnter" PointerLeave="FinalCardsLeave" />
+      <Components:TextOverlay DockPanel.Dock="Right" VerticalAlignment="Center" PointerEnter="FinalCardsEnter" PointerLeave="FinalCardsLeave" />
+      <Components:TextOverlay DockPanel.Dock="Left" VerticalAlignment="Center" PointerEnter="FinalCardsEnter" PointerLeave="FinalCardsLeave" />
+      <Border BorderThickness="0" />
+    </DockPanel>
   </Grid>
 </UserControl>

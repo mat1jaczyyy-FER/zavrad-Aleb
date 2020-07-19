@@ -16,19 +16,35 @@ namespace Aleb.GUI.Components {
 
         StackPanel Root;
 
-        public TextOverlay() => throw new InvalidOperationException();
+        public void SetControl(Control control, int timeout = 0) {
+            Root.Children.Clear();
+
+            if (control != null) {
+                control.Margin = Thickness.Parse("40 20");
+
+                Root.Children.Add(control);
+                IsHitTestVisible = true;
+                Opacity = 1;
+
+                if (timeout > 0)
+                    Task.Delay(timeout).ContinueWith(_ => Dispatcher.UIThread.InvokeAsync(() => IsVisible = false));
+
+            } else {
+                IsHitTestVisible = false;
+                Opacity = 0;
+            }
+        }
+
+        public TextOverlay()
+        : this((Control)null) {}
 
         public TextOverlay(string text, int timeout = 0)
         : this(new TextBlock() { Text = text }, timeout) {}
 
         public TextOverlay(Control control, int timeout = 0) {
             InitializeComponent();
-
-            control.Margin = Thickness.Parse("40 20");
-            Root.Children.Add(control);
-
-            if (timeout > 0)
-                Task.Delay(timeout).ContinueWith(_ => Dispatcher.UIThread.InvokeAsync(() => IsVisible = false));
+            
+            SetControl(control, timeout);
         }
     }
 }

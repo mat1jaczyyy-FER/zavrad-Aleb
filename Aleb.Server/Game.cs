@@ -177,11 +177,11 @@ namespace Aleb.Server {
                     Start(5500);
 
                     for (int i = 0; i < 4; i++)
-                        Broadcast(2000, "FinalCards", i, Players[i].OriginalCards.ToStr(), Players[i].OriginalTalon.ToStr());
+                        Broadcast("FinalCards", i, Players[i].OriginalCards.ToStr(), Players[i].OriginalTalon.ToStr());
 
                     Broadcast(2000, "FinalScores", current.ToString());
 
-                    Broadcast(5500, "TotalScore", current.ToString(), Score.ToStr());
+                    Broadcast(3000, "TotalScore", current.ToString(), Score.ToStr());
                 
                 } else Broadcast(2000, "ContinuePlayingCards", Array.IndexOf(Players, Current));
                 
