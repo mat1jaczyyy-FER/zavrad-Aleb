@@ -52,7 +52,6 @@ namespace Aleb.GUI {
                 }
             };
             
-            TimeSpent.Start();
             App.Args = args;
             
             BuildAvaloniaApp().StartWithClassicDesktopLifetime(null);

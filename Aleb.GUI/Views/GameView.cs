@@ -271,6 +271,8 @@ namespace Aleb.GUI.Views {
             Discord.Info.Details = $"U igri - {Discord.Info.State}";
             Discord.Info.Party = null;
             Discord.Info.Timestamps = new DiscordRPC.Timestamps(DateTime.UtcNow);
+
+            Program.TimeSpent.Start();
         }
 
         public GameView(List<string> names): this() => InitNames(names);
@@ -339,6 +341,8 @@ namespace Aleb.GUI.Views {
             timer.Stop();
             Timer.Stop();
             Timer.Tick -= UpdateTime;
+
+            Program.TimeSpent.Stop();
         }
 
         GameState _state;
