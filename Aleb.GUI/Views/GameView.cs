@@ -222,10 +222,13 @@ namespace Aleb.GUI.Views {
         void FinalCardsLeave(object sender, PointerEventArgs e) => FinalCardsUpdate(sender, false);
         
         void FinalCardsUpdate(object sender, bool visible) {
-            if (!(sender is Control source)) return;
-            if (!(source.Parent is DockPanel parent)) return;
+            int index;
 
-            FinalCard[parent.Children.IndexOf(source)].IsVisible = visible;
+            if (sender is TextOverlay source) index = FinalCard.IndexOf(source);
+            else if (sender is UserInGame user) index = UserText.IndexOf(user);
+            else return;
+
+            FinalCard[index].IsVisible = visible;
         }
 
         bool ShouldReconnect;
@@ -233,6 +236,7 @@ namespace Aleb.GUI.Views {
         void InitNames(List<string> names) {
             UserText.Swap(1, 2);
             names.Swap(1, 2);
+            FinalCard.Swap(1, 2);
 
             foreach (var (text, name) in UserText.Zip(names.RotateWith(i => i == App.User.Name)))
                 text.Text = name;
