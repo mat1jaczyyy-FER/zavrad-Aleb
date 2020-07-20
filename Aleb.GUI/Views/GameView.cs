@@ -242,6 +242,7 @@ namespace Aleb.GUI.Views {
             UserText = UserText.Rotate(position).ToList();
             TableSegments = TableSegments.Rotate(position).ToList();
             CardTableSegments = CardTableSegments.Rotate(position).ToList();
+            FinalCard = FinalCard.Rotate(position).ToList();
 
             for (int i = 0; i < 4; i++)
                 CardTable(i, new CardImage(32) { Opacity = 0 });
