@@ -110,9 +110,9 @@ namespace Aleb.Server {
             Bid(sender, sender.Talon[index].Suit);
         }
 
-        public bool Declare(Player player, List<int> indexes) {
+        public bool? Declare(Player player, List<int> indexes) {
             if (State != GameState.Declaring || player != Current)
-                return false;
+                return null;
 
             if (indexes?.Any(i => i < 0 || 8 <= i) == true) return false;
 

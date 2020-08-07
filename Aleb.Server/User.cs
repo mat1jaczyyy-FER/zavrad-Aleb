@@ -155,7 +155,8 @@ namespace Aleb.Server {
                 } else if (msg.Command == "Declare") {
                     if (msg.Args.Length == 1) {
                         List<int> indexes = msg.Args[0] != "null"? msg.Args[0].ToIntList() : null;
-                        Player.YouDeclared(Game.Declare(Player, indexes));
+                        bool? result = Game.Declare(Player, indexes);
+                        if (result.HasValue) Player.YouDeclared(result.Value);
                     }
 
                 } else if (msg.Command == "PlayCard") {
