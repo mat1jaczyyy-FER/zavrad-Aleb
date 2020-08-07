@@ -118,20 +118,17 @@ namespace Aleb.Server {
 
             if (!Current.CreateCalls(indexes)) return false;
 
-            if (Current.Calls.Max.Cards.Count == 8) {
-                History.Last().Belot(Current, Score[Current.Team], Room.ScoreGoal); //todo implementaj ovo nekako
-
-                Start();
-                return true;
-            }
-
             if (Current == Dealer) {
                 Player maxPlayer = Players.RotateWith(i => i == Dealer.Next).Aggregate((a, b) => a.Calls.Gt(b.Calls)? a : b);
                 int total = History.Last().ApplyCalls(maxPlayer);
 
                 int delay = total != 0? 1500 : 0;
                 Broadcast(delay, "WinningDeclaration", Array.IndexOf(Players, maxPlayer), total, maxPlayer.Calls.ToString(), maxPlayer.Teammate.Calls.ToString());
-                Broadcast(delay + maxPlayer.DeclarationDelay(), "StartPlayingCards");
+                
+                if (maxPlayer.Calls.IsBelot || maxPlayer.Teammate.Calls.IsBelot)
+                    Room.BelotCompleted(maxPlayer.Team);
+
+                else Broadcast(delay + maxPlayer.DeclarationDelay(), "StartPlayingCards");
 
                 State++;
             }

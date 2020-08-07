@@ -40,6 +40,7 @@ namespace Aleb.Server {
         public int Used => Cards.Count;
 
         List<Call> IndividualCalls = new List<Call>();
+        public bool IsBelot => Max.Value >= Consts.BelotValue;
 
         public void Add(int value, IEnumerable<Card> cards) {
             foreach (Card card in cards)

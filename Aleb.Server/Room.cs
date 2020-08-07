@@ -103,8 +103,10 @@ namespace Aleb.Server {
             return false;
         }
 
-        void DestroyGame(int delay = 0) {
-            Message msg = new Message("GameFinished", Game.Score.ToStr(), ToString(), Password);
+        public void BelotCompleted(int team) => DestroyGame(15000, team);
+
+        void DestroyGame(int delay = 0, int belot = -1) {
+            Message msg = new Message("GameFinished", Game.Score.Select((x, i) => i == belot? Consts.BelotValue : x).ToStr(), ToString(), Password);
 
             foreach (User user in Users) {
                 user.CompletedGame();

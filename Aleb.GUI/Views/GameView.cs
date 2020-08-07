@@ -534,8 +534,11 @@ namespace Aleb.GUI.Views {
             }
 
             if (State != GameState.Declaring) return;
+
+            string declare = (value != 0)? value.ToString() : "Dalje";
+            if (value >= Consts.BelotValue) declare = "Belot";
             
-            Table(lastPlaying, new TextOverlay((value != 0)? value.ToString() : "Dalje"));
+            Table(lastPlaying, new TextOverlay(declare));
 
             if (lastPlaying == Dealer) SetPlaying(-1);
             else NextPlaying();
@@ -560,7 +563,7 @@ namespace Aleb.GUI.Views {
                 Table(player, new CardStack(calls));
                 Table(Utilities.Modulo(player + 2, 4), new CardStack(teammateCalls));
 
-                Alert = new TextOverlay(value.ToString());
+                Alert = new TextOverlay(value >= Consts.BelotValue? "Belot" : value.ToString());
 
             } else Alert = new TextOverlay("Nema zvanja");
 
@@ -718,8 +721,6 @@ namespace Aleb.GUI.Views {
                 Dispatcher.UIThread.InvokeAsync(() => GameFinished(score, room, password));
                 return;
             }
-
-            if (State != GameState.Playing) return;
 
             room.Password = password;
             

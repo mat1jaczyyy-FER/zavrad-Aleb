@@ -52,7 +52,10 @@ namespace Aleb.Server {
                     if (i == cards.Count || !cards[i - 1].IsNext(cards[i])) {
                         int count = i - start;
 
-                        if (count >= 3)
+                        if (count == 8)
+                            calls.Add(Consts.BelotValue, cards.Skip(start).Take(count));
+
+                        else if (count >= 3)
                             calls.Add(Math.Min(100, 10 * count * count - 40 * count + 50), cards.Skip(start).Take(count));
 
                         start = i;

@@ -155,8 +155,11 @@ namespace Aleb.Server {
                 } else if (msg.Command == "Declare") {
                     if (msg.Args.Length == 1) {
                         List<int> indexes = msg.Args[0] != "null"? msg.Args[0].ToIntList() : null;
-                        bool? result = Game.Declare(Player, indexes);
-                        if (result.HasValue) Player.YouDeclared(result.Value);
+
+                        Player player = Player; // workaround for belote, game finishes during declare() call
+
+                        bool? result = Game.Declare(player, indexes);
+                        if (result.HasValue) player.YouDeclared(result.Value);
                     }
 
                 } else if (msg.Command == "PlayCard") {

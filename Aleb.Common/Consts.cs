@@ -17,4 +17,8 @@
         Declaring,
         Playing
     }
+
+    public static class Consts {
+        public const int BelotValue = int.MaxValue / 3;
+    }
 }

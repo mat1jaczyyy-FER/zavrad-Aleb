@@ -46,7 +46,7 @@ namespace Aleb.GUI.Views {
             Victory.Text = $"{win} ste"; //todo nerijeseno
 
             foreach (var (text, pts) in Score.Zip(score.Rotate(rotate)))
-                text.Text = pts.ToString();
+                text.Text = pts >= Consts.BelotValue? "Belot" : pts.ToString();
 
             foreach (var (text, user) in Users.Zip(room.Users.Rotate(rotate * 2)))
                 text.Text = user.Name;
