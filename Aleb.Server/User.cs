@@ -177,6 +177,8 @@ namespace Aleb.Server {
         }
 
         void Disconnect(AlebClient sender) {
+            if (sender != Client) return;
+
             Console.WriteLine($"{Client.Address} disconnected");
 
             Client = null;
