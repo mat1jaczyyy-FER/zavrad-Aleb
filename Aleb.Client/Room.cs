@@ -9,6 +9,7 @@ namespace Aleb.Client {
         public readonly string Name;
         public readonly GameType Type;
         public readonly int Goal;
+        public readonly bool ShowPts;
         public int Count;
 
         public bool HasPassword;
@@ -31,10 +32,11 @@ namespace Aleb.Client {
             Name = args[0];
             Type = args[1].ToEnum<GameType>().Value;
             Goal = Convert.ToInt32(args[2]);
-            HasPassword = Convert.ToBoolean(args[3]);
-            Count = Convert.ToInt32(args[4]);
+            ShowPts = Convert.ToBoolean(args[3]);
+            HasPassword = Convert.ToBoolean(args[4]);
+            Count = Convert.ToInt32(args[5]);
 
-            Users = args[5].ToList(i => new User(i)).ToArray();
+            Users = args[6].ToList(i => new User(i)).ToArray();
         }
 
         public override bool Equals(object obj) {

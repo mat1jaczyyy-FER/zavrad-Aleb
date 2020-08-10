@@ -19,6 +19,7 @@ namespace Aleb.GUI.Components {
 
             NameText = this.Get<TextBlock>("NameText");
             PasswordIcon = this.Get<LockIcon>("PasswordIcon");
+            HiddenIcon = this.Get<HiddenIcon>("HiddenIcon");
             Settings = this.Get<TextBlock>("Settings");
             Separator = this.Get<Border>("Separator");
 
@@ -32,6 +33,7 @@ namespace Aleb.GUI.Components {
 
         TextBlock NameText, Settings;
         LockIcon PasswordIcon;
+        HiddenIcon HiddenIcon;
         Border Separator;
         List<UserInList> Users;
 
@@ -43,6 +45,7 @@ namespace Aleb.GUI.Components {
                 NameText.Text = Room.Name;
                 Settings.Text = Room.Settings;
 
+                HiddenIcon.IsVisible = !Room.ShowPts;
                 PasswordIcon.IsVisible = Room.HasPassword;
                 
                 for (int i = 0; i < 4; i++)

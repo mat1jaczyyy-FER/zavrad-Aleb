@@ -10,6 +10,7 @@
 
       <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center" Margin="0 -10 0 0">
         <Components:LockIcon Cursor="Hand" x:Name="PasswordIcon" Clicked="CopyPassword" />
+        <Components:HiddenIcon x:Name="HiddenIcon" />
         
         <TextBlock Classes="heading" x:Name="Settings" />
       </StackPanel>

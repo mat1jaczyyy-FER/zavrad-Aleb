@@ -10,6 +10,7 @@
     <TextBlock Grid.Row="0" HorizontalAlignment="Center" FontWeight="Bold" x:Name="NameText" />
 
     <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
+      <Components:HiddenIcon x:Name="HiddenIcon" />
       <Components:LockIcon Enabled="False" x:Name="PasswordIcon" />
 
       <TextBlock Classes="heading" x:Name="Settings" />

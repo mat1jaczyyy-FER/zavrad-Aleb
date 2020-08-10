@@ -20,6 +20,7 @@ namespace Aleb.GUI.Popups {
             RoomName = this.Get<ValidationTextBox>("RoomName");
             Type = this.Get<ComboBox>("Type");
             Goal = this.Get<ValidationTextBox>("Goal");
+            ShowPts = this.Get<CheckBox>("ShowPts");
             Password = this.Get<ValidationTextBox>("Password");
 
             CreateButton = this.Get<Button>("CreateButton");
@@ -28,6 +29,7 @@ namespace Aleb.GUI.Popups {
 
         ValidationTextBox RoomName, Goal, Password;
         ComboBox Type;
+        CheckBox ShowPts;
 
         Button CreateButton;
         TextBlock Status;
@@ -78,7 +80,7 @@ namespace Aleb.GUI.Popups {
             Status.Text = " ";
             Focus();
             
-            Room room = await Requests.CreateRoom(RoomName.Text, (GameType)Type.SelectedItem, RoomGoalInt(Goal.Text), Password.Text);
+            Room room = await Requests.CreateRoom(RoomName.Text, (GameType)Type.SelectedItem, RoomGoalInt(Goal.Text), ShowPts.IsChecked?? false, Password.Text);
 
             if (room == null) {
                 RoomName.IsEnabled = Type.IsEnabled = Goal.IsEnabled = Password.IsEnabled = CreateButton.IsEnabled = App.MainWindow.PopupClose.IsEnabled = true;

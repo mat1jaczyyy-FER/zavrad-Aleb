@@ -19,6 +19,7 @@ namespace Aleb.GUI.Views {
             NameText = this.Get<TextBlock>("NameText");
             Settings = this.Get<TextBlock>("Settings");
             PasswordIcon = this.Get<LockIcon>("PasswordIcon");
+            HiddenIcon = this.Get<HiddenIcon>("HiddenIcon");
 
             Users = this.Get<StackPanel>("Users").Children.OfType<UserInRoom>().ToList();
             Separator = this.Get<Border>("Separator");
@@ -29,6 +30,7 @@ namespace Aleb.GUI.Views {
 
         TextBlock NameText, Settings;
         LockIcon PasswordIcon;
+        HiddenIcon HiddenIcon;
 
         List<UserInRoom> Users;
         Border Separator;
@@ -68,6 +70,7 @@ namespace Aleb.GUI.Views {
             Count = room.Users.Count(i => i != null);
             Separator.Opacity = Convert.ToDouble(Count > 2);
 
+            HiddenIcon.IsVisible = !room.ShowPts;
             PasswordIcon.IsVisible = room.HasPassword;
             Password = room.Password;
 
@@ -219,7 +222,7 @@ namespace Aleb.GUI.Views {
                 return;
             }
 
-            GameView game = new GameView(Users.Select(i => i.Text).ToList());
+            GameView game = new GameView(Users.Select(i => i.Text).ToList()) { showPts = !HiddenIcon.IsVisible };
 
             App.MainWindow.View = game;
             game.GameStarted(dealer, cards);

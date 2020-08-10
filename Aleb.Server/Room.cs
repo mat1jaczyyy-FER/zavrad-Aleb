@@ -7,7 +7,7 @@ namespace Aleb.Server {
     class Room {
         public static List<Room> Rooms { get; private set; } = new List<Room>();
 
-        public static Room Create(string name, GameType? type, int goal, string password, User creator) {
+        public static Room Create(string name, GameType? type, int goal, bool showpts, string password, User creator) {
             if (!Validation.ValidateRoomName(name)) return null;
             if (type == null) return null;
             if (!Validation.ValidateRoomGoal(goal)) return null;
@@ -15,7 +15,7 @@ namespace Aleb.Server {
 
             if (Rooms.Any(i => i.Name == name || i.Users.Contains(creator))) return null;
 
-            Room room = new Room(name, type.Value, goal, password, creator);
+            Room room = new Room(name, type.Value, goal, showpts, password, creator);
             Rooms.Add(room);
 
             return room;
@@ -38,6 +38,7 @@ namespace Aleb.Server {
         public readonly string Name;
         public readonly GameType Type;
         public readonly int ScoreGoal;
+        public readonly bool ShowPts;
         public readonly string Password;
 
         public bool HasPassword => Password != "";
@@ -131,15 +132,16 @@ namespace Aleb.Server {
             return true;
         }
 
-        Room(string name, GameType type, int goal, string password, User owner) {
+        Room(string name, GameType type, int goal, bool showpts, string password, User owner) {
             Name = name;
             Type = type;
             ScoreGoal = goal;
+            ShowPts = showpts;
             Password = password;
 
             Join(owner, password);
         }
 
-        public override string ToString() => $"{Name},{Type},{ScoreGoal},{HasPassword},{Count},{People.ToStr(i => i.User.Name)}";
+        public override string ToString() => $"{Name},{Type},{ScoreGoal},{ShowPts},{HasPassword},{Count},{People.ToStr(i => i.User.Name)}";
     }
 }

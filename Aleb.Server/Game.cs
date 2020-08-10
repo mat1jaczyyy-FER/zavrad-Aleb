@@ -155,23 +155,22 @@ namespace Aleb.Server {
 
                 current.Play(Table, last, out Current);
 
-                string round = current.ToStringNoFail();
+                string roundPts = current.ToStringNoFail();
+                string roundHidden = current.ToStringHidden();
 
-                bool dosta = false;
-
-                if (Room.Type == GameType.Dosta) {
+                if (Room.Type == GameType.Dosta && !last) {
                     int[] score = Score;
 
                     for (int i = 0; i < 2; i++) {
                         score[i] += current.Played[i] + (current.Played[i] > 0? current.Calls[i] : 0);
                         if (score[i] >= Room.ScoreGoal) {
-                            dosta = true;
+                            last = true;
                             break;
                         }
                     }
                 }
                 
-                if (last || dosta) {
+                if (last) {
                     current.Finish(last);
                     Start(3000);
 
@@ -184,7 +183,7 @@ namespace Aleb.Server {
                 
                 } else Broadcast(2000, "ContinuePlayingCards", Array.IndexOf(Players, Current));
                 
-                Broadcast("TableComplete", $"{round},{current.Suit},{current.Fail}");
+                Broadcast("TableComplete", $"{(last? roundPts : (Room.ShowPts? roundPts : roundHidden))},{current.Suit},{current.Fail}");
 
             } else Current = Current.Next;
 

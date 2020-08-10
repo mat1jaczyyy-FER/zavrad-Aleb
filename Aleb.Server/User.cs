@@ -65,8 +65,8 @@ namespace Aleb.Server {
                     Client.Send("RoomList", Room.Rooms.Select(i => i.ToString()).ToArray());
                     
                 } else if (msg.Command == "CreateRoom") {
-                    Room room = (msg.Args.Length == 4)
-                        ? Room.Create(msg.Args[0], msg.Args[1].ToEnum<GameType>(), Convert.ToInt32(msg.Args[2]), msg.Args[3], this)
+                    Room room = (msg.Args.Length == 5)
+                        ? Room.Create(msg.Args[0], msg.Args[1].ToEnum<GameType>(), Convert.ToInt32(msg.Args[2]), Convert.ToBoolean(msg.Args[3]), msg.Args[4], this)
                         : null;
 
                     if (room != null) {

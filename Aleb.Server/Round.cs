@@ -64,6 +64,10 @@ namespace Aleb.Server {
 
         string PlayedString => $"{Played.ToStr(delimiter: ',')}";
 
+        public string ToStringHidden() => Finalized
+            ? "-1,-1"
+            : $"{Calls.ToStr(delimiter: ',')};-1,-1";
+
         public string ToStringNoFail() => Finalized
             ? PlayedString
             : $"{Calls.ToStr(delimiter: ',')};{PlayedString}";

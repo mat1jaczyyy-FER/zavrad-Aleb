@@ -23,14 +23,14 @@ namespace Aleb.Client {
         public static async Task<List<Room>> GetRoomList()
             => (await Network.Ask(new Message("GetRoomList"), "RoomList"))?.Args.Select(i => new Room(i)).ToList()?? new List<Room>();
 
-        public static async Task<Room> CreateRoom(string name, GameType type, int goal, string password) {
+        public static async Task<Room> CreateRoom(string name, GameType type, int goal, bool showpts, string password) {
             name = name?? "";
             password = password?? "";
 
             if (!Validation.ValidateRoomName(name)) return null;
             if (!Validation.ValidateRoomPassword(password)) return null;
 
-            Message response = await Network.Ask(new Message("CreateRoom", name, type, goal, password), "RoomCreated", "RoomFailed");
+            Message response = await Network.Ask(new Message("CreateRoom", name, type, goal, showpts, password), "RoomCreated", "RoomFailed");
             return response.Command == "RoomCreated"? new Room(response.Args[0]) : null;
         }
 

@@ -167,6 +167,7 @@ namespace Aleb.GUI.Views {
         static List<string> emptyRow = new List<string>() { "", "" };
 
         List<int> discScores = new List<int>() { 0, 0 };
+        public bool showPts = true;
 
         void UpdateRow<T>(RoundRow row, List<T> values, bool autoTeams = true) {
             int team = autoTeams? Team : 0;
@@ -188,8 +189,10 @@ namespace Aleb.GUI.Views {
 
         void UpdateCurrentRound(List<int> calls, List<int> played) {
             UpdateRow(Declarations, calls);
-            UpdateRow(CurrentRound, played);
-            UpdateRow(TotalRound, calls.Zip(played).Select(t => t.First + t.Second).ToList());
+            if (played.Any(i => i != -1)) {
+                UpdateRow(CurrentRound, played);
+                UpdateRow(TotalRound, calls.Zip(played).Select(t => t.First + t.Second).ToList());
+            }
         }
 
         void UpdateCurrentRound(FinalizedRound final) {
@@ -205,8 +208,10 @@ namespace Aleb.GUI.Views {
             };
 
             UpdateRow(Declarations, calls);
-            UpdateRow(CurrentRound, new List<int>() { 0, 0 });
-            UpdateRow(TotalRound, calls);
+            if (showPts) {
+                UpdateRow(CurrentRound, new List<int>() { 0, 0 });
+                UpdateRow(TotalRound, calls);
+            }
         }
 
         void ClearCurrentRound() {
@@ -739,6 +744,8 @@ namespace Aleb.GUI.Views {
             InitNames(room.Users.Select(i => i.Name).ToList());
 
             List<int> total = Enumerable.Range(0, 2).Select(i => history.Sum(j => j.Score[i])).ToList();
+
+            showPts = room.ShowPts;
 
             State = GameState.Playing;
 
