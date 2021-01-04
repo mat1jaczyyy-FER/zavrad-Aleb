@@ -654,10 +654,14 @@ namespace Aleb.GUI.Views {
 
             UpdateCurrentRound(calls, played.Score);
 
-            if (played.Fail) Table(selectedTrump, new TextOverlay(new Image() {
-                Height = 70,
-                Source = App.GetImage("Edgar")
-            }));
+            if (played.Fail) {
+                Table(selectedTrump, new TextOverlay(new Image() {
+                    Height = 70,
+                    Source = App.GetImage("Edgar")
+                }));
+
+                Audio.Fail();
+            }
         }
 
         void ContinuePlayingCards(int winner) {
