@@ -20,7 +20,7 @@ namespace Aleb.GUI.Components {
 
                 mouseHeld = false;
 
-                Fill = (IBrush)Application.Current.Styles.FindResource(Enabled
+                Fill = App.GetResource<IBrush>(Enabled
                     ? (mouseOver
                         ? OverBrush
                         : EnabledBrush
@@ -44,12 +44,12 @@ namespace Aleb.GUI.Components {
         bool mouseOver = false;
 
         protected void MouseEnter(object sender, PointerEventArgs e) {
-            if (Enabled) Fill = (IBrush)Application.Current.Styles.FindResource(mouseHeld? DownBrush : OverBrush);
+            if (Enabled) Fill = App.GetResource<IBrush>(mouseHeld? DownBrush : OverBrush);
             mouseOver = true;
         }
 
         protected void MouseLeave(object sender, PointerEventArgs e) {
-            if (Enabled) Fill = (IBrush)Application.Current.Styles.FindResource(EnabledBrush);
+            if (Enabled) Fill = App.GetResource<IBrush>(EnabledBrush);
             mouseOver = false;
         }
 
@@ -61,7 +61,7 @@ namespace Aleb.GUI.Components {
             if (MouseButton == PointerUpdateKind.LeftButtonPressed || (AllowRightClick && MouseButton == PointerUpdateKind.RightButtonPressed)) {
                 mouseHeld = true;
 
-                if (Enabled) Fill = (IBrush)Application.Current.Styles.FindResource(DownBrush);
+                if (Enabled) Fill = App.GetResource<IBrush>(DownBrush);
             }
         }
 

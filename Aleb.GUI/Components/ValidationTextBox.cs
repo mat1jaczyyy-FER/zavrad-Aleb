@@ -29,7 +29,7 @@ namespace Aleb.GUI.Components {
 
             bool state = Validator?.Invoke(text) != false;
 
-            Foreground = (IBrush)Application.Current.Styles.FindResource(state? "ThemeForegroundBrush" : "ErrorBrush");
+            Foreground = App.GetResource<IBrush>(state? "ThemeForegroundBrush" : "ErrorBrush");
 
             Validated?.Invoke(state);
         }

@@ -44,6 +44,11 @@ namespace Aleb.GUI {
         public static Bitmap GetImage(string uri)
             => new Bitmap(AvaloniaLocator.Current.GetService<IAssetLoader>().Open(new Uri($"avares://Aleb.GUI/Assets/{uri}.png")));
 
+        public static T GetResource<T>(string res)
+            => Current.Styles.TryGetResource(res, out object ret) && ret is T final
+                ? final
+                : default;
+
         public override void Initialize() {
             AvaloniaXamlLoader.Load(this);
             instance = this;

@@ -47,7 +47,7 @@ namespace Aleb.GUI.Components {
                 
             foreach (Path value in paths) {
                 value.IsHitTestVisible = false;
-                value.Stroke = (IBrush)Application.Current.Styles.FindResource("ThemeForegroundBrush");
+                value.Stroke = App.GetResource<IBrush>("ThemeForegroundBrush");
                 if (ShouldFill) value.Fill = value.Stroke;
 
                 Icon.Children.Add(value);
