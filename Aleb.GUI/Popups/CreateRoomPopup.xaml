@@ -24,9 +24,9 @@
 
         <Components:ValidationTextBox Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch"
                                       x:Name="Goal" Validated="Goal_Validated" Return="Return" Text="1001" />
-        <StackPanel Width="0" Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left">
-          <CheckBox Content="Prikaži trenutne bodove" IsChecked="true" x:Name="ShowPts" />
-        </StackPanel>
+
+        <CheckBox Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Left" VerticalAlignment="Center" 
+                  x:Name="ShowPts" Content="Prikaži trenutne bodove" IsChecked="true" />
 
         <TextBlock Grid.Row="8" Grid.Column="0" Classes="heading" VerticalAlignment="Center" Text="Lozinka:  " />
 
