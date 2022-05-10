@@ -655,11 +655,7 @@ namespace Aleb.GUI.Views {
             UpdateCurrentRound(calls, played.Score);
 
             if (played.Fail) {
-                Table(selectedTrump, new TextOverlay(new Image() {
-                    Height = 70,
-                    Source = App.GetImage("Edgar")
-                }));
-
+                Table(selectedTrump, new TextOverlay($"Pali {(Position(selectedTrump) % 2 == 0 ? "ste" : "su")}"));
                 Audio.Fail();
             }
         }
