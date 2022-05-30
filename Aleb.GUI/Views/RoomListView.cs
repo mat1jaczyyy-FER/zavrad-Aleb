@@ -20,10 +20,12 @@ namespace Aleb.GUI.Views {
 
             RoomList = this.Get<UniformGrid>("RoomList");
             Create = this.Get<Create>("Create");
+            NoRooms = this.Get<Grid>("NoRooms");
         }
 
         UniformGrid RoomList;
         Create Create;
+        Grid NoRooms;
 
         public RoomListView() {
             InitializeComponent();
@@ -36,6 +38,9 @@ namespace Aleb.GUI.Views {
         async void Loaded(object sender, VisualTreeAttachmentEventArgs e) {
             foreach (Room room in await Requests.GetRoomList())
                 RoomAdded(room);
+
+            if (!Rooms.Any())
+                NoRooms.IsVisible = true;
 
             Network.RoomAdded += RoomAdded;
             Network.RoomUpdated += RoomUpdated;
@@ -55,6 +60,8 @@ namespace Aleb.GUI.Views {
                 Dispatcher.UIThread.InvokeAsync(() => RoomAdded(room));
                 return;
             }
+
+            NoRooms.IsVisible = false;
 
             RoomEntry entry = new RoomEntry() { Room = room };
             entry.RoomJoined += JoinRoom;
@@ -78,8 +85,11 @@ namespace Aleb.GUI.Views {
             }
 
             RoomList.Children.RemoveAll(Rooms.Where(i => i.Room.Name == name).ToList());
+
+            if (!Rooms.Any())
+                NoRooms.IsVisible = true;
         }
-        
+
         void CreateRoom()
             => App.MainWindow.Popup = new CreateRoomPopup();
 
