@@ -64,12 +64,15 @@ namespace Aleb.GUI.Views {
         CardsWonIcon CardsWonButton;
         TextOverlay CardsWon;
 
+        TimeSpan startOffset = TimeSpan.Zero;
         Stopwatch timer = new Stopwatch();
         DispatcherTimer Timer;
         TextBlock TimeElapsed;
 
-        void UpdateTime(object sender, EventArgs e)
-            => TimeElapsed.Text = $"{((int)timer.Elapsed.TotalHours > 0? $"{(int)timer.Elapsed.TotalHours}:" : "")}{timer.Elapsed.Minutes:00}:{timer.Elapsed.Seconds:00}";
+        void UpdateTime(object sender, EventArgs e) {
+            TimeSpan timeElapsed = timer.Elapsed + startOffset;
+            TimeElapsed.Text = $"{((int)timeElapsed.TotalHours > 0? $"{(int)timeElapsed.TotalHours}:" : "")}{timeElapsed.Minutes:00}:{timeElapsed.Seconds:00}";
+        }
 
         Control Prompt {
             get => (Control)prompt.Child;
@@ -298,6 +301,9 @@ namespace Aleb.GUI.Views {
             You = UserText.IndexOf(UserText.First(i => i.Text == App.User.Name));
 
             ShouldReconnect = false;
+
+            UpdateTime(null, EventArgs.Empty);
+            TimeElapsed.IsVisible = true;
         }
 
         public GameView() {
@@ -308,7 +314,6 @@ namespace Aleb.GUI.Views {
             
             timer.Start();
 
-            UpdateTime(null, EventArgs.Empty);
             Timer = new DispatcherTimer() {
                 Interval = new TimeSpan(0, 0, 0, 0, 100)
             };
@@ -782,14 +787,16 @@ namespace Aleb.GUI.Views {
             App.MainWindow.View = new ResultsView(score, room);
         }
 
-        void Reconnect(Room room, List<FinalizedRound> history) {
+        void Reconnect(Room room, List<FinalizedRound> history, TimeSpan timeElapsed) {
             if (!Dispatcher.UIThread.CheckAccess()) {
-                Dispatcher.UIThread.InvokeAsync(() => Reconnect(room, history));
+                Dispatcher.UIThread.InvokeAsync(() => Reconnect(room, history, timeElapsed));
                 return;
             }
 
             App.MainWindow.Title = room.Name;
             Discord.Info.Details = $"U igri - {room.Name}";
+
+            startOffset = timeElapsed;
 
             InitNames(room.Users.Select(i => i.Name).ToList());
 

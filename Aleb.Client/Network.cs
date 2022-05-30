@@ -74,7 +74,7 @@ namespace Aleb.Client {
         public delegate void GameStartedEventHandler(int dealer, List<int> yourCards);
         public static event GameStartedEventHandler GameStarted;
 
-        public delegate void ReconnectEventHandler(Room room, List<FinalizedRound> history);
+        public delegate void ReconnectEventHandler(Room room, List<FinalizedRound> history, TimeSpan timeElapsed);
         public static event ReconnectEventHandler Reconnect;
 
         public static event NothingEventHandler TrumpNext;
@@ -141,7 +141,7 @@ namespace Aleb.Client {
             else if (msg.Command == "Kicked") Kicked?.Invoke();
 
             else if (msg.Command == "GameStarted") GameStarted?.Invoke(Convert.ToInt32(msg.Args[0]), msg.Args[1].ToIntList());
-            else if (msg.Command == "Reconnect") Reconnect?.Invoke(new Room(msg.Args[0]), msg.Args[1].ToList(i => new FinalizedRound(i)));
+            else if (msg.Command == "Reconnect") Reconnect?.Invoke(new Room(msg.Args[0]), msg.Args[1].ToList(i => new FinalizedRound(i)), TimeSpan.FromMilliseconds(Convert.ToDouble(msg.Args[2])));
 
             else if (msg.Command == "TrumpNext") TrumpNext?.Invoke();
             else if (msg.Command == "TalonChosen") TalonChosen?.Invoke(Convert.ToInt32(msg.Args[0]));

@@ -11,10 +11,11 @@ namespace Aleb.Common {
         public static bool LogCommunication = false;
 
         static Stopwatch time = new Stopwatch();
+        public static TimeSpan TimeNow => time.Elapsed;
 
         void Log(bool received, string raw) {
             if (LogCommunication && Connected && raw != null)
-                Console.WriteLine($"{time.Elapsed.ToString()} [NETW-{(received? "RECV" : "SEND")}] {Name} ({Address}) > {raw.Trim().Trim('\n')}");
+                Console.WriteLine($"{TimeNow} [NETW-{(received? "RECV" : "SEND")}] {Name} ({Address}) > {raw.Trim().Trim('\n')}");
         }
 
         TcpClient _client;

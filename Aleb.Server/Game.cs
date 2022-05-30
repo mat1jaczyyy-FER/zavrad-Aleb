@@ -6,6 +6,8 @@ using Aleb.Common;
 
 namespace Aleb.Server {
     class Game {
+        TimeSpan StartTime = AlebClient.TimeNow;
+
         public void Flush() {
             foreach (Player player in Players)
                 player.Flush();
@@ -200,7 +202,7 @@ namespace Aleb.Server {
         }
 
         public void Reconnect(Player player) {
-            player.User.Client.Send("Reconnect", Room.ToString(), History.Where(i => i.Finalized).ToStr());
+            player.User.Client.Send("Reconnect", Room.ToString(), History.Where(i => i.Finalized).ToStr(), (AlebClient.TimeNow - StartTime).TotalMilliseconds);
             player.Flush();
 
             player.ReplayRecords();

@@ -76,7 +76,7 @@
       <Components:CardsWonIcon HorizontalAlignment="Left" PointerEnter="CardsWonEnter" PointerLeave="CardsWonLeave" IsVisible="False" x:Name="CardsWonButton" />
     </StackPanel>
 
-    <TextBlock HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0 0 20 5" x:Name="TimeElapsed" />
+    <TextBlock HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0 0 20 5" IsVisible="False" x:Name="TimeElapsed" />
 
     <DockPanel x:Name="FinalCard">
       <Components:TextOverlay DockPanel.Dock="Bottom" HorizontalAlignment="Center" PointerEnter="FinalCardsEnter" PointerLeave="FinalCardsLeave" IsVisible="False" />
