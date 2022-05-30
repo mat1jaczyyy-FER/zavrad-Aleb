@@ -42,7 +42,5 @@ namespace Aleb.GUI.Components {
             foreach (int card in talon)
                 Contents.Children.Add(new CardImage(card));
         }
-
-        void Unloaded(object sender, VisualTreeAttachmentEventArgs e) {}
     }
 }

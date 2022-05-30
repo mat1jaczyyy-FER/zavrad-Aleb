@@ -71,6 +71,11 @@
       <Components:RoundRow Header="True" Legend="Σ" IsVisible="False" x:Name="Total" />
     </StackPanel>
 
+    <StackPanel HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="20 0 0 0">
+      <Components:TextOverlay PointerEnter="CardsWonEnter" PointerLeave="CardsWonLeave" IsVisible="False" x:Name="CardsWon" />
+      <Components:CardsWonIcon HorizontalAlignment="Left" PointerEnter="CardsWonEnter" PointerLeave="CardsWonLeave" IsVisible="False" x:Name="CardsWonButton" />
+    </StackPanel>
+
     <TextBlock HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0 0 20 5" x:Name="TimeElapsed" />
 
     <DockPanel x:Name="FinalCard">

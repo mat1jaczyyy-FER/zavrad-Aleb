@@ -177,7 +177,7 @@ namespace Aleb.Server {
                     for (int i = 0; i < 4; i++)
                         Broadcast("FinalCards", i, Players[i].OriginalCards.ToStr(), Players[i].OriginalTalon.ToStr());
 
-                    Broadcast(2000, "FinalScores", current.ToString());
+                    Broadcast(2000, "FinalScores", $"{current};{Array.IndexOf(Players, Current)}");
 
                     Broadcast(3000, "TotalScore", current.ToString(), Score.ToStr());
                 

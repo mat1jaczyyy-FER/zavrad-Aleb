@@ -110,7 +110,7 @@ namespace Aleb.Client {
         
         public static event SimpleIntEventHandler ContinuePlayingCards;
 
-        public delegate void FinalScoresEventHandler(FinalizedRound final);
+        public delegate void FinalScoresEventHandler(FinalizedRound final, int winner);
         public static event FinalScoresEventHandler FinalScores;
 
         public delegate void FinalCardsEventHandler(int player, List<int> cards, List<int> talon);
@@ -161,7 +161,7 @@ namespace Aleb.Client {
             else if (msg.Command == "TableComplete") TableComplete?.Invoke(msg.Args[0].ToIntList(delimiter: ','), new FinalizedRound(msg.Args[1]));
             else if (msg.Command == "ContinuePlayingCards") ContinuePlayingCards?.Invoke(Convert.ToInt32(msg.Args[0]));
 
-            else if (msg.Command == "FinalScores") FinalScores?.Invoke(new FinalizedRound(msg.Args[0]));
+            else if (msg.Command == "FinalScores") FinalScores?.Invoke(new FinalizedRound(msg.Args[0]), Convert.ToInt32(msg.Args[1]));
             else if (msg.Command == "FinalCards") FinalCards?.Invoke(Convert.ToInt32(msg.Args[0]), msg.Args[1].ToIntList(), msg.Args[2].ToIntList());
             else if (msg.Command == "TotalScore") TotalScore?.Invoke(new FinalizedRound(msg.Args[0]), msg.Args[1].ToIntList());
 

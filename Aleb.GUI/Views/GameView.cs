@@ -43,6 +43,9 @@ namespace Aleb.GUI.Views {
 
             FinalCard = this.Get<DockPanel>("FinalCard").Children.OfType<TextOverlay>().ToList();
 
+            CardsWonButton = this.Get<CardsWonIcon>("CardsWonButton");
+            CardsWon = this.Get<TextOverlay>("CardsWon");
+
             TimeElapsed = this.Get<TextBlock>("TimeElapsed");
         }
 
@@ -57,6 +60,9 @@ namespace Aleb.GUI.Views {
         Border prompt, trump;
 
         List<TextOverlay> FinalCard;
+
+        CardsWonIcon CardsWonButton;
+        TextOverlay CardsWon;
 
         Stopwatch timer = new Stopwatch();
         DispatcherTimer Timer;
@@ -143,6 +149,36 @@ namespace Aleb.GUI.Views {
             }
         }
 
+        List<int> cardsOnTable = new List<int>();
+        List<int> cardsWon = new List<int>();
+
+        void SetCardsWon() {
+            if (cardsWon.Count > 0) {
+                CardsWonButton.IsVisible = true;
+                CardsWon.SetControl(new CardsWonMatrix(cardsWon));
+
+            } else {
+                CardsWonButton.IsVisible = CardsWon.IsVisible = false;
+                CardsWon.SetControl(null);
+            }
+        }
+        
+        void UpdateCardsWon(int winner) {
+            if (winner % 2 == Team) {
+                cardsWon.AddRange(cardsOnTable);
+                SetCardsWon();
+            }
+
+            cardsOnTable.Clear();
+        }
+
+        void ClearCardsWon() {
+            cardsOnTable.Clear();
+            cardsWon.Clear();
+            
+            SetCardsWon();
+        }
+
         CardImage CreateCard(int card) {
             CardImage cardImage = new CardImage(card);
             cardImage.Clicked += CardClicked;
@@ -222,10 +258,13 @@ namespace Aleb.GUI.Views {
 
         void ScoreEnter(object sender, PointerEventArgs e) => Rounds.IsVisible = true;
         void ScoreLeave(object sender, PointerEventArgs e) => Rounds.IsVisible = false;
-        
+
+        void CardsWonEnter(object sender, PointerEventArgs e) => CardsWon.IsVisible = true;
+        void CardsWonLeave(object sender, PointerEventArgs e) => CardsWon.IsVisible = false;
+
         void FinalCardsEnter(object sender, PointerEventArgs e) => FinalCardsUpdate(sender, true);
         void FinalCardsLeave(object sender, PointerEventArgs e) => FinalCardsUpdate(sender, false);
-        
+
         void FinalCardsUpdate(object sender, bool visible) {
             int index;
 
@@ -443,6 +482,7 @@ namespace Aleb.GUI.Views {
 
             ClearCurrentRound();
             ClearTable();
+            ClearCardsWon();
 
             Dealer = dealer;
 
@@ -640,6 +680,8 @@ namespace Aleb.GUI.Views {
             if (bela)
                 Table(lastPlaying, new TextOverlay("Bela"));
 
+            cardsOnTable.Add(card);
+
             if (lastPlaying == lastInTable) SetPlaying(-1);
             else NextPlaying();
         }
@@ -674,19 +716,23 @@ namespace Aleb.GUI.Views {
             
             ClearTable();
 
+            UpdateCardsWon(winner);
+
             SetPlaying(winner);
             lastInTable = Utilities.Modulo(lastPlaying - 1, 4);
         }
 
-        void FinalScores(FinalizedRound final) {
+        void FinalScores(FinalizedRound final, int lastRoundWinner) {
             if (!Dispatcher.UIThread.CheckAccess()) {
-                Dispatcher.UIThread.InvokeAsync(() => FinalScores(final));
+                Dispatcher.UIThread.InvokeAsync(() => FinalScores(final, lastRoundWinner));
                 return;
             }
 
             if (State != GameState.Playing) return;
             
             ClearTable();
+
+            UpdateCardsWon(lastRoundWinner);
 
             SetPlaying(-1);
 
