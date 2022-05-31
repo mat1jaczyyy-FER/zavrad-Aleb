@@ -39,7 +39,7 @@ namespace Aleb.Server {
         HashSet<Card> Cards = new HashSet<Card>();
         public int Used => Cards.Count;
 
-        List<Call> IndividualCalls = new List<Call>();
+        public readonly List<Call> IndividualCalls = new List<Call>();
         public bool IsBelot => Max.Value >= Consts.BelotValue;
 
         public void Add(int value, IEnumerable<Card> cards) {

@@ -110,5 +110,16 @@ namespace Aleb.Client {
 
         public static void Bela(bool bela)
             => Network.Send(new Message("Bela", bela));
+
+        public static async Task<UserStats> UserStats(string name) {
+            name = name ?? "";
+            if (!Validation.ValidateUsername(name)) return null;
+
+            Message response = await Network.Ask(new Message("UserStats", name), "UserStatsSuccess", "UserStatsFail");
+
+            if (response.Command != "UserStatsSuccess") return null;
+
+            return new UserStats(response.Args[0]);
+        }
     }
 }

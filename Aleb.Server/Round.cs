@@ -8,13 +8,14 @@ namespace Aleb.Server {
         public int[] Played { get; private set; } = new int[2];
         public int[] Taken { get; private set; } = new int[2];
 
-        public int Team { get; private set; }
+        public Player Bidder { get; private set; }
+        public int Team => Bidder.Team;
         public bool Fail { get; private set; }
         public bool Finalized { get; private set; }
         public Suit Suit { get; private set; }
 
         public Round(Player bidder, Suit suit) {
-            Team = bidder.Team;
+            Bidder = bidder;
             Suit = suit;
         }
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using Aleb.Common;
@@ -133,8 +134,18 @@ namespace Aleb.Server {
         void DestroyGame(int delay = 0, int belot = -1) {
             Message msg = new Message("GameFinished", Game.Score.Select((x, i) => i == belot? Consts.BelotValue : x).ToStr(), ToString(), Password);
 
-            foreach (User user in Everyone) {
+            int winTeam = Array.IndexOf(Game.Score, Game.Score.Max());
+            Users[winTeam * 2].GamesWon++;
+            Users[winTeam * 2 + 1].GamesWon++;
+            Users[(1 - winTeam) * 2].GamesLost++;
+            Users[(1 - winTeam) * 2 + 1].GamesLost++;
 
+            Users[winTeam * 2].MaxPointsMatch = Math.Max(Users[winTeam * 2].MaxPointsMatch, Game.Score[winTeam]);
+            Users[winTeam * 2 + 1].MaxPointsMatch = Math.Max(Users[winTeam * 2 + 1].MaxPointsMatch, Game.Score[winTeam]);
+            Users[(1 - winTeam) * 2].MaxPointsMatch = Math.Max(Users[winTeam * 2].MaxPointsMatch, Game.Score[1 - winTeam]);
+            Users[(1 - winTeam) * 2 + 1].MaxPointsMatch = Math.Max(Users[winTeam * 2 + 1].MaxPointsMatch, Game.Score[1 - winTeam]);
+
+            foreach (User user in Everyone) {
                 if (user.State != UserState.Spectating) {
                     user.CompletedGame();
                     user.State = UserState.InRoom;
@@ -154,6 +165,7 @@ namespace Aleb.Server {
             People.ForEach(i => {
                 i.Ready = false;
                 i.User.State = UserState.InGame;
+                i.User.GamesPlayed++;
             });
 
             return true;
