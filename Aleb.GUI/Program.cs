@@ -20,7 +20,7 @@ namespace Aleb.GUI {
 
         public static readonly string UserPath = Path.Combine(Environment.GetEnvironmentVariable(
             RuntimeInformation.IsOSPlatform(OSPlatform.Windows)? "USERPROFILE" : "HOME"
-        ), ".aleb");
+        ), ".alebFER");
 
         public static readonly string CrashDir = Path.Combine(UserPath, "Crashes");
 

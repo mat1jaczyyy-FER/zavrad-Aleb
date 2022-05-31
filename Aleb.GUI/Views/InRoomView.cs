@@ -71,8 +71,6 @@ namespace Aleb.GUI.Views {
             StartButton.Enabled = isAdmin && Users.All(i => i.Ready.State == true);
 
             UserInRoom.AllowAdminActions = isAdmin;
-
-            Discord.Info.Party.Size = Count;
         }
 
         string Password;
@@ -116,12 +114,6 @@ namespace Aleb.GUI.Views {
 
             foreach (var (text, user) in Results.Zip(room.Users.Rotate(rotate * 2)))
                 text.Text = user.Name;
-            
-            // TODO work that out
-            //Discord.Info = new DiscordRPC.RichPresence() {
-            //    Details = win,
-            //    State = $"{Score[0].Text} - {Score[1].Text}"
-            //};
         }
 
         void Loaded(object sender, VisualTreeAttachmentEventArgs e) {

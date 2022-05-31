@@ -423,20 +423,7 @@ namespace Aleb.GUI.Views {
             Program.TimeSpent.Stop();
         }
 
-        GameState _state;
-        GameState State {
-            get => _state;
-            set {
-                _state = value;
-
-                if (_state == GameState.Bidding) Discord.Info.State = "Bira aduta";
-                if (_state == GameState.Declaring) Discord.Info.State = "Zvanja";
-                if (_state == GameState.Playing) Discord.Info.State = "Karta";
-
-                if (Dealer == You) Discord.Info.State += " na musu";
-                Discord.Info.State += $" ({discScores[Team]} - {discScores[1 - Team]})";
-            }
-        }
+        GameState State { get; set; }
 
         int You = 0;
         int Team => You % 2;
@@ -519,9 +506,6 @@ namespace Aleb.GUI.Views {
 
             State = GameState.Bidding;
 
-            Discord.Logo.SmallImageKey = null;
-            Discord.Logo.SmallImageText = null;
-
             CreateCards(cards);
             Trump = null;
 
@@ -572,9 +556,6 @@ namespace Aleb.GUI.Views {
 
             Trump = new Trump(trump, UserText[lastPlaying].Text);
             selectedTrump = lastPlaying;
-
-            Discord.Logo.SmallImageKey = trump.ToString().ToLower();
-            Discord.Logo.SmallImageText = lastPlaying % 2 == Team? "Zvao": "Ruši";
 
             DeclareSelected = new bool[8];
             State = GameState.Declaring;
@@ -827,7 +808,6 @@ namespace Aleb.GUI.Views {
             }
 
             App.MainWindow.Title = room.Name;
-            Discord.Info.Details = $"U igri - {room.Name}";
 
             startOffset = timeElapsed;
 

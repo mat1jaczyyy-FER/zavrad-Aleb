@@ -20,8 +20,6 @@ namespace Aleb.GUI.Popups {
             MiVi = this.Get<ComboBox>("MiVi");
             Notify = this.Get<ComboBox>("Notify");
 
-            DiscordPresence = this.Get<CheckBox>("DiscordPresence");
-
             CurrentSession = this.Get<TextBlock>("CurrentSession");
             AllTime = this.Get<TextBlock>("AllTime");
 
@@ -29,7 +27,6 @@ namespace Aleb.GUI.Popups {
         }
 
         ComboBox MiVi, Notify;
-        CheckBox DiscordPresence;
 
         TextBlock CurrentSession, AllTime, Version;
         DispatcherTimer Timer;
@@ -47,9 +44,6 @@ namespace Aleb.GUI.Popups {
 
             Version.Text += Program.Version;
 
-            if (App.AvaloniaVersion() != "")
-                ToolTip.SetTip(Version, $"Avalonia {App.AvaloniaVersion()}");
-
             UpdateTime(null, EventArgs.Empty);
             Timer = new DispatcherTimer() {
                 Interval = new TimeSpan(0, 0, 1)
@@ -57,13 +51,9 @@ namespace Aleb.GUI.Popups {
             Timer.Tick += UpdateTime;
             Timer.Start();
 
-            DiscordPresence.IsChecked = Preferences.DiscordPresence;
-
             MiVi.SelectedIndex = Convert.ToInt32(!Preferences.MiVi);
             Notify.SelectedIndex = Convert.ToInt32(Preferences.Notify);
         }
-
-        void DiscordPresence_Changed(object sender, RoutedEventArgs e) => Preferences.DiscordPresence = DiscordPresence.IsChecked.Value;
         
         void MiVi_Changed(object sender, SelectionChangedEventArgs e) => Preferences.MiVi = MiVi.SelectedIndex == 0;
         void Notify_Changed(object sender, SelectionChangedEventArgs e) => Preferences.Notify = (Preferences.NotificationType)Notify.SelectedIndex;

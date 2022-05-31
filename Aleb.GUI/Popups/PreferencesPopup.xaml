@@ -38,7 +38,7 @@
     <Border />
 
     <TextBlock Classes="heading" Text="Upravljanje" />
-    <CheckBox Click="DiscordPresence_Changed" x:Name="DiscordPresence">Discord integracija</CheckBox>
+
     <Button Background="{DynamicResource ThemeControlHighBrush}" Content="Otvori mapu s crashevima" Click="OpenCrashesFolder" />
 
     <Border />

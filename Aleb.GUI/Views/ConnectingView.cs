@@ -28,10 +28,6 @@ namespace Aleb.GUI.Views {
             InitializeComponent();
 
             AutoConnect = auto;
-
-            Discord.Info = new DiscordRPC.RichPresence() {
-                Details = "Povezivanje..."
-            };
         }
 
         void Loaded(object sender, VisualTreeAttachmentEventArgs e) {

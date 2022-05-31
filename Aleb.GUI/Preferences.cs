@@ -4,7 +4,6 @@ using System.IO;
 
 namespace Aleb.GUI {
     static class Preferences {
-        const int Version = 2;
         static readonly char[] Header = new char[] {'A', 'L', 'E', 'B'};
 
         static readonly string FilePath = Path.Combine(Program.UserPath, "Aleb.config");
@@ -12,16 +11,6 @@ namespace Aleb.GUI {
 
         public delegate void SimpleBoolChangedEventHandler(bool newValue);
         public delegate void ChangedEventHandler();
-
-        static bool _DiscordPresence = true;
-        public static bool DiscordPresence {
-            get => _DiscordPresence;
-            set {
-                _DiscordPresence = value;
-                Discord.Set(DiscordPresence);
-                Save();
-            }
-        }
 
         public static event SimpleBoolChangedEventHandler MiViChanged;
         static bool _MiVi = true;
@@ -112,19 +101,11 @@ namespace Aleb.GUI {
 
         static Preferences() {
             Decode(FilePath, reader => {
-                int version = reader.ReadInt32();
-                if (version > Version)
-                    throw new InvalidDataException();
-
-                DiscordPresence = reader.ReadBoolean();
-
                 MiVi = reader.ReadBoolean();
 
-                if (version >= 1)
-                    Topmost = reader.ReadBoolean();
+                Topmost = reader.ReadBoolean();
 
-                if (version >= 2)
-                    Notify = (NotificationType)reader.ReadInt32();
+                Notify = (NotificationType)reader.ReadInt32();
             });
 
             Decode(StatsPath, reader => BaseTime = reader.ReadInt64());
@@ -132,10 +113,6 @@ namespace Aleb.GUI {
 
         public static void Save() {
             Encode(FilePath, writer => {
-                writer.Write(Version);
-
-                writer.Write(DiscordPresence);
-
                 writer.Write(MiVi);
 
                 writer.Write(Topmost);

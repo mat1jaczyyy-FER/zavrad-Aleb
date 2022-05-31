@@ -70,8 +70,6 @@ namespace Aleb.GUI.Views {
                 return;
             }
 
-            Discord.Logo.LargeImageText = App.User.Name;
-
             if (App.User.State == UserState.Idle)
                 App.MainWindow.View = new RoomListView();
 

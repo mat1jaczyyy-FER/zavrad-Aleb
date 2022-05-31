@@ -13,8 +13,6 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 
-using Newtonsoft.Json;
-
 using Aleb.Client;
 
 namespace Aleb.GUI {
@@ -71,36 +69,8 @@ namespace Aleb.GUI {
                 return;
             }
 
-            if (Preferences.DiscordPresence) Discord.Set(true);
-
-            lifetime.Exit += (_, __) => Discord.Set(false);
-
             lifetime.MainWindow = new AlebWindow();
             base.OnFrameworkInitializationCompleted();
-        }
-        
-        static readonly string DepsPath = $"{AppDomain.CurrentDomain.BaseDirectory}Aleb.deps.json";
-        static string avaloniaVersion = "";
-
-        public static string AvaloniaVersion() {
-            if (avaloniaVersion == "" && File.Exists(DepsPath)) {
-                try {
-                    using (StreamReader file = File.OpenText(DepsPath))
-                        using (JsonTextReader reader = new JsonTextReader(file))
-                            while (reader.Read())
-                                if (reader.TokenType == JsonToken.String &&
-                                    reader.Path.StartsWith("targets['.NETCoreApp,Version=v3.1") &&
-                                    reader.Path.EndsWith("']['Aleb/0.0.0'].dependencies.Avalonia")) {
-                                        
-                                    avaloniaVersion = (string)reader.Value;
-                                    break;
-                                }
-                } catch {
-                    avaloniaVersion = "";
-                }
-            }
-
-            return avaloniaVersion;
         }
     }
 }
