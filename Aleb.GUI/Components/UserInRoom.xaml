@@ -7,6 +7,7 @@
 
   <UserControl.Resources>
     <Components:AlebContextMenu x:Key="Menu" MenuAction="MenuAction">
+      <MenuItem Header="Statistike" />
       <MenuItem Header="Izbaci" />
     </Components:AlebContextMenu>
   </UserControl.Resources>

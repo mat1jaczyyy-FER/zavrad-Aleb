@@ -8,6 +8,7 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 
 using Aleb.Client;
+using Aleb.GUI.Popups;
 
 namespace Aleb.GUI.Components {
     public class UserInRoom: UserDisplay {
@@ -92,7 +93,10 @@ namespace Aleb.GUI.Components {
             );
         }
 
-        void MenuAction(string action) {
+        async void MenuAction(string action) {
+            if (action == "Statistike")
+                App.MainWindow.Popup = new StatisticsPopup(await Requests.UserStats(Text));
+            
             if (action == "Izbaci" && AllowAdminActions)
                 Requests.KickUser(Text);
         }

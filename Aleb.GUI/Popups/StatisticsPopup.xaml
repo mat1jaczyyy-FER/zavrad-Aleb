@@ -1,0 +1,22 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Aleb.GUI.Popups.StatisticsPopup">
+
+  <Grid ColumnDefinitions="*,5,*" Margin="70 10 70 15">
+    <StackPanel Grid.Column="0" Spacing="5" HorizontalAlignment="Stretch" x:Name="Keys">
+      <StackPanel.Styles>
+        <Style Selector="TextBlock">
+          <Setter Property="HorizontalAlignment" Value="Left" />
+        </Style>
+      </StackPanel.Styles>
+    </StackPanel>
+    
+    <StackPanel Grid.Column="2" Spacing="5" HorizontalAlignment="Stretch" x:Name="Values">
+      <StackPanel.Styles>
+        <Style Selector="TextBlock">
+          <Setter Property="HorizontalAlignment" Value="Right" />
+        </Style>
+      </StackPanel.Styles>
+    </StackPanel>
+  </Grid>
+</UserControl>

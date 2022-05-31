@@ -101,6 +101,7 @@ namespace Aleb.Server {
                 History.Add(new Round(Current, suit.Value));
 
                 Broadcast("TrumpChosen", suit.ToString());
+                sender.User.Bidded++;
 
                 do {
                     Current.RevealTalon();
@@ -136,10 +137,29 @@ namespace Aleb.Server {
                 int delay = total != 0? 1500 : 0;
                 Broadcast(delay, "WinningDeclaration", Array.IndexOf(Players, maxPlayer), total, maxPlayer.Calls.ToString(), maxPlayer.Teammate.Calls.ToString());
                 
-                if (maxPlayer.Calls.IsBelot || maxPlayer.Teammate.Calls.IsBelot)
+                maxPlayer.User.Calls20 += maxPlayer.Calls.IndividualCalls.Count(i => i.Value == 20);
+                maxPlayer.User.Calls50 += maxPlayer.Calls.IndividualCalls.Count(i => i.Value == 50);
+                maxPlayer.User.Calls100 += maxPlayer.Calls.IndividualCalls.Count(i => i.Value == 100);
+                maxPlayer.User.Calls150 += maxPlayer.Calls.IndividualCalls.Count(i => i.Value == 150);
+                maxPlayer.User.Calls200 += maxPlayer.Calls.IndividualCalls.Count(i => i.Value == 200);
+                maxPlayer.User.SixRow += maxPlayer.Calls.IndividualCalls.Count(i => i.Cards.Count == 6);
+                maxPlayer.User.SevenRow += maxPlayer.Calls.IndividualCalls.Count(i => i.Cards.Count == 7);
+
+                maxPlayer.Teammate.User.Calls20 += maxPlayer.Teammate.Calls.IndividualCalls.Count(i => i.Value == 20);
+                maxPlayer.Teammate.User.Calls50 += maxPlayer.Teammate.Calls.IndividualCalls.Count(i => i.Value == 50);
+                maxPlayer.Teammate.User.Calls100 += maxPlayer.Teammate.Calls.IndividualCalls.Count(i => i.Value == 100);
+                maxPlayer.Teammate.User.Calls150 += maxPlayer.Teammate.Calls.IndividualCalls.Count(i => i.Value == 150);
+                maxPlayer.Teammate.User.Calls200 += maxPlayer.Teammate.Calls.IndividualCalls.Count(i => i.Value == 200);
+                maxPlayer.Teammate.User.SixRow += maxPlayer.Teammate.Calls.IndividualCalls.Count(i => i.Cards.Count == 6);
+                maxPlayer.Teammate.User.SevenRow += maxPlayer.Teammate.Calls.IndividualCalls.Count(i => i.Cards.Count == 7);
+
+                if (maxPlayer.Calls.IsBelot || maxPlayer.Teammate.Calls.IsBelot) {
+                    if (maxPlayer.Calls.IsBelot) maxPlayer.User.Belotes++;
+                    if (maxPlayer.Teammate.Calls.IsBelot) maxPlayer.Teammate.User.Belotes++;
+
                     Room.BelotCompleted(maxPlayer.Team);
 
-                else Broadcast(delay + maxPlayer.DeclarationDelay(), "StartPlayingCards");
+                } else Broadcast(delay + maxPlayer.DeclarationDelay(), "StartPlayingCards");
 
                 State++;
             }
@@ -183,6 +203,18 @@ namespace Aleb.Server {
                 
                 if (last) {
                     current.Finish(last);
+                    
+                    foreach (Player i in Players) {
+                        i.User.PointsScored += current.Played[player.Team];
+                        i.User.MaxPointsRound = Math.Max(i.User.MaxPointsRound, current.Played[player.Team]);
+                    }
+
+                    if (current.Fail) {
+                        current.Bidder.User.BidFailures++;
+                    } else {
+                        current.Bidder.User.BidSuccesses++;
+                    }
+
                     Start(3000);
 
                     for (int i = 0; i < 4; i++)
