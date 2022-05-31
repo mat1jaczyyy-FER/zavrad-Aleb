@@ -6,7 +6,6 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
-using Avalonia.VisualTree;
 
 namespace Aleb.GUI.Components {
     public class AlebContextMenu: ContextMenu, IStyleable {
@@ -29,10 +28,13 @@ namespace Aleb.GUI.Components {
         public void Open(Control control, string[] hide = null) {
             hide = hide?? new string[0];
 
-            foreach (MenuItem item in Items.OfType<MenuItem>())
+            List<MenuItem> items = Items.OfType<MenuItem>().ToList();
+
+            foreach (MenuItem item in items)
                 item.IsVisible = !hide.Contains((string)item.Header);
 
-            base.Open((Window)control.GetVisualRoot());
+            if (items.Any(i => i.IsVisible))
+                base.Open(control);
         }
     }
 }

@@ -8,7 +8,9 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Platform;
+using Avalonia.Threading;
 
+using Aleb.Client;
 using Aleb.GUI.Components;
 using Aleb.GUI.Views;
 
@@ -32,8 +34,12 @@ namespace Aleb.GUI {
             popup = this.Get<Border>("Popup");
             
             PopupContainer = this.Get<Grid>("PopupContainer");
-        }
 
+            SpectatorsRoot = this.Get<StackPanel>("SpectatorsRoot");
+            Spectators = this.Get<TextBlock>("Spectators");
+            SpectatorLeaveIcon = this.Get<LeaveIcon>("SpectatorLeaveIcon");
+        }
+        
         Grid Root, ContentRoot;
         Canvas Canvas;
 
@@ -46,6 +52,10 @@ namespace Aleb.GUI {
 
         Border view, popup;
         Grid PopupContainer;
+
+        StackPanel SpectatorsRoot;
+        TextBlock Spectators;
+        LeaveIcon SpectatorLeaveIcon;
 
         double VirtualWidth {
             set {
@@ -63,7 +73,24 @@ namespace Aleb.GUI {
 
         public Control View {
             get => (Control)view.Child;
-            set => view.Child = value;
+            set {
+                view.Child = value;
+
+                SpectatorsRoot.IsVisible = value is ISpectateable;
+
+                if (View is ISpectateable spec && Spectating)
+                    spec.Spectate();
+            }
+        }
+
+        public bool Spectating {
+            get => SpectatorLeaveIcon.IsVisible;
+            set {
+                SpectatorLeaveIcon.IsVisible = value;
+                
+                if (View is ISpectateable spec)
+                    spec.Spectate();
+            }
         }
 
         public Control Popup {
@@ -100,10 +127,16 @@ namespace Aleb.GUI {
             View = new ConnectingView(true);
 
             observable = this.GetObservable(ClientSizeProperty).Subscribe(SizeUpdated);
+
+            Network.SpectatorCount += SpectatorCount;
+            Network.SpectatingOver += SpectatingOver;
         }
 
         void Unloaded(object sender, CancelEventArgs e) {
             observable?.Dispose();
+            
+            Network.SpectatorCount -= SpectatorCount;
+            Network.SpectatingOver -= SpectatingOver;
         }
 
         void SizeUpdated(Size size) {
@@ -167,5 +200,35 @@ namespace Aleb.GUI {
         void ResizeSouthEast(object sender, PointerPressedEventArgs e) => BeginResizeDrag(WindowEdge.SouthEast, e);
 
         void ClosePopup() => Popup = null;
+
+        void SpectatorCount(int count) {
+            if (!Dispatcher.UIThread.CheckAccess()) {
+                Dispatcher.UIThread.InvokeAsync(() => SpectatorCount(count));
+                return;
+            }
+
+            Spectators.Text = count.ToString();
+            SpectatorsRoot.Opacity = count <= 0? 0 : 1;
+        }
+        
+        void SpectatingOver() {
+            if (!Dispatcher.UIThread.CheckAccess()) {
+                Dispatcher.UIThread.InvokeAsync(SpectatingOver);
+                return;
+            }
+
+            if (!Spectating) return;
+
+            Spectating = false;
+            
+            View = new RoomListView();
+        }
+
+        void SpectatorLeave() {
+            if (!Spectating) return;
+            
+            Requests.SpectatorLeave();
+            SpectatingOver();
+        }
     }
 }

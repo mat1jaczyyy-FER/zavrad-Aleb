@@ -9,12 +9,16 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
 
 using Aleb.Client;
+using Aleb.Common;
 using Aleb.GUI.Components;
 
 namespace Aleb.GUI.Views {
-    public class InRoomView: UserControl {
+    public class InRoomView: UserControl, ISpectateable {
         void InitializeComponent() {
             AvaloniaXamlLoader.Load(this);
+
+            RoomPanel = this.Get<StackPanel>("RoomPanel");
+            ResultsPanel = this.Get<StackPanel>("ResultsPanel");
 
             NameText = this.Get<TextBlock>("NameText");
             Settings = this.Get<TextBlock>("Settings");
@@ -26,7 +30,21 @@ namespace Aleb.GUI.Views {
 
             ReadyButton = this.Get<Ready>("ReadyButton");
             StartButton = this.Get<Start>("StartButton");
+
+            ActionPanel = this.Get<StackPanel>("ActionPanel");
+            
+            Victory = this.Get<TextBlock>("Victory");
+
+            Score = new TextBlock[] {
+                this.Get<TextBlock>("ScoreLeft"),
+                this.Get<TextBlock>("ScoreRight")
+            };
+
+            Results = this.Get<StackPanel>("ResultsLeft").Children.OfType<UserInList>()
+                .Concat(this.Get<StackPanel>("ResultsRight").Children.OfType<UserInList>()).ToArray();
         }
+
+        StackPanel RoomPanel, ResultsPanel;
 
         TextBlock NameText, Settings;
         LockIcon PasswordIcon;
@@ -37,6 +55,12 @@ namespace Aleb.GUI.Views {
 
         Ready ReadyButton;
         Start StartButton;
+        
+        StackPanel ActionPanel;
+
+        TextBlock Victory;
+        TextBlock[] Score;
+        UserInList[] Results;
 
         int Count = 0;
 
@@ -85,6 +109,29 @@ namespace Aleb.GUI.Views {
             };
 
             UpdateRoomAdmin();
+        }
+
+        public InRoomView(List<int> score, Room room)
+        : this(room) {
+            ResultsPanel.IsVisible = true;
+            RoomPanel.IsVisible = false;
+
+            int rotate = Math.Max(0, room.Users.Select(i => i.Name).ToList().IndexOf(App.User.Name)) >> 1 & 1;
+
+            string win = (score[rotate] > score[1 - rotate])? "Pobijedili" : "Izgubili";
+            Victory.Text = $"{win} ste"; //todo nerijeseno
+
+            foreach (var (text, pts) in Score.Zip(score.Rotate(rotate)))
+                text.Text = pts >= Consts.BelotValue? "Belot" : pts.ToString();
+
+            foreach (var (text, user) in Results.Zip(room.Users.Rotate(rotate * 2)))
+                text.Text = user.Name;
+            
+            // TODO work that out
+            //Discord.Info = new DiscordRPC.RichPresence() {
+            //    Details = win,
+            //    State = $"{Score[0].Text} - {Score[1].Text}"
+            //};
         }
 
         void Loaded(object sender, VisualTreeAttachmentEventArgs e) {
@@ -205,6 +252,11 @@ namespace Aleb.GUI.Views {
 
             App.MainWindow.View = new RoomListView(); // todo notification in corner
         }
+        
+        void BackToRoom(object sender, RoutedEventArgs e) {
+            ResultsPanel.IsVisible = false;
+            RoomPanel.IsVisible = true;
+        }
 
         void SetReady() => Requests.SetReady(!Users.First(i => i.Text == App.User.Name).Ready.State?? false);
 
@@ -226,6 +278,11 @@ namespace Aleb.GUI.Views {
 
             App.MainWindow.View = game;
             game.GameStarted(dealer, cards);
+        }
+
+        public void Spectate() {
+            ActionPanel.IsVisible = false;
+            Users.ForEach(i => i.DisableMenu());
         }
     }
 }

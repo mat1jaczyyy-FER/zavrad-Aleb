@@ -4,26 +4,33 @@
              xmlns:Components="clr-namespace:Aleb.GUI.Components"
              DetachedFromVisualTree="Unloaded" Clicked="JoinRoom">
 
-  <Grid Margin="10" RowDefinitions="*,5,*,15,*" Background="Transparent"
-        PointerEnter="MouseEnter" PointerLeave="MouseLeave" PointerPressed="MouseDown" PointerReleased="MouseUp">
-    
-    <TextBlock Grid.Row="0" HorizontalAlignment="Center" FontWeight="Bold" x:Name="NameText" />
+  <Grid Margin="10">
+    <Grid RowDefinitions="*,5,*,15,*" Background="Transparent"
+      PointerEnter="MouseEnter" PointerLeave="MouseLeave" PointerPressed="MouseDown" PointerReleased="MouseUp">
 
-    <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
-      <Components:HiddenIcon x:Name="HiddenIcon" />
-      <Components:LockIcon Enabled="False" x:Name="PasswordIcon" />
+      <TextBlock Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" x:Name="NameText" />
 
-      <TextBlock Classes="heading" x:Name="Settings" />
-    </StackPanel>
+      <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
+        <Components:HiddenIcon x:Name="HiddenIcon" />
+        <Components:LockIcon Enabled="False" x:Name="PasswordIcon" />
 
-    <StackPanel Grid.Row="4" HorizontalAlignment="Center" Spacing="5" x:Name="Users">
-      <Components:UserInList Margin="15 0" HorizontalAlignment="Center" />
-      <Components:UserInList Margin="15 0" HorizontalAlignment="Center" />
+        <TextBlock Classes="heading" x:Name="Settings" />
+      </StackPanel>
 
-      <Border BorderBrush="{DynamicResource ThemeForegroundLowBrush}" BorderThickness="0 0 0 1" Height="2" Opacity="0" x:Name="Separator" />
-      
-      <Components:UserInList Margin="15 0" HorizontalAlignment="Center" />
-      <Components:UserInList Margin="15 0" HorizontalAlignment="Center" />
-    </StackPanel>
+      <StackPanel Grid.Row="4" HorizontalAlignment="Center" Spacing="5" x:Name="Users">
+        <Components:UserInList Margin="15 0" HorizontalAlignment="Center" />
+        <Components:UserInList Margin="15 0" HorizontalAlignment="Center" />
+
+        <Border BorderBrush="{DynamicResource ThemeForegroundLowBrush}" BorderThickness="0 0 0 1" Height="2" Opacity="0" x:Name="Separator" />
+
+        <Components:UserInList Margin="15 0" HorizontalAlignment="Center" />
+        <Components:UserInList Margin="15 0" HorizontalAlignment="Center" />
+      </StackPanel>
+    </Grid>
+
+    <Grid>
+      <Components:SpectateIcon ZIndex="1" Background="Transparent" HorizontalAlignment="Right" VerticalAlignment="Top" Clicked="SpectateRoom" x:Name="SpectateIcon" />
+    </Grid>
   </Grid>
+  
 </UserControl>

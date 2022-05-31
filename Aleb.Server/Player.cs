@@ -5,7 +5,7 @@ using System.Linq;
 using Aleb.Common;
 
 namespace Aleb.Server {
-    class Player {
+    class Player: Recorder {
         List<Card> _cards;
         public List<Card> Cards {
             get => _cards;
@@ -80,17 +80,8 @@ namespace Aleb.Server {
 
         public Player Previous, Next, Teammate;
         public int Team;
-        
-        public User User { get; private set; }
 
-        public void SendMessage(int delay, string command, params dynamic[] args) {
-            Message msg = new Message(command, args);
-
-            if (User?.Client?.Connected == true)
-                User.Client.Send(delay, new Message(command, args));
-
-            if (Record) TempRecords.Add(msg);
-        }
+        public User User => Users.SingleOrDefault();
 
         public void YouDeclared(bool result) {
             Record = result;
@@ -104,40 +95,10 @@ namespace Aleb.Server {
             Record = true;
         }
 
-        public void SendMessage(string command, params dynamic[] args)
-            => SendMessage(0, command, args);
-
-        public void Flush() {
-            if (User?.Client?.Connected == true)
-                User.Client.Flush();
-            
-            TempRecords.Reverse();
-            Records = Records.Concat(TempRecords).ToList();
-            TempRecords.Clear();
-        }
-
-        bool Record = true;
-        List<Message> Records = new List<Message>();
-        List<Message> TempRecords = new List<Message>();
-
-        public void ClearRecords() {
-            Records.Clear();
-            TempRecords.Clear();
-        }
-
-        public void ReplayRecords() {
-            if (User?.Client?.Connected == true) {
-                Records.Reverse();
-
-                foreach (Message msg in Records)
-                    User.Client.Send(0, msg);
-
-                User.Client.Flush();
-
-                Records.Reverse();
-            }
-        }
-
-        public Player(User user) => User = user;
+        public void ReplayRecords()
+            => ReplayRecords(User);
+        
+        public Player(User user)
+        : base(new List<User>() { user }) {}
     }
 }

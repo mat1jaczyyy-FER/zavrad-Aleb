@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using Avalonia;
@@ -20,10 +21,12 @@ namespace Aleb.GUI.Views {
 
             RoomList = this.Get<UniformGrid>("RoomList");
             Create = this.Get<Create>("Create");
+            NoRooms = this.Get<Grid>("NoRooms");
         }
 
         UniformGrid RoomList;
         Create Create;
+        Grid NoRooms;
 
         public RoomListView() {
             InitializeComponent();
@@ -36,6 +39,9 @@ namespace Aleb.GUI.Views {
         async void Loaded(object sender, VisualTreeAttachmentEventArgs e) {
             foreach (Room room in await Requests.GetRoomList())
                 RoomAdded(room);
+
+            if (!Rooms.Any())
+                NoRooms.IsVisible = true;
 
             Network.RoomAdded += RoomAdded;
             Network.RoomUpdated += RoomUpdated;
@@ -56,8 +62,11 @@ namespace Aleb.GUI.Views {
                 return;
             }
 
+            NoRooms.IsVisible = false;
+
             RoomEntry entry = new RoomEntry() { Room = room };
             entry.RoomJoined += JoinRoom;
+            entry.RoomSpectate += SpectateRoom;
             RoomList.Children.Add(entry);
         }
 
@@ -78,8 +87,11 @@ namespace Aleb.GUI.Views {
             }
 
             RoomList.Children.RemoveAll(Rooms.Where(i => i.Room.Name == name).ToList());
+
+            if (!Rooms.Any())
+                NoRooms.IsVisible = true;
         }
-        
+
         void CreateRoom()
             => App.MainWindow.Popup = new CreateRoomPopup();
 
@@ -96,6 +108,24 @@ namespace Aleb.GUI.Views {
 
             App.MainWindow.Popup = null;
             App.MainWindow.View = new InRoomView(room);
+        }
+
+        async void SpectateRoom(Room room) {
+            RoomList.IsEnabled = Create.Enabled = false;
+            Focus();
+
+            Tuple<bool, Room> response = await Requests.SpectateRoom(room.Name, "");
+            bool ingame = response.Item1;
+            room = response.Item2;
+
+            if (room == null) {
+                RoomList.IsEnabled = Create.Enabled = true;
+                return;
+            }
+            
+            App.MainWindow.Spectating = true;
+            App.MainWindow.Popup = null;
+            App.MainWindow.View = ingame? new GameView() : new InRoomView(room);
         }
     }
 }

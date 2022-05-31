@@ -71,6 +71,7 @@ namespace Aleb.Server {
 
                     if (room != null) {
                         Client.Send("RoomCreated", room.ToString());
+                        Client.Send("SpectatorCount", room.Spectators.Count);
 
                         BroadcastIdle("RoomAdded", room.ToString());
                         
@@ -81,11 +82,38 @@ namespace Aleb.Server {
 
                     if (room?.Join(this, msg.Args[1]) == true) {
                         Client.Send("RoomJoined", room.ToString(), room.People.ToStr(i => i.Ready.ToString()));
+                        Client.Send("SpectatorCount", room.Spectators.Count);
 
                         BroadcastIdle("RoomUpdated", room.ToString());
-                        Broadcast(room.Users, "UserJoined", Name);
+                        Broadcast(room.Everyone, "UserJoined", Name);
 
                     } else Client.Send("RoomJoinFailed");
+
+                } else if (msg.Command == "SpectateRoom") {
+                    Room room = (msg.Args.Length == 2)? Room.Rooms.FirstOrDefault(i => i.Name == msg.Args[0]) : null;
+
+                    if (room?.Spectate(this, msg.Args[1]) == true) {
+                        Client.Send("SpectateSuccess", room.ToString(), room.People.ToStr(i => i.Ready.ToString()), room.Game != null);
+
+                        Client.Send("SpectatorCount", room.Spectators.Count);
+                        Broadcast(room.Everyone, "SpectatorCount", room.Spectators.Count);
+
+                    } else Client.Send("SpectateFailed");
+                }
+
+            } else if (State == UserState.Spectating) {
+                if (msg.Command == "SpectatorLeave") {
+                    Room room = Room.Rooms.FirstOrDefault(i => i.Spectators.Contains(this));
+
+                    if (room?.SpectatorLeave(this) == true && Room.Rooms.Contains(room)) {
+                        Client.Send("SpectatorCount", 0);
+                        Broadcast(room.Everyone, "SpectatorCount", room.Spectators.Count);
+                    }
+                    
+                } else if (msg.Command == "Reconnecting") {
+                    Room room = Room.Rooms.FirstOrDefault(i => i.Spectators.Contains(this));
+                    
+                    room?.Game?.Spectate(this);
                 }
 
             } else if (State == UserState.InRoom) {
@@ -95,7 +123,9 @@ namespace Aleb.Server {
                     if (room?.Leave(this) == true) {
                         if (Room.Rooms.Contains(room)) {
                             BroadcastIdle("RoomUpdated", room.ToString());
-                            Broadcast(room.Users, "UserLeft", Name);
+                            Broadcast(room.Everyone, "UserLeft", Name);
+                            
+                            Client.Send("SpectatorCount", 0);
 
                         } else BroadcastIdle("RoomDestroyed", room.Name);
                     }
@@ -106,7 +136,7 @@ namespace Aleb.Server {
 
                     if (room?.SetReady(this, value) == true) {
                         Client.Send("UserReady", Name, value);
-                        Broadcast(room.Users, "UserReady", Name, value);
+                        Broadcast(room.Everyone, "UserReady", Name, value);
                     }
 
                 } else if (msg.Command == "SwitchUsers") {
@@ -117,7 +147,7 @@ namespace Aleb.Server {
 
                         if (room.Switch(switching)) {
                             Client.Send("UsersSwitched", switching[0].Name, switching[1].Name);
-                            Broadcast(room.Users, "UsersSwitched", switching[0].Name, switching[1].Name);
+                            Broadcast(room.Everyone, "UsersSwitched", switching[0].Name, switching[1].Name);
                         }
                     }
                 
@@ -129,10 +159,11 @@ namespace Aleb.Server {
 
                         if (room?.Leave(kicking) == true) {
                             kicking.Client.Send("Kicked");
+                            kicking.Client.Send("SpectatorCount", room.Spectators.Count);
                             kicking.Client.Flush();
 
                             BroadcastIdle("RoomUpdated", room.ToString());
-                            kicking.Broadcast(room.Users, "UserLeft", kicking.Name);
+                            kicking.Broadcast(room.Everyone, "UserLeft", kicking.Name);
                         }
                     }
 
@@ -174,7 +205,7 @@ namespace Aleb.Server {
 
                 if (Game != null) Game.Flush();
                 else Room.Rooms.FirstOrDefault(i => i.Users.Contains(this))
-                    .Users.ForEach(i => i?.Client?.Flush());
+                    .Everyone.ToList().ForEach(i => i?.Client?.Flush());
             }
 
             Client.Flush();
@@ -193,9 +224,16 @@ namespace Aleb.Server {
                 if (room?.Leave(this) == true) {
                     if (Room.Rooms.Contains(room)) {
                         BroadcastIdle("RoomUpdated", room.ToString());
-                        Broadcast(room.Users, "UserLeft", Name);
+                        Broadcast(room.Everyone, "UserLeft", Name);
 
                     } else BroadcastIdle("RoomDestroyed", room.Name);
+                }
+                
+            } else if (State == UserState.Spectating) {
+                Room room = Room.Rooms.FirstOrDefault(i => i.Spectators.Contains(this));
+
+                if (room?.SpectatorLeave(this) == true && Room.Rooms.Contains(room)) {
+                    Broadcast(room.Everyone, "SpectatorCount", room.Spectators.Count);
                 }
             }
         }

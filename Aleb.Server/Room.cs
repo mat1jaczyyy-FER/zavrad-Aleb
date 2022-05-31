@@ -13,7 +13,7 @@ namespace Aleb.Server {
             if (!Validation.ValidateRoomGoal(goal)) return null;
             if (!Validation.ValidateRoomPassword(password)) return null;
 
-            if (Rooms.Any(i => i.Name == name || i.Users.Contains(creator))) return null;
+            if (Rooms.Any(i => i.Name == name || i.Everyone.Contains(creator))) return null;
 
             Room room = new Room(name, type.Value, goal, showpts, password, creator);
             Rooms.Add(room);
@@ -21,7 +21,11 @@ namespace Aleb.Server {
             return room;
         }
 
-        public static void Destroy(Room room) => Rooms.Remove(room);
+        public void Destroy() {
+            Spectators.ForEach(i => i?.Client?.Send(new Message("SpectatingOver")));
+
+            Rooms.Remove(this);
+        }
 
         public class Person {
             public readonly User User;
@@ -32,6 +36,8 @@ namespace Aleb.Server {
 
         public List<Person> People { get; private set; } = new List<Person>();
         public List<User> Users => People.Select(i => i.User).ToList();
+        public List<User> Spectators { get; private set; } = new List<User>();
+        public IEnumerable<User> Everyone => Users.Concat(Spectators);
 
         public int Count => People.Count;
         
@@ -43,9 +49,27 @@ namespace Aleb.Server {
 
         public bool HasPassword => Password != "";
 
+        public bool Spectate(User spectating, string password) {
+            if (Everyone.Contains(spectating)) return false;
+            if (HasPassword && Password != password) return false;
+
+            Spectators.Add(spectating);
+            spectating.State = UserState.Spectating;
+            return true;
+        }
+
+        public bool SpectatorLeave(User leaving) {
+            if (!Spectators.Contains(leaving)) return false;
+
+            Spectators.Remove(leaving);
+            leaving.State = UserState.Idle;
+
+            return true;
+        }
+
         public bool Join(User joining, string password) {
             if (Count >= 4) return false;
-            if (Users.Contains(joining)) return false;
+            if (Everyone.Contains(joining)) return false;
             if (HasPassword && Password != password) return false;
 
             People.Add(new Person(joining));
@@ -62,7 +86,7 @@ namespace Aleb.Server {
             People.Remove(People.First(i => i.User == leaving));
             leaving.State = UserState.Idle;
 
-            if (Count == 0) Destroy(this);
+            if (Count == 0) Destroy();
 
             return true;
         }
@@ -109,9 +133,12 @@ namespace Aleb.Server {
         void DestroyGame(int delay = 0, int belot = -1) {
             Message msg = new Message("GameFinished", Game.Score.Select((x, i) => i == belot? Consts.BelotValue : x).ToStr(), ToString(), Password);
 
-            foreach (User user in Users) {
-                user.CompletedGame();
-                user.State = UserState.InRoom;
+            foreach (User user in Everyone) {
+
+                if (user.State != UserState.Spectating) {
+                    user.CompletedGame();
+                    user.State = UserState.InRoom;
+                }
 
                 user.Client.Send(delay, msg);
             }

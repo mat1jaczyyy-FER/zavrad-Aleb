@@ -9,6 +9,14 @@
       <UniformGrid VerticalAlignment="Top" Columns="4" x:Name="RoomList" />
     </ScrollViewer>
 
+    <Grid IsHitTestVisible="False" IsVisible="False" x:Name="NoRooms">
+      <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="Trenutno nema otvorenih soba." />
+
+      <Grid RowDefinitions="*,50,15" ColumnDefinitions="*,Auto,90">
+        <TextBlock Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" Text="Stvori vlastitu sobu?" />
+      </Grid>
+    </Grid>
+
     <Grid RowDefinitions="*,Auto,15" ColumnDefinitions="*,Auto,20">
       <Components:Create Grid.Row="1" Grid.Column="1" ToolTip.Tip="Stvori sobu" x:Name="Create" Clicked="CreateRoom" />
     </Grid>

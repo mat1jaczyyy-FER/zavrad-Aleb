@@ -54,6 +54,30 @@ namespace Aleb.Client {
             return ret;
         }
 
+        public static async Task<Tuple<bool, Room>> SpectateRoom(string name, string password) {
+            name = name ?? "";
+            password = password ?? "";
+
+            if (!Validation.ValidateRoomName(name)) return null;
+            if (!Validation.ValidateRoomPassword(password)) return null;
+
+            Message response = await Network.Ask(new Message("SpectateRoom", name, password), "SpectateSuccess", "SpectateFailed");
+
+            if (response.Command != "SpectateSuccess") return null;
+
+            Room ret = new Room(response.Args[0]);
+            List<bool> ready = response.Args[1].ToList(i => Convert.ToBoolean(i));
+            bool ingame = Convert.ToBoolean(response.Args[2]);
+
+            for (int i = 0; i < ready.Count; i++)
+                ret.Users[i].Ready = ready[i];
+
+            return new Tuple<bool, Room>(ingame, ret);
+        }
+
+        public static void SpectatorLeave()
+            => Network.Send(new Message("SpectatorLeave"));
+
         public static void LeaveRoom()
             => Network.Send(new Message("LeaveRoom"));
 
