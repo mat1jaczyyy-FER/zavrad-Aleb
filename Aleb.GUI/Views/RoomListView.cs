@@ -30,10 +30,6 @@ namespace Aleb.GUI.Views {
 
         public RoomListView() {
             InitializeComponent();
-
-            Discord.Info = new DiscordRPC.RichPresence() {
-                Details = "Ne radi niš"
-            };
         }
 
         async void Loaded(object sender, VisualTreeAttachmentEventArgs e) {

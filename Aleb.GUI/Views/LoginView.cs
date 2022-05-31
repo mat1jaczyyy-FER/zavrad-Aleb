@@ -31,10 +31,6 @@ namespace Aleb.GUI.Views {
 
             Username.Validator = Validation.ValidateUsername;
             Password.Validator = Validation.ValidatePassword;
-
-            Discord.Info = new DiscordRPC.RichPresence() {
-                Details = "Prijava"
-            };
         }
 
         void Loaded(object sender, VisualTreeAttachmentEventArgs e)

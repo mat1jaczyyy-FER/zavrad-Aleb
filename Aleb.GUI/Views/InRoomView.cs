@@ -98,16 +98,6 @@ namespace Aleb.GUI.Views {
             PasswordIcon.IsVisible = room.HasPassword;
             Password = room.Password;
 
-            Discord.Info = new DiscordRPC.RichPresence() {
-                Details = "U sobi",
-                State =  NameText.Text,
-                Party = new DiscordRPC.Party() {
-                    ID = NameText.Text,
-                    Size = Count,
-                    Max = 4
-                }
-            };
-
             UpdateRoomAdmin();
         }
 

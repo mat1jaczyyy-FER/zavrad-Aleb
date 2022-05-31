@@ -17,9 +17,6 @@
     <PackageReference Include="Avalonia" Version="0.10.14" />
     <PackageReference Include="Avalonia.Desktop" Version="0.10.14" />
     <PackageReference Include="Avalonia.Diagnostics" Version="0.10.14" />
-    <PackageReference Include="DiscordRichPresence" Version="1.0.175">
-      <NoWarn>NU1701</NoWarn>
-    </PackageReference>
     <PackageReference Include="Humanizer.Core.hr" Version="2.14.1" />
     <PackageReference Include="NetCoreAudio" Version="1.6.3" />
   </ItemGroup>

@@ -350,10 +350,6 @@ namespace Aleb.GUI.Views {
 
             ShouldReconnect = true;
 
-            Discord.Info.Details = $"U igri - {Discord.Info.State}";
-            Discord.Info.Party = null;
-            Discord.Info.Timestamps = new DiscordRPC.Timestamps(DateTime.UtcNow);
-
             Program.TimeSpent.Start();
         }
 
