@@ -4,7 +4,7 @@
     }
 
     public enum UserState {
-        Idle, InRoom, InGame   
+        Idle, InRoom, InGame, Spectating
     }
 
     public enum GameType {

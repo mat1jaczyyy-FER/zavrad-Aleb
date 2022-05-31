@@ -11,17 +11,22 @@ namespace Aleb.Server {
         public void Flush() {
             foreach (Player player in Players)
                 player.Flush();
+
+            Spectators.Flush();
         }
 
         void Broadcast(int delay, string command, params dynamic[] args) {
             foreach (Player player in Players)
                 player.SendMessage(delay, command, args);
+
+            Spectators.SendMessage(delay, command, args);
         }
 
         void Broadcast(string command, params dynamic[] args)
             => Broadcast(0, command, args);
 
         Player[] Players = new Player[4];
+        Recorder Spectators;
 
         GameState State;
 
@@ -51,6 +56,8 @@ namespace Aleb.Server {
 
             Dealer = Players[2];
 
+            Spectators = new Recorder(Room.Spectators);
+
             Start();
         }
 
@@ -73,6 +80,9 @@ namespace Aleb.Server {
                 player.ClearRecords();
                 player.SendMessage(delay, "GameStarted", Array.IndexOf(Players, Dealer), player.Cards.ToStr());
             }
+
+            Spectators.ClearRecords();
+            Spectators.SendMessage(delay, "GameStarted", Array.IndexOf(Players, Dealer), Players.SelectMany(i => i.Cards.Concat(i.Talon)).ToList().ToStr());
         }
 
         public void Bid(Player sender, Suit? suit) {
@@ -84,8 +94,7 @@ namespace Aleb.Server {
                 Current.RevealTalon();
                 Current = Current.Next;
 
-                foreach (Player player in Players)
-                    player.SendMessage("TrumpNext");
+                Broadcast("TrumpNext");
 
             } else {
                 Table = new Table(suit.Value);
@@ -201,11 +210,20 @@ namespace Aleb.Server {
             Table.Bela?.TrySetResult(bela);
         }
 
+        Message ReconnectMessage => new Message("Reconnect", Room.ToString(), History.Where(i => i.Finalized).ToStr(), (AlebClient.TimeNow - StartTime).TotalMilliseconds);
+
         public void Reconnect(Player player) {
-            player.User.Client.Send("Reconnect", Room.ToString(), History.Where(i => i.Finalized).ToStr(), (AlebClient.TimeNow - StartTime).TotalMilliseconds);
+            player.User.Client.Send(ReconnectMessage);
             player.Flush();
 
             player.ReplayRecords();
+        }
+
+        public void Spectate(User user) {
+            user.Client.Send(ReconnectMessage);
+            user.Client.Flush();
+
+            Spectators.ReplayRecords(user);
         }
     }
 }

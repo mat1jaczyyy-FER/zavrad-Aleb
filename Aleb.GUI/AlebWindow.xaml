@@ -35,6 +35,12 @@
             <Grid>
               <Border BorderThickness="0" x:Name="View" />
 
+              <StackPanel Margin="92 7 0 5" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Bottom" Spacing="5" IsVisible="False" Opacity="0" x:Name="SpectatorsRoot">
+                <Components:SpectateIcon VerticalAlignment="Center" IsHitTestVisible="False" Enabled="False" />
+                <TextBlock VerticalAlignment="Center" IsHitTestVisible="False" Foreground="{DynamicResource ThemeButtonEnabledBrush}" Text="0" Margin="0 0 5 2" x:Name="Spectators" />
+                <Components:LeaveIcon VerticalAlignment="Center" IsVisible="False" Clicked="SpectatorLeave" x:Name="SpectatorLeaveIcon" />
+              </StackPanel>
+
               <Grid RowDefinitions="*,Auto,Auto,*" ColumnDefinitions="*,2*,*" x:Name="PopupContainer" IsVisible="False" Background="{DynamicResource ThemeControlDarkenBrush}">
                 <Grid Grid.Row="1" Grid.Column="1" ColumnDefinitions="*,Auto" Background="{DynamicResource ThemeBorderMidBrush}">
                   <Grid Grid.Column="1" Background="Transparent" />

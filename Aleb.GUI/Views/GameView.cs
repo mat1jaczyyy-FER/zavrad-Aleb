@@ -18,11 +18,15 @@ using Aleb.GUI.Prompts;
 using System.Diagnostics;
 
 namespace Aleb.GUI.Views {
-    public class GameView: UserControl {
+    public class GameView: UserControl, ISpectateable {
         void InitializeComponent() {
             AvaloniaXamlLoader.Load(this);
 
             UserText = this.Get<DockPanel>("Root").Children.OfType<UserInGame>().ToList();
+            GameGrid = this.Get<Grid>("GameGrid");
+
+            YourCardsHolder = this.Get<Border>("YourCardsHolder");
+            SpecCardHolders = this.Get<DockPanel>("SpecCardHolders").Children.OfType<SpecCardHolder>().ToList();
 
             Cards = this.Get<StackPanel>("Cards");
             Rounds = this.Get<StackPanel>("Rounds");
@@ -43,13 +47,21 @@ namespace Aleb.GUI.Views {
 
             FinalCard = this.Get<DockPanel>("FinalCard").Children.OfType<TextOverlay>().ToList();
 
+            CardsWonRoot = this.Get<StackPanel>("CardsWonRoot");
             CardsWonButton = this.Get<CardsWonIcon>("CardsWonButton");
             CardsWon = this.Get<TextOverlay>("CardsWon");
+
+            HideSpecCardsButton = this.Get<SpectateIcon>("HideSpecCardsButton");
 
             TimeElapsed = this.Get<TextBlock>("TimeElapsed");
         }
 
         List<UserInGame> UserText;
+        Grid GameGrid;
+        
+        List<SpecCardHolder> SpecCardHolders;
+        Border YourCardsHolder;
+
         StackPanel Cards, Rounds, Score;
 
         RoundRow TitleRow, Declarations, CurrentRound, TotalRound, Total;
@@ -61,8 +73,11 @@ namespace Aleb.GUI.Views {
 
         List<TextOverlay> FinalCard;
 
+        StackPanel CardsWonRoot;
         CardsWonIcon CardsWonButton;
         TextOverlay CardsWon;
+
+        SpectateIcon HideSpecCardsButton;
 
         TimeSpan startOffset = TimeSpan.Zero;
         Stopwatch timer = new Stopwatch();
@@ -191,13 +206,21 @@ namespace Aleb.GUI.Views {
         void CreateCards(List<int> cards) {
             Cards.Children.Clear();
 
-            foreach (int card in cards)
-                Cards.Children.Add(CreateCard(card));
+            if (App.MainWindow.Spectating) {
+                int n = 0;
+                
+                foreach (var i in cards.GroupBy(x => n++ / 8))
+                    SpecCardHolders[i.Key].SetCards(i.ToList());
 
-            while (Cards.Children.Count < 8)
-                Cards.Children.Add(CreateCard(32));
+            } else {
+                foreach (int card in cards)
+                    Cards.Children.Add(CreateCard(card));
 
-            Cards.Parent.Opacity = 1;  
+                while (Cards.Children.Count < 8)
+                    Cards.Children.Add(CreateCard(32));
+
+                Cards.Parent.Opacity = 1;
+            }
         }
 
         static List<string> FailScore(FinalizedRound score)
@@ -284,6 +307,9 @@ namespace Aleb.GUI.Views {
             UserText.Swap(1, 2);
             names.Swap(1, 2);
             FinalCard.Swap(1, 2);
+            
+            SpecCardHolders.Swap(0, 2);
+            SpecCardHolders.Swap(2, 3);
 
             foreach (var (text, name) in UserText.Zip(names.RotateWith(i => i == App.User.Name)))
                 text.Text = name;
@@ -297,15 +323,17 @@ namespace Aleb.GUI.Views {
 
             for (int i = 0; i < 4; i++)
                 CardTable(i, new CardImage(32) { Opacity = 0 });
-
-            You = UserText.IndexOf(UserText.First(i => i.Text == App.User.Name));
+            
+            UserInGame label = UserText.FirstOrDefault(i => i.Text == App.User.Name);
+            if (label != null)
+                You = UserText.IndexOf(label);
 
             ShouldReconnect = false;
 
             UpdateTime(null, EventArgs.Empty);
             TimeElapsed.IsVisible = true;
         }
-
+        
         public GameView() {
             InitializeComponent();
 
@@ -414,7 +442,7 @@ namespace Aleb.GUI.Views {
             }
         }
 
-        int You;
+        int You = 0;
         int Team => You % 2;
 
         int _dealer;
@@ -439,7 +467,7 @@ namespace Aleb.GUI.Views {
             for (int i = 0; i < 4; i++)
                 UserText[i].Playing = i == playing;
 
-            if (playing == You) {
+            if (!App.MainWindow.Spectating && playing == You) {
                 Audio.YourTurn();
                 
                 if (State == GameState.Bidding)
@@ -456,6 +484,8 @@ namespace Aleb.GUI.Views {
         bool playWaiting;
 
         void CardClicked(CardImage sender) {
+            if (App.MainWindow.Spectating) return;
+
             int index = Cards.Children.IndexOf(sender);
 
             if (State == GameState.Bidding && lastPlaying == You && Dealer == You && index >= 6) {
@@ -514,6 +544,9 @@ namespace Aleb.GUI.Views {
 
             Table(lastPlaying, new TextOverlay("Dalje"));
 
+            if (App.MainWindow.Spectating)
+                SpecCardHolders[lastPlaying].RevealTalon();
+
             NextPlaying();
         }
 
@@ -537,6 +570,9 @@ namespace Aleb.GUI.Views {
             if (State != GameState.Bidding) return;
 
             ClearTable();
+            
+            if (App.MainWindow.Spectating)
+                SpecCardHolders.ForEach(i => i.RevealTalon());
 
             Trump = new Trump(trump, UserText[lastPlaying].Text);
             selectedTrump = lastPlaying;
@@ -557,6 +593,8 @@ namespace Aleb.GUI.Views {
             }
 
             if (State != GameState.Bidding) return;
+
+            if (App.MainWindow.Spectating) return;
 
             CreateCards(cards);
         }
@@ -687,6 +725,9 @@ namespace Aleb.GUI.Views {
 
             cardsOnTable.Add(card);
 
+            if (App.MainWindow.Spectating)
+                SpecCardHolders[lastPlaying].CardPlayed(card);
+            
             if (lastPlaying == lastInTable) SetPlaying(-1);
             else NextPlaying();
         }
@@ -784,7 +825,7 @@ namespace Aleb.GUI.Views {
 
             room.Password = password;
             
-            App.MainWindow.View = new ResultsView(score, room);
+            App.MainWindow.View = new InRoomView(score, room);
         }
 
         void Reconnect(Room room, List<FinalizedRound> history, TimeSpan timeElapsed) {
@@ -810,6 +851,21 @@ namespace Aleb.GUI.Views {
                 TotalScore(round, total);
 
             State = GameState.Bidding;
+        }
+
+        static bool SpecCardsState = false;
+
+        public void Spectate() {
+            YourCardsHolder.IsVisible = false;
+            SpecCardHolders.ForEach(i => i.IsVisible = SpecCardsState);
+            GameGrid.Margin = new Thickness(5);
+            CardsWonRoot.IsVisible = false;
+            HideSpecCardsButton.IsVisible = true;
+        }
+
+        void HideSpecCards() {
+            SpecCardsState = !SpecCardsState;
+            SpecCardHolders.ForEach(i => i.IsVisible = SpecCardsState);
         }
     }
 }

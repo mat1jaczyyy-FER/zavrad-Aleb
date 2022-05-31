@@ -1,0 +1,11 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Aleb.GUI.Components.SpecCardHolder"
+             IsHitTestVisible="False">
+
+  <LayoutTransformControl x:Name="Root">
+    <Border Grid.Row="2" BorderBrush="{DynamicResource ThemeForegroundLowBrush}" BorderThickness="1.5" CornerRadius="3.75" HorizontalAlignment="Center">
+      <StackPanel Margin="3.75" Orientation="Horizontal" MaxHeight="85" x:Name="Cards" />
+    </Border>
+  </LayoutTransformControl>
+</UserControl>

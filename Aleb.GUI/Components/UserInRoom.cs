@@ -84,7 +84,7 @@ namespace Aleb.GUI.Components {
 
             e.Handled = true;
 
-            Menu.Open(
+            Menu?.Open(
                 this,
                 AllowAdminActions && App.User.Name != Text
                     ? null
@@ -96,5 +96,7 @@ namespace Aleb.GUI.Components {
             if (action == "Izbaci" && AllowAdminActions)
                 Requests.KickUser(Text);
         }
+
+        public void DisableMenu() => Menu = null;
     }
 }

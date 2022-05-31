@@ -57,6 +57,8 @@ namespace Aleb.GUI {
         }
 
         public override void OnFrameworkInitializationCompleted() {
+            if (ApplicationLifetime == null) return; // designer
+
             if (!(ApplicationLifetime is IClassicDesktopStyleApplicationLifetime lifetime)) throw new ApplicationException("Invalid ApplicationLifetime");
 
             #if !DEBUG

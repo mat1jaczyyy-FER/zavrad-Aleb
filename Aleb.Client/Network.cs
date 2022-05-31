@@ -55,7 +55,13 @@ namespace Aleb.Client {
         public static event DisconnectedEventHandler Disconnected;
 
         static HashSet<(string[] Expected, TaskCompletionSource<Message> TCS)> Waiting = new HashSet<(string[], TaskCompletionSource<Message>)>();
-        
+
+        public delegate void SimpleIntEventHandler(int value);
+        public static event SimpleIntEventHandler SpectatorCount;
+
+        public delegate void NothingEventHandler();
+        public static event NothingEventHandler SpectatingOver;
+
         public delegate void RoomUpdatedEventHandler(Room room);
         public static event RoomUpdatedEventHandler RoomAdded, RoomUpdated;
 
@@ -68,7 +74,6 @@ namespace Aleb.Client {
         public delegate void UsersSwitchedEventHandler(User user1, User user2);
         public static event UsersSwitchedEventHandler UsersSwitched;
         
-        public delegate void NothingEventHandler();
         public static event NothingEventHandler Kicked;
 
         public delegate void GameStartedEventHandler(int dealer, List<int> yourCards);
@@ -79,7 +84,6 @@ namespace Aleb.Client {
 
         public static event NothingEventHandler TrumpNext;
         
-        public delegate void SimpleIntEventHandler(int value);
         public static event SimpleIntEventHandler TalonChosen;
 
         public delegate void TrumpChosenEventHandler(Suit trump);
@@ -130,7 +134,10 @@ namespace Aleb.Client {
                 }
             }
 
-            if (msg.Command == "RoomAdded") RoomAdded?.Invoke(new Room(msg.Args[0]));
+            if (msg.Command == "SpectatorCount") SpectatorCount?.Invoke(Convert.ToInt32(msg.Args[0]));
+            else if (msg.Command == "SpectatingOver") SpectatingOver?.Invoke();
+
+            else if (msg.Command == "RoomAdded") RoomAdded?.Invoke(new Room(msg.Args[0]));
             else if (msg.Command == "RoomUpdated") RoomUpdated?.Invoke(new Room(msg.Args[0]));
             else if (msg.Command == "RoomDestroyed") RoomDestroyed?.Invoke(msg.Args[0]);
 

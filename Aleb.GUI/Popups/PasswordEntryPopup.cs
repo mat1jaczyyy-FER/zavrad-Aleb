@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Threading.Tasks;
 
 using Avalonia;
 using Avalonia.Controls;
@@ -8,8 +9,6 @@ using Avalonia.Markup.Xaml;
 using Aleb.Client;
 using Aleb.Common;
 using Aleb.GUI.Components;
-using Aleb.GUI.Views;
-using System;
 
 namespace Aleb.GUI.Popups {
     public class PasswordEntryPopup: UserControl {
@@ -30,13 +29,17 @@ namespace Aleb.GUI.Popups {
         TextBlock Status;
 
         Room Room;
+        Func<Room, string, Task<Tuple<bool, Room>>> Action;
+        Action<bool, Room> Transition;
 
         public PasswordEntryPopup() => throw new InvalidOperationException();
 
-        public PasswordEntryPopup(Room room) {
+        public PasswordEntryPopup(Room room, Func<Room, string, Task<Tuple<bool, Room>>> action, Action<bool, Room> transition) {
             InitializeComponent();
 
             Room = room;
+            Action = action;
+            Transition = transition;
 
             Password.Validator = Validation.ValidateRoomPassword;
         }
@@ -57,9 +60,11 @@ namespace Aleb.GUI.Popups {
             Status.Text = " ";
             Focus();
             
-            Room room = await Requests.JoinRoom(Room.Name, Password.Text);
+            Tuple<bool, Room> response = await Action(Room, Password.Text);
+            bool ingame = response.Item1;
+            Room room = response.Item2;
 
-            if (room == null) {
+            if (response.Item2 == null) {
                 Password.IsEnabled = JoinButton.IsEnabled = App.MainWindow.PopupClose.IsEnabled = true;
 
                 Status.Text = "Netočna lozinka.";
@@ -68,8 +73,7 @@ namespace Aleb.GUI.Popups {
 
             room.Password = Password.Text;
 
-            App.MainWindow.Popup = null;
-            App.MainWindow.View = new InRoomView(room);
+            Transition(ingame, room);
         }
     }
 }

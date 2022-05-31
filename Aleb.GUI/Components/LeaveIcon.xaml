@@ -1,0 +1,16 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Aleb.GUI.Components.LeaveIcon">
+
+  <UserControl.Resources>
+    <SolidColorBrush x:Key="Brush" />
+  </UserControl.Resources>
+
+  <Canvas Width="16" Height="16" Background="Transparent"
+          PointerEnter="MouseEnter" PointerLeave="MouseLeave" PointerPressed="MouseDown" PointerReleased="MouseUp">
+
+    <Path Margin="1" Stroke="{DynamicResource Brush}" StrokeThickness="0.75"
+          Data="M 8.25,0 L 12.75,1.5 12.75,12 8.25,13.5 Z M 6.75,0.75 L 5.25,0.75 Z M 5.25,0.75 L 5.25,3.375 Z M 5.25,10.125 L 5.25,12.75 Z M 5.25,12.75 L 6.75,12.75 Z M 6,4.875 L 3,4.875 3,3.375 0,6.75 3,10.125 3,8.625 6,8.625 Z">
+    </Path>
+  </Canvas>
+</UserControl>

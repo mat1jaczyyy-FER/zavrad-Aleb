@@ -35,26 +35,12 @@
     
     <AvaloniaResource Include="Fonts/*" />
     <AvaloniaResource Include="Assets/**/*" />
-    <None Remove="Components\CardsWonIcon.xaml" />
-    <None Remove="Components\CardsWonMatrix.xaml" />
-    <AvaloniaResource Update="Components\CardsWonMatrix.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </AvaloniaResource>
-    <AvaloniaResource Update="Components\CardsWonIcon.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </AvaloniaResource>
-    <Compile Update="Components\CardsWonMatrix.cs">
-      <DependentUpon>%(Filename).xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Components\CardsWonIcon.cs">
-      <DependentUpon>%(Filename).xaml</DependentUpon>
-    </Compile>
 
     <None Update="Audio/YourTurn.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
 
-    <None Update="Audio\Fail.wav">
+    <None Update="Audio/Fail.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

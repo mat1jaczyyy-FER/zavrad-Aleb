@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using Avalonia;
@@ -65,6 +66,7 @@ namespace Aleb.GUI.Views {
 
             RoomEntry entry = new RoomEntry() { Room = room };
             entry.RoomJoined += JoinRoom;
+            entry.RoomSpectate += SpectateRoom;
             RoomList.Children.Add(entry);
         }
 
@@ -106,6 +108,24 @@ namespace Aleb.GUI.Views {
 
             App.MainWindow.Popup = null;
             App.MainWindow.View = new InRoomView(room);
+        }
+
+        async void SpectateRoom(Room room) {
+            RoomList.IsEnabled = Create.Enabled = false;
+            Focus();
+
+            Tuple<bool, Room> response = await Requests.SpectateRoom(room.Name, "");
+            bool ingame = response.Item1;
+            room = response.Item2;
+
+            if (room == null) {
+                RoomList.IsEnabled = Create.Enabled = true;
+                return;
+            }
+            
+            App.MainWindow.Spectating = true;
+            App.MainWindow.Popup = null;
+            App.MainWindow.View = ingame? new GameView() : new InRoomView(room);
         }
     }
 }
