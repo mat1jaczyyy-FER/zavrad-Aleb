@@ -8,7 +8,6 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 
 using Aleb.Client;
-using Aleb.GUI.Popups;
 
 namespace Aleb.GUI.Components {
     public class UserInRoom: UserDisplay {
@@ -18,7 +17,6 @@ namespace Aleb.GUI.Components {
             base.InitializeComponent();
             
             Ready = this.Get<Checkmark>("Ready");
-            Menu = (AlebContextMenu)this.Resources["Menu"];
         }
 
         public Checkmark Ready { get; private set; }
@@ -27,8 +25,6 @@ namespace Aleb.GUI.Components {
             get => User.FontWeight == FontWeight.Bold;
             set => User.FontWeight = value? FontWeight.Bold : FontWeight.Regular;
         }
-
-        AlebContextMenu Menu;
 
         public UserInRoom() {
             InitializeComponent();
@@ -80,27 +76,17 @@ namespace Aleb.GUI.Components {
             }
         }
 
-        void MenuOpen(object sender, PointerReleasedEventArgs e) {
-            if (e.GetCurrentPoint(this).Properties.PointerUpdateKind != PointerUpdateKind.RightButtonReleased) return;
-
-            e.Handled = true;
-
-            Menu?.Open(
-                this,
-                AllowAdminActions && App.User.Name != Text
-                    ? null
-                    : new string[] { "Izbaci" }
-            );
-        }
-
         async void MenuAction(string action) {
-            if (action == "Statistike")
-                App.MainWindow.Popup = new StatisticsPopup(await Requests.UserStats(Text));
+            if (action == "Profil")
+                App.MainWindow.Profile = new ProfileView(await Requests.UserProfile(Text));
             
             if (action == "Izbaci" && AllowAdminActions)
                 Requests.KickUser(Text);
         }
-
-        public void DisableMenu() => Menu = null;
+        
+        protected override string[] MenuHides()
+            => AllowAdminActions && App.User.Name != Text
+                ? null
+                : new string[] { "Izbaci" };
     }
 }

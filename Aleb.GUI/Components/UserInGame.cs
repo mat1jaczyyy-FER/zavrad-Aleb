@@ -1,5 +1,7 @@
-﻿using Avalonia;
+﻿using Aleb.Client;
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 
@@ -15,7 +17,7 @@ namespace Aleb.GUI.Components {
             Rotation = this.Get<LayoutTransformControl>("Root");
             Border = this.Get<Border>("Border");
         }
-
+        
         LayoutTransformControl Rotation;
         Border Border;
 
@@ -39,6 +41,11 @@ namespace Aleb.GUI.Components {
 
         public UserInGame() {
             InitializeComponent();
+        }
+
+        async void MenuAction(string action) {
+            if (action == "Profil")
+                App.MainWindow.Profile = new ProfileView(await Requests.UserProfile(Text));
         }
     }
 }

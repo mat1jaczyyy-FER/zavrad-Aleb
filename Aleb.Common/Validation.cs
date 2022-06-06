@@ -13,7 +13,7 @@ namespace Aleb.Common {
         public static bool ValidatePassword(string text) => Validate(text, 8, 32);
 
         public static bool ValidateRoomName(string text) => Validate(text, 4, 30, ' ');
-        public static bool ValidateRoomGoal(int goal) => 501 <= goal && goal <= 10001;
+        public static bool ValidateRoomGoal(int goal) => 50 <= goal && goal <= 10001; // todo set min back to 501
         public static bool ValidateRoomPassword(string text) => text == "" || Validate(text, 6, 32);
     }
 }

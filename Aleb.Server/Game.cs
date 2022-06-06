@@ -27,6 +27,7 @@ namespace Aleb.Server {
 
         Player[] Players = new Player[4];
         Recorder Spectators;
+        public RecordedMatch Recording => Spectators.Recording;
 
         GameState State;
 
@@ -246,7 +247,7 @@ namespace Aleb.Server {
 
         public void Reconnect(Player player) {
             player.User.Client.Send(ReconnectMessage);
-            player.Flush();
+            player.User.Client.Flush();
 
             player.ReplayRecords();
         }

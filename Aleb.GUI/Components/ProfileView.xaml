@@ -1,0 +1,67 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Aleb.GUI.Components.ProfileView">
+
+  <Grid Margin="0 10 0 0" RowDefinitions="Auto,10,Auto,10,Auto,10,*" HorizontalAlignment="Stretch">
+    <Grid.Styles>
+      <Style Selector="Grid > Border">
+        <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderLowBrush}" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="Height" Value="2" />
+        <Setter Property="BorderThickness" Value="0 1 0 0" />
+      </Style>
+      <Style Selector="StackPanel > Border">
+        <Setter Property="BorderBrush" Value="{DynamicResource ThemeForegroundBrush}" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="Height" Value="2" />
+        <Setter Property="BorderThickness" Value="0 1 0 0" />
+      </Style>
+    </Grid.Styles>
+      
+    <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 0 0 5">
+      <TextBlock Text="Igrač " />
+      <TextBlock FontWeight="Bold" x:Name="User" />
+    </StackPanel>
+
+    <Border Grid.Row="2" Margin="25 0" />
+
+    <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Left" Spacing="10" Margin="25 0">
+      <StackPanel Spacing="2">
+        <TextBlock Background="Transparent" Text="Statistike" PointerReleased="StatisticsClick" x:Name="StatisticsText" />
+        <Border x:Name="StatisticsSelected" />
+      </StackPanel>
+
+      <StackPanel Spacing="2">
+        <TextBlock Background="Transparent" Foreground="{DynamicResource ThemeForegroundLowColor}" Text="Povijest" PointerReleased="HistoryClick" x:Name="HistoryText" />
+        <Border Opacity="0" x:Name="HistorySelected" />
+      </StackPanel>
+    </StackPanel>
+
+    <ScrollViewer Grid.Row="6">
+      <StackPanel>
+        <Grid Margin="25 0" ColumnDefinitions="*,5,Auto" x:Name="StatisticsRoot">
+          <StackPanel Grid.Column="0" Spacing="5" HorizontalAlignment="Stretch" x:Name="Keys">
+            <StackPanel.Styles>
+              <Style Selector="TextBlock">
+                <Setter Property="HorizontalAlignment" Value="Left" />
+                <Setter Property="Foreground" Value="{DynamicResource ThemeControlHighlightLowBrush}" />
+              </Style>
+            </StackPanel.Styles>
+          </StackPanel>
+
+          <StackPanel Grid.Column="2" Spacing="5" HorizontalAlignment="Stretch" x:Name="Values">
+            <StackPanel.Styles>
+              <Style Selector="TextBlock">
+                <Setter Property="HorizontalAlignment" Value="Right" />
+              </Style>
+            </StackPanel.Styles>
+          </StackPanel>
+        </Grid>
+
+        <StackPanel IsVisible="False" HorizontalAlignment="Stretch" x:Name="HistoryRoot">
+          <TextBlock Text="Igrač nema dovršenih mečeva." HorizontalAlignment="Center" />
+        </StackPanel>
+      </StackPanel>
+    </ScrollViewer>
+  </Grid>
+</UserControl>

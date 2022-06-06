@@ -1,0 +1,48 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Aleb.GUI.Components.MatchMetadata"
+             xmlns:Components="clr-namespace:Aleb.GUI.Components"
+             DetachedFromVisualTree="Unloaded">
+
+  <Grid Background="Transparent" HorizontalAlignment="Stretch"
+        PointerEnter="MouseEnter" PointerLeave="MouseLeave" PointerPressed="MouseDown" PointerReleased="MouseUp">
+
+    <Grid Background="{DynamicResource ThemeControlDarkenBrush}" IsVisible="False" x:Name="Alternating" />
+    
+    <Grid ColumnDefinitions="50,50,Auto,50,5,*,Auto,*">
+      <Grid Grid.Column="0" Height="50">
+        <Path Fill="#00FF00" Data="M 0,0 L 50,0 40,50 0,50 0,0 Z" x:Name="VictoryColor" />
+        <TextBlock FontWeight="Bold" FontSize="30" VerticalAlignment="Center" Margin="0 0 2 0" HorizontalAlignment="Center" x:Name="Victory" />
+      </Grid>
+
+      <TextBlock Grid.Column="1" FontSize="18" HorizontalAlignment="Right" VerticalAlignment="Center" x:Name="ScoreLeft" />
+      <TextBlock Grid.Column="2" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" Text=" - " />
+      <TextBlock Grid.Column="3" FontSize="18" HorizontalAlignment="Left" VerticalAlignment="Center" x:Name="ScoreRight" />
+
+      <StackPanel Grid.Column="5" VerticalAlignment="Center" x:Name="ResultsLeft">
+        <StackPanel.Styles>
+          <Style Selector="UserControl > TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource ThemeControlHighlightLowBrush}" />
+          </Style>
+        </StackPanel.Styles>
+
+        <Components:UserInList HorizontalAlignment="Center" FontSize="12" />
+        <Components:UserInList HorizontalAlignment="Center" FontSize="12" />
+      </StackPanel>
+
+      <TextBlock Grid.Column="6" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="10" Text="vs" />
+
+      <StackPanel Grid.Column="7" VerticalAlignment="Center" x:Name="ResultsRight">
+        <StackPanel.Styles>
+          <Style Selector="UserControl > TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource ThemeControlHighlightLowBrush}" />
+          </Style>
+        </StackPanel.Styles>
+
+        <Components:UserInList HorizontalAlignment="Center" FontSize="12" />
+        <Components:UserInList HorizontalAlignment="Center" FontSize="12" />
+      </StackPanel>
+    </Grid>
+  </Grid>
+  
+</UserControl>

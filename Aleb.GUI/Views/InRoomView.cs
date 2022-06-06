@@ -282,7 +282,6 @@ namespace Aleb.GUI.Views {
 
         public void Spectate() {
             ActionPanel.IsVisible = false;
-            //Users.ForEach(i => i.DisableMenu());
         }
     }
 }

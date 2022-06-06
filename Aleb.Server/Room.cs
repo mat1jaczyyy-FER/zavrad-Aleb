@@ -120,6 +120,9 @@ namespace Aleb.Server {
         public Game Game { get; private set; }
 
         public bool GameCompleted(int delay = 0) {
+            if (Game?.Score[0] == Game?.Score[1])
+                return false;
+
             for (int i = 0; i < 2; i++)
                 if (Game?.Score[i] >= ScoreGoal) {
                     DestroyGame(delay);
@@ -132,7 +135,13 @@ namespace Aleb.Server {
         public void BelotCompleted(int team) => DestroyGame(15000, team);
 
         void DestroyGame(int delay = 0, int belot = -1) {
-            Message msg = new Message("GameFinished", Game.Score.Select((x, i) => i == belot? Consts.BelotValue : x).ToStr(), ToString(), Password);
+            IEnumerable<int> score = Game.Score.Select((x, i) => i == belot ? Consts.BelotValue : x);
+
+            RecordedMatch recording = Game.Recording;
+            recording.RoomName = Name;
+            recording.Score = score.ToArray();
+            recording.Users = Users.Select(i => i.Name).ToArray();
+            recording.Date = DateTime.UtcNow;
 
             int winTeam = Array.IndexOf(Game.Score, Game.Score.Max());
             Users[winTeam * 2].GamesWon++;
@@ -145,15 +154,17 @@ namespace Aleb.Server {
             Users[(1 - winTeam) * 2].MaxPointsMatch = Math.Max(Users[winTeam * 2].MaxPointsMatch, Game.Score[1 - winTeam]);
             Users[(1 - winTeam) * 2 + 1].MaxPointsMatch = Math.Max(Users[winTeam * 2 + 1].MaxPointsMatch, Game.Score[1 - winTeam]);
 
+            Message msg = new Message("GameFinished", score.ToStr(), ToString(), Password);
+
             foreach (User user in Everyone) {
                 if (user.State != UserState.Spectating) {
-                    user.CompletedGame();
+                    user.CompletedGame(recording);
                     user.State = UserState.InRoom;
                 }
 
                 user.Client.Send(delay, msg);
             }
-
+            
             Game = null;
         }
 

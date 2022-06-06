@@ -33,19 +33,35 @@
 
           <Border Grid.Row="1" BorderBrush="{DynamicResource ThemeBorderMidBrush}" BorderThickness="1 0 1 1">
             <Grid>
-              <Border BorderThickness="0" x:Name="View" />
+              <Grid ColumnDefinitions="*,Auto">
+                <Grid Grid.Column="0">
+                  <Border BorderThickness="0" x:Name="View" />
 
-              <StackPanel Margin="92 7 0 5" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Bottom" Spacing="5" IsVisible="False" Opacity="0" x:Name="SpectatorsRoot">
-                <Components:SpectateIcon VerticalAlignment="Center" IsHitTestVisible="False" Enabled="False" />
-                <TextBlock VerticalAlignment="Center" IsHitTestVisible="False" Foreground="{DynamicResource ThemeButtonEnabledBrush}" Text="0" Margin="0 0 5 2" x:Name="Spectators" />
-                <Components:LeaveIcon VerticalAlignment="Center" IsVisible="False" Clicked="SpectatorLeave" x:Name="SpectatorLeaveIcon" />
-              </StackPanel>
+                  <StackPanel Margin="92 7 0 5" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Bottom" Spacing="5" IsVisible="False" Opacity="0" x:Name="SpectatorsRoot">
+                    <Components:SpectateIcon VerticalAlignment="Center" IsHitTestVisible="False" Enabled="False" />
+                    <TextBlock VerticalAlignment="Center" IsHitTestVisible="False" Foreground="{DynamicResource ThemeButtonEnabledBrush}" Text="0" Margin="0 0 5 2" x:Name="Spectators" />
+                    <Components:LeaveIcon VerticalAlignment="Center" IsVisible="False" Clicked="SpectatorLeave" x:Name="SpectatorLeaveIcon" />
+                  </StackPanel>
+                </Grid>
+
+                <Border Grid.Column="1" BorderThickness="1 0 0 0" Width="300" BorderBrush="{DynamicResource ThemeBorderMidBrush}" Background="{DynamicResource ThemeControlDarkenBrush}" IsVisible="False" x:Name="ProfileContainer">
+                  <Grid RowDefinitions="Auto,*">
+                    <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
+                      <Grid Grid.Column="0" Background="Transparent" />
+
+                      <Components:Close Grid.Column="1" Margin="5 5" Clicked="CloseProfile" />
+                    </Grid>
+                  
+                    <Border Grid.Row="1" BorderThickness="0" x:Name="Profile" />
+                  </Grid>
+                </Border>
+              </Grid>
 
               <Grid RowDefinitions="*,Auto,Auto,*" ColumnDefinitions="*,2*,*" x:Name="PopupContainer" IsVisible="False" Background="{DynamicResource ThemeControlDarkenBrush}">
                 <Grid Grid.Row="1" Grid.Column="1" ColumnDefinitions="*,Auto" Background="{DynamicResource ThemeBorderMidBrush}">
-                  <Grid Grid.Column="1" Background="Transparent" />
+                  <Grid Grid.Column="0" Background="Transparent" />
 
-                  <Components:Close Grid.Column="2" Margin="5 5" x:Name="PopupClose" Clicked="ClosePopup" />
+                  <Components:Close Grid.Column="1" Margin="5 5" x:Name="PopupClose" Clicked="ClosePopup" />
                 </Grid>
 
                 <Grid Grid.Row="1" Grid.Column="1">
