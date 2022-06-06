@@ -17,7 +17,6 @@ namespace Aleb.GUI.Popups {
 
             App.MainWindow.PopupTitle.Text = "Postavke";
 
-            MiVi = this.Get<ComboBox>("MiVi");
             Notify = this.Get<ComboBox>("Notify");
 
             CurrentSession = this.Get<TextBlock>("CurrentSession");
@@ -26,7 +25,7 @@ namespace Aleb.GUI.Popups {
             Version = this.Get<TextBlock>("Version");
         }
 
-        ComboBox MiVi, Notify;
+        ComboBox Notify;
 
         TextBlock CurrentSession, AllTime, Version;
         DispatcherTimer Timer;
@@ -51,11 +50,9 @@ namespace Aleb.GUI.Popups {
             Timer.Tick += UpdateTime;
             Timer.Start();
 
-            MiVi.SelectedIndex = Convert.ToInt32(!Preferences.MiVi);
             Notify.SelectedIndex = Convert.ToInt32(Preferences.Notify);
         }
         
-        void MiVi_Changed(object sender, SelectionChangedEventArgs e) => Preferences.MiVi = MiVi.SelectedIndex == 0;
         void Notify_Changed(object sender, SelectionChangedEventArgs e) => Preferences.Notify = (Preferences.NotificationType)Notify.SelectedIndex;
 
         void OpenCrashesFolder(object sender, RoutedEventArgs e) {

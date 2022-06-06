@@ -17,15 +17,6 @@
     <TextBlock Classes="heading" Text="Prilagodba" />
 
     <StackPanel Orientation="Horizontal" Spacing="5">
-      <TextBlock Text="Nazivi ekipa:" VerticalAlignment="Center" />
-      
-      <ComboBox x:Name="MiVi" SelectionChanged="MiVi_Changed">
-        <ComboBoxItem>Mi, Vi</ComboBoxItem>
-        <ComboBoxItem>Vi, Oni</ComboBoxItem>
-      </ComboBox>
-    </StackPanel>
-
-    <StackPanel Orientation="Horizontal" Spacing="5">
       <TextBlock Text="Zvuk na potezu:" VerticalAlignment="Center" />
 
       <ComboBox x:Name="Notify" SelectionChanged="Notify_Changed">

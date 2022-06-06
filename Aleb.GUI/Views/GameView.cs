@@ -237,18 +237,6 @@ namespace Aleb.GUI.Views {
             row.Right = values[1 - team].ToString();
         }
 
-        void UpdateTitleRow(bool mivi) {
-            if (!Dispatcher.UIThread.CheckAccess()) {
-                Dispatcher.UIThread.InvokeAsync(() => UpdateTitleRow(mivi));
-                return;
-            }
-
-            UpdateRow(TitleRow, (mivi
-                ? new List<string>() { "Mi", "Vi" }
-                : new List<string>() { "Vi", "Oni" }
-            ), false);
-        }
-
         void UpdateCurrentRound(List<int> calls, List<int> played) {
             UpdateRow(Declarations, calls);
             if (played.Any(i => i != -1)) {
@@ -337,8 +325,7 @@ namespace Aleb.GUI.Views {
         public GameView() {
             InitializeComponent();
 
-            UpdateTitleRow(Preferences.MiVi);
-            Preferences.MiViChanged += UpdateTitleRow;
+            UpdateRow(TitleRow, new List<string>() { "Mi", "Vi" });
             
             timer.Start();
 
@@ -387,8 +374,6 @@ namespace Aleb.GUI.Views {
         }
 
         void Unloaded(object sender, VisualTreeAttachmentEventArgs e) {
-            Preferences.MiViChanged -= UpdateTitleRow;
-
             Network.GameStarted -= GameStarted;
             Network.Reconnect -= Reconnect;
             

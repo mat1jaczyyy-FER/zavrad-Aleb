@@ -9,20 +9,6 @@ namespace Aleb.GUI {
         static readonly string FilePath = Path.Combine(Program.UserPath, "Aleb.config");
         static readonly string StatsPath = Path.Combine(Program.UserPath, "Aleb.stats");
 
-        public delegate void SimpleBoolChangedEventHandler(bool newValue);
-        public delegate void ChangedEventHandler();
-
-        public static event SimpleBoolChangedEventHandler MiViChanged;
-        static bool _MiVi = true;
-        public static bool MiVi {
-            get => _MiVi;
-            set {
-                _MiVi = value;
-                MiViChanged?.Invoke(MiVi);
-                Save();
-            }
-        }
-
         static bool _Top = false;
         public static bool Topmost {
             get => _Top;
@@ -101,8 +87,6 @@ namespace Aleb.GUI {
 
         static Preferences() {
             Decode(FilePath, reader => {
-                MiVi = reader.ReadBoolean();
-
                 Topmost = reader.ReadBoolean();
 
                 Notify = (NotificationType)reader.ReadInt32();
@@ -113,8 +97,6 @@ namespace Aleb.GUI {
 
         public static void Save() {
             Encode(FilePath, writer => {
-                writer.Write(MiVi);
-
                 writer.Write(Topmost);
 
                 writer.Write((int)Notify);
