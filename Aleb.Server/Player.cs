@@ -5,7 +5,7 @@ using System.Linq;
 using Aleb.Common;
 
 namespace Aleb.Server {
-    class Player: Recorder {
+    class Player: Replayable {
         List<Card> _cards;
         public List<Card> Cards {
             get => _cards;

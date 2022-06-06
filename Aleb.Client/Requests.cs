@@ -111,15 +111,15 @@ namespace Aleb.Client {
         public static void Bela(bool bela)
             => Network.Send(new Message("Bela", bela));
 
-        public static async Task<UserStats> UserStats(string name) {
+        public static async Task<Profile> UserProfile(string name) {
             name = name ?? "";
             if (!Validation.ValidateUsername(name)) return null;
 
-            Message response = await Network.Ask(new Message("UserStats", name), "UserStatsSuccess", "UserStatsFail");
+            Message response = await Network.Ask(new Message("UserProfile", name), "UserProfileSuccess", "UserProfileFail");
 
-            if (response.Command != "UserStatsSuccess") return null;
+            if (response.Command != "UserProfileSuccess") return null;
 
-            return new UserStats(response.Args[0]);
+            return new Profile(response.Args[0]);
         }
     }
 }

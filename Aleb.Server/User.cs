@@ -63,11 +63,11 @@ namespace Aleb.Server {
         }
 
         void Received(AlebClient sender, Message msg) {
-            if (msg.Command == "UserStats") {
+            if (msg.Command == "UserProfile") {
                 User user = Pool.FirstOrDefault(i => i.Name == msg.Args[0]);
 
                 if (user != null) {
-                    Client.Send(new Message("UserStatsSuccess", new List<string>() {
+                    Client.Send(new Message("UserProfileSuccess", new List<string>() {
                         user.Name,
                         user.PointsScored.ToString(),
                         user.GamesPlayed.ToString(),
@@ -85,10 +85,11 @@ namespace Aleb.Server {
                         user.SevenRow.ToString(),
                         user.Belotes.ToString(),
                         user.MaxPointsRound.ToString(),
-                        user.MaxPointsMatch.ToString()
+                        user.MaxPointsMatch.ToString(),
+                        user.EncodeMatchHistory()
                     }.ToStr()));
                     
-                } else Client.Send(new Message("UserStatsFailure"));
+                } else Client.Send(new Message("UserProfileFailure"));
 
             } else if (State == UserState.Idle) {
                 if (msg.Command == "GetRoomList") {
@@ -281,9 +282,22 @@ namespace Aleb.Server {
             return Player = new Player(this);
         }
 
-        public void CompletedGame() {
+        public void CompletedGame(RecordedMatch recording) {
             Player = null;
             Game = null;
+
+            MatchHistory.Add(recording);
+            Persistent.SaveUserPool(Pool);
+        }
+
+        public string EncodeMatchHistory() {
+            using (MemoryStream ms = new MemoryStream()) {
+                using (BinaryWriter writer = new BinaryWriter(ms)) {
+                    writer.Write(MatchHistory.Count);
+                    MatchHistory.ForEach(i => i.WriteMetadata(writer));
+                }
+                return Convert.ToHexString(ms.ToArray());
+            }
         }
 
         long _PointsScored;
@@ -439,6 +453,8 @@ namespace Aleb.Server {
             }
         }
 
+        List<RecordedMatch> MatchHistory = new List<RecordedMatch>();
+
         public static User FromBinary(BinaryReader reader) {
             string name = reader.ReadString();
             string password = reader.ReadString();
@@ -466,6 +482,15 @@ namespace Aleb.Server {
             user.MaxPointsRound = reader.ReadInt32();
             user.MaxPointsMatch = reader.ReadInt32();
 
+            int n = reader.ReadInt32();
+
+            for (int i = 0; i < n; i++) {
+                RecordedMatch match = RecordedMatch.FromBinary(reader);
+
+                if (match != null)
+                    user.MatchHistory.Add(match);
+            }
+
             return user;
         }
 
@@ -490,6 +515,9 @@ namespace Aleb.Server {
             writer.Write(Belotes);
             writer.Write(MaxPointsRound);
             writer.Write(MaxPointsMatch);
+
+            writer.Write(MatchHistory.Count);
+            MatchHistory.ForEach(i => i.ToBinary(writer));
         }
     }
 }

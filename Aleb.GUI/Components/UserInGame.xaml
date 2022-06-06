@@ -1,7 +1,14 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="Aleb.GUI.Components.UserInGame"
-             xmlns:Components="clr-namespace:Aleb.GUI.Components">
+             xmlns:Components="clr-namespace:Aleb.GUI.Components"
+             PointerReleased="MenuOpen">
+
+  <UserControl.Resources>
+    <Components:AlebContextMenu x:Key="Menu" MenuAction="MenuAction">
+      <MenuItem Header="Profil" />
+    </Components:AlebContextMenu>
+  </UserControl.Resources>
 
   <LayoutTransformControl x:Name="Root">
     <Border BorderThickness="2" x:Name="Border">

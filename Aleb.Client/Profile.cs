@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 using Aleb.Common;
 
 namespace Aleb.Client {
-    public class UserStats {
+    public class Profile {
         public readonly string Name;
         public static readonly List<Tuple<string, string>> StatList = new List<Tuple<string, string>>() {
             new Tuple<string, string>("PointsScored", "Sveukupno bodova"),
@@ -26,19 +27,31 @@ namespace Aleb.Client {
             new Tuple<string, string>("MaxPointsRound", "Najviše bodova u rundi"),
             new Tuple<string, string>("MaxPointsMatch", "Najviše bodova u partiji"),
         };
-        public readonly List<Tuple<string, string>> Dict;
+        public readonly List<Tuple<string, string>> Statistics;
+        public readonly List<RecordedMatch> MatchHistory;
 
         public UserState State;
 
-        public UserStats(string raw) {
+        public Profile(string raw) {
             string[] args = raw.Split('|');
 
-            Name = args[0];
-            Dict = new List<Tuple<string, string>>();
-            int i = 1;
+            int i = 0;
+            Name = args[i++];
 
+            Statistics = new List<Tuple<string, string>>();
+            
             foreach (string key in StatList.Select(i => i.Item1))
-                Dict.Add(new Tuple<string, string>(key, args[i++]));
+                Statistics.Add(new Tuple<string, string>(key, args[i++]));
+            
+            MatchHistory = new List<RecordedMatch>();
+
+            using (MemoryStream ms = new MemoryStream(Convert.FromHexString(args[i++])))
+            using (BinaryReader reader = new BinaryReader(ms)) {
+                int n = reader.ReadInt32();
+
+                for (int j = 0; j < n; j++)
+                    MatchHistory.Add(RecordedMatch.FromMetadata(reader));
+            }
         }
     }
 }

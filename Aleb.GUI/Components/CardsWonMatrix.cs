@@ -23,10 +23,9 @@ namespace Aleb.GUI.Components {
             InitializeComponent();
 
             StackPanel row = null;
-            int pack = Math.Clamp(cards.Count / 2, 4, 8);
 
             for (int i = 0; i < cards.Count; i++) {
-                if (i % pack == 0) {
+                if (i % 8 == 0) {
                     row = new StackPanel() {
                         Orientation = Orientation.Horizontal,
                         HorizontalAlignment = HorizontalAlignment.Left,
@@ -35,6 +34,11 @@ namespace Aleb.GUI.Components {
                         Margin = new Thickness(rng.NextDouble() * 10, 0, 0, 0)
                     };
                     Contents.Children.Add(row);
+                }
+                if (i % 8 == 4) {
+                    CardImage empty = new CardImage(cards[i]);
+                    empty.Opacity = 0;
+                    row.Children.Add(empty);
                 }
                 row.Children.Add(new CardImage(cards[i]));
             }

@@ -32,8 +32,10 @@ namespace Aleb.GUI {
 
             view = this.Get<Border>("View");
             popup = this.Get<Border>("Popup");
+            profile = this.Get<Border>("Profile");
             
             PopupContainer = this.Get<Grid>("PopupContainer");
+            ProfileContainer = this.Get<Border>("ProfileContainer");
 
             SpectatorsRoot = this.Get<StackPanel>("SpectatorsRoot");
             Spectators = this.Get<TextBlock>("Spectators");
@@ -50,8 +52,9 @@ namespace Aleb.GUI {
         PinButton PinButton;
         public Close PopupClose;
 
-        Border view, popup;
+        Border view, popup, profile;
         Grid PopupContainer;
+        Border ProfileContainer;
 
         StackPanel SpectatorsRoot;
         TextBlock Spectators;
@@ -106,6 +109,15 @@ namespace Aleb.GUI {
             }
         }
 
+        public Control Profile {
+            get => (Control)profile.Child;
+            set {
+                profile.Child = value;
+                ProfileContainer.IsVisible = Profile != null;
+                SizeUpdated();
+            }
+        }
+
         public new string Title {
             set => TitleText.Text = base.Title = value == ""? "Aleb" : $"Aleb - {value}";
         }
@@ -138,15 +150,20 @@ namespace Aleb.GUI {
             Network.SpectatorCount -= SpectatorCount;
             Network.SpectatingOver -= SpectatingOver;
         }
+        
+        void SizeUpdated() => SizeUpdated(ClientSize);
 
         void SizeUpdated(Size size) {
-            double target = 960 / 540.0;
+            double width = 960.0 + (Profile != null? ProfileContainer.Width : 0);
+            double height = 540.0;
+            
+            double target = width / height;
             double aspect = size.Width / size.Height;
             
-            VirtualWidth = (aspect <= target)? 960 : (540 * aspect);
-            VirtualHeight = (aspect >= target)? 540 : (960 / aspect);
+            VirtualWidth = (aspect <= target)? width : (height * aspect);
+            VirtualHeight = (aspect >= target)? height : (width / aspect);
 
-            double scale = Math.Min(size.Width / 960, size.Height / 540);
+            double scale = Math.Min(size.Width / width, size.Height / height);
             Root.RenderTransform = new ScaleTransform(scale, scale);
         }
 
@@ -200,6 +217,7 @@ namespace Aleb.GUI {
         void ResizeSouthEast(object sender, PointerPressedEventArgs e) => BeginResizeDrag(WindowEdge.SouthEast, e);
 
         void ClosePopup() => Popup = null;
+        void CloseProfile() => Profile = null;
 
         void SpectatorCount(int count) {
             if (!Dispatcher.UIThread.CheckAccess()) {

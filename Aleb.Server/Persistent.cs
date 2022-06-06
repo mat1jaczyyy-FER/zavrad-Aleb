@@ -39,12 +39,12 @@ namespace Aleb.Server {
 
                 using (FileStream file = File.Open(StorePath, FileMode.Open, FileAccess.Read))
                 using (BinaryReader reader = new BinaryReader(file)) {
-                    uint version = DecodeHeader(reader);
-
-                    int n = reader.ReadInt32();
+                    Reading = true;
 
                     try {
-                        Reading = true;
+                        uint version = DecodeHeader(reader);
+
+                        int n = reader.ReadInt32();
 
                         for (int i = 0; i < n; i++) {
                             User user = User.FromBinary(reader);
