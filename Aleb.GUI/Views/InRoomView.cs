@@ -98,15 +98,7 @@ namespace Aleb.GUI.Views {
             PasswordIcon.IsVisible = room.HasPassword;
             Password = room.Password;
 
-            Discord.Info = new DiscordRPC.RichPresence() {
-                Details = "U sobi",
-                State =  NameText.Text,
-                Party = new DiscordRPC.Party() {
-                    ID = NameText.Text,
-                    Size = Count,
-                    Max = 4
-                }
-            };
+            SetDiscordInRoom();
 
             UpdateRoomAdmin();
         }
@@ -119,7 +111,7 @@ namespace Aleb.GUI.Views {
             int rotate = Math.Max(0, room.Users.Select(i => i.Name).ToList().IndexOf(App.User.Name)) >> 1 & 1;
 
             string win = (score[rotate] > score[1 - rotate])? "Pobijedili" : "Izgubili";
-            Victory.Text = $"{win} ste"; //todo nerijeseno
+            Victory.Text = $"{win} ste";
 
             foreach (var (text, pts) in Score.Zip(score.Rotate(rotate)))
                 text.Text = pts >= Consts.BelotValue? "Belot" : pts.ToString();
@@ -127,11 +119,10 @@ namespace Aleb.GUI.Views {
             foreach (var (text, user) in Results.Zip(room.Users.Rotate(rotate * 2)))
                 text.Text = user.Name;
             
-            // TODO work that out
-            //Discord.Info = new DiscordRPC.RichPresence() {
-            //    Details = win,
-            //    State = $"{Score[0].Text} - {Score[1].Text}"
-            //};
+            Discord.Info = new DiscordRPC.RichPresence() {
+                Details = win,
+                State = $"{Score[0].Text} - {Score[1].Text}"
+            };
         }
 
         void Loaded(object sender, VisualTreeAttachmentEventArgs e) {
@@ -250,12 +241,14 @@ namespace Aleb.GUI.Views {
                 return;
             }
 
-            App.MainWindow.View = new RoomListView(); // todo notification in corner
+            App.MainWindow.View = new RoomListView() { Kicked = NameText.Text };
         }
         
         void BackToRoom(object sender, RoutedEventArgs e) {
             ResultsPanel.IsVisible = false;
             RoomPanel.IsVisible = true;
+
+            SetDiscordInRoom();
         }
 
         void SetReady() => Requests.SetReady(!Users.First(i => i.Text == App.User.Name).Ready.State?? false);
@@ -282,6 +275,18 @@ namespace Aleb.GUI.Views {
 
         public void Spectate() {
             ActionPanel.IsVisible = false;
+        }
+
+        void SetDiscordInRoom() {
+            Discord.Info = new DiscordRPC.RichPresence() {
+                Details = "U sobi",
+                State = NameText.Text,
+                Party = new DiscordRPC.Party() {
+                    ID = NameText.Text,
+                    Size = Count,
+                    Max = 4
+                }
+            };
         }
     }
 }

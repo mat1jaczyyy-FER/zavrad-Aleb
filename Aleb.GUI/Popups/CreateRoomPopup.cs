@@ -34,7 +34,6 @@ namespace Aleb.GUI.Popups {
         Button CreateButton;
         TextBlock Status;
 
-        // TODO REWRITE GROUPS
         bool[] Valid = new bool[3];
 
         int RoomGoalInt(string text)

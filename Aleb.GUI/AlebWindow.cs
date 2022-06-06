@@ -40,6 +40,8 @@ namespace Aleb.GUI {
             SpectatorsRoot = this.Get<StackPanel>("SpectatorsRoot");
             Spectators = this.Get<TextBlock>("Spectators");
             SpectatorLeaveIcon = this.Get<LeaveIcon>("SpectatorLeaveIcon");
+
+            YourProfile = this.Get<ProfileButton>("YourProfile");
         }
         
         Grid Root, ContentRoot;
@@ -59,6 +61,8 @@ namespace Aleb.GUI {
         StackPanel SpectatorsRoot;
         TextBlock Spectators;
         LeaveIcon SpectatorLeaveIcon;
+
+        public ProfileButton YourProfile { get; private set; }
 
         double VirtualWidth {
             set {

@@ -31,7 +31,7 @@ namespace Aleb.Server {
 
         public void ClearCalls() => Calls = null;
 
-        public bool CreateCalls(List<int> indexes) { // todo rename sve calls u declarations
+        public bool CreateCalls(List<int> indexes) {
             Calls calls = new Calls();
 
             if (indexes != null) {

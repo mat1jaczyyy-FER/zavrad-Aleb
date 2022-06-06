@@ -74,6 +74,8 @@ namespace Aleb.GUI.Views {
                 return;
             }
 
+            App.MainWindow.YourProfile.IsVisible = true;
+
             Discord.Logo.LargeImageText = App.User.Name;
 
             if (App.User.State == UserState.Idle)
