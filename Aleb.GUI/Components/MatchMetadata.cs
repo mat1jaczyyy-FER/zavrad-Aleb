@@ -55,7 +55,7 @@ namespace Aleb.GUI.Components {
             int rotate = Math.Max(0, match.Users.ToList().IndexOf(viewing)) >> 1 & 1;
             bool win = match.Score[rotate] > match.Score[1 - rotate];
             
-            VictoryColor.Fill = SolidColorBrush.Parse(win? "#00FF00" : "#FF0000");
+            VictoryColor.Fill = SolidColorBrush.Parse(win? "#00DD00" : "#DD0000");
             Victory.Text = win? "W" : "L";
 
             foreach (var (text, pts) in Score.Zip(match.Score.Rotate(rotate)))
