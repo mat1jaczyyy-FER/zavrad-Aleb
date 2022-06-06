@@ -5,6 +5,8 @@
              AttachedToVisualTree="Loaded" DetachedFromVisualTree="Unloaded">
 
   <Grid RowDefinitions="2*,*">
+    <Image Grid.Row="0" Height="144" HorizontalAlignment="Center" VerticalAlignment="Center" Source="avares://Aleb.GUI/Assets/Logo.png" />
+    
     <StackPanel Grid.Row="1" Spacing="20">
       <TextBlock HorizontalAlignment="Center" x:Name="Status" />
       
