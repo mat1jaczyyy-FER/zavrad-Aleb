@@ -4,21 +4,25 @@
              xmlns:Components="clr-namespace:Aleb.GUI.Components"
              AttachedToVisualTree="Loaded" DetachedFromVisualTree="Unloaded">
 
-  <Grid RowDefinitions="2*,*" ColumnDefinitions="3*,2*,3*">
-    <StackPanel Grid.Row="1" Grid.Column="1" Spacing="10">
-      <Grid HorizontalAlignment="Stretch" RowDefinitions="*,5,*" ColumnDefinitions="Auto,*">
-        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="Korisničko ime:  " />
-        <Components:ValidationTextBox Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch"
-                                      x:Name="Username" Validated="Username_Validated" Return="Return" />
-        
-        <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="Lozinka:  " />
-        <Components:ValidationTextBox Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" PasswordChar="•"
-                                      x:Name="Password" Validated="Password_Validated" Return="Return" />
-      </Grid>
-      
-      <Button Margin="0 10 0 0" HorizontalAlignment="Center" Content="Prijava" IsEnabled="False" x:Name="LoginButton" Click="Login" />
+  <Grid RowDefinitions="2*,*">
+    <Image Grid.Row="0" Height="144" HorizontalAlignment="Center" VerticalAlignment="Center" Source="avares://Aleb.GUI/Assets/Logo.png" />
 
-      <TextBlock HorizontalAlignment="Center" x:Name="Status" />
-    </StackPanel>
+    <Grid Grid.Row="1" ColumnDefinitions="3*,2*,3*">
+      <StackPanel Grid.Column="1" Spacing="10">
+        <Grid HorizontalAlignment="Stretch" RowDefinitions="*,5,*" ColumnDefinitions="Auto,*">
+          <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="Korisničko ime:  " />
+          <Components:ValidationTextBox Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch"
+                                        x:Name="Username" Validated="Username_Validated" Return="Return" />
+
+          <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="Lozinka:  " />
+          <Components:ValidationTextBox Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" PasswordChar="•"
+                                        x:Name="Password" Validated="Password_Validated" Return="Return" />
+        </Grid>
+
+        <Button Margin="0 10 0 0" HorizontalAlignment="Center" Content="Prijava" IsEnabled="False" x:Name="LoginButton" Click="Login" />
+
+        <TextBlock HorizontalAlignment="Center" x:Name="Status" />
+      </StackPanel>
+    </Grid>
   </Grid>
 </UserControl>
