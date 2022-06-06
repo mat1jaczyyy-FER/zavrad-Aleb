@@ -56,7 +56,7 @@ namespace Aleb.Server {
             List<Card> cards = Cards.ToList();
             cards.Sort();
 
-            return cards.ToStr(); // todo check
+            return cards.ToStr();
         }
     }
 }

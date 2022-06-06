@@ -107,7 +107,7 @@ namespace Aleb.GUI.Views {
             int rotate = Math.Max(0, room.Users.Select(i => i.Name).ToList().IndexOf(App.User.Name)) >> 1 & 1;
 
             string win = (score[rotate] > score[1 - rotate])? "Pobijedili" : "Izgubili";
-            Victory.Text = $"{win} ste"; //todo nerijeseno
+            Victory.Text = $"{win} ste";
 
             foreach (var (text, pts) in Score.Zip(score.Rotate(rotate)))
                 text.Text = pts >= Consts.BelotValue? "Belot" : pts.ToString();
@@ -232,7 +232,7 @@ namespace Aleb.GUI.Views {
                 return;
             }
 
-            App.MainWindow.View = new RoomListView(); // todo notification in corner
+            App.MainWindow.View = new RoomListView() { Kicked = NameText.Text };
         }
         
         void BackToRoom(object sender, RoutedEventArgs e) {

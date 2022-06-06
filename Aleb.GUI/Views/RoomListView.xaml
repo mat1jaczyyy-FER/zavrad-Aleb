@@ -20,5 +20,10 @@
     <Grid RowDefinitions="*,Auto,15" ColumnDefinitions="*,Auto,20">
       <Components:Create Grid.Row="1" Grid.Column="1" ToolTip.Tip="Stvori sobu" x:Name="Create" Clicked="CreateRoom" />
     </Grid>
+
+    <Grid Height="50" Margin="50 0 0 30" HorizontalAlignment="Left" VerticalAlignment="Bottom" IsVisible="False" ColumnDefinitions="15,Auto,10,Auto,5" Background="{DynamicResource ThemeBorderMidBrush}" x:Name="KickedRoot">
+      <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="Izbaceni ste iz test." x:Name="KickedText" />
+      <Components:Close Grid.Column="3" VerticalAlignment="Top" Margin="0 5 0 0" Clicked="CloseKicked" />
+    </Grid>
   </Grid>
 </UserControl>

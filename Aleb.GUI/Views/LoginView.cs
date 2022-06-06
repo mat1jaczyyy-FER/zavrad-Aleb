@@ -70,6 +70,8 @@ namespace Aleb.GUI.Views {
                 return;
             }
 
+            App.MainWindow.YourProfile.IsVisible = true;
+            
             if (App.User.State == UserState.Idle)
                 App.MainWindow.View = new RoomListView();
 

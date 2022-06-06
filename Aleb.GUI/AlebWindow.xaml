@@ -21,6 +21,7 @@
             <Grid Grid.Column="1" Background="Transparent" PointerPressed="MoveWindow" />
 
             <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="5 5" Spacing="5">
+              <Components:ProfileButton x:Name="YourProfile" Margin="0 0 28 0" IsVisible="False" />
               <Components:Minimize Clicked="Minimize" />
               <Components:Maximize Clicked="Maximize" />
               <Components:Close Clicked="Close" />

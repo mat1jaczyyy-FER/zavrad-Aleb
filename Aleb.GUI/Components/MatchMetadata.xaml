@@ -11,8 +11,8 @@
     
     <Grid ColumnDefinitions="50,50,Auto,50,5,*,Auto,*">
       <Grid Grid.Column="0" Height="50">
-        <Path Fill="#00FF00" Data="M 0,0 L 50,0 40,50 0,50 0,0 Z" x:Name="VictoryColor" />
-        <TextBlock FontWeight="Bold" FontSize="30" VerticalAlignment="Center" Margin="0 0 2 0" HorizontalAlignment="Center" x:Name="Victory" />
+        <Path Data="M 0,0 L 50,0 40,50 0,50 0,0 Z" x:Name="VictoryColor" />
+        <TextBlock FontWeight="Bold" FontSize="30" VerticalAlignment="Center" Margin="0 0 4 0" Foreground="#FFFFFF" HorizontalAlignment="Center" x:Name="Victory" />
       </Grid>
 
       <TextBlock Grid.Column="1" FontSize="18" HorizontalAlignment="Right" VerticalAlignment="Center" x:Name="ScoreLeft" />

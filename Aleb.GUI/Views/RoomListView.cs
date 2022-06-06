@@ -22,11 +22,17 @@ namespace Aleb.GUI.Views {
             RoomList = this.Get<UniformGrid>("RoomList");
             Create = this.Get<Create>("Create");
             NoRooms = this.Get<Grid>("NoRooms");
+
+            KickedRoot = this.Get<Grid>("KickedRoot");
+            KickedText = this.Get<TextBlock>("KickedText");
         }
 
         UniformGrid RoomList;
         Create Create;
         Grid NoRooms;
+
+        Grid KickedRoot;
+        TextBlock KickedText;
 
         public RoomListView() {
             InitializeComponent();
@@ -123,5 +129,14 @@ namespace Aleb.GUI.Views {
             App.MainWindow.Popup = null;
             App.MainWindow.View = ingame? new GameView() : new InRoomView(room);
         }
+
+        public string Kicked {
+            set {
+                KickedText.Text = $"Izbačeni ste iz {value}.";
+                KickedRoot.IsVisible = true;
+            }
+        }
+
+        void CloseKicked() => KickedRoot.IsVisible = false;
     }
 }
