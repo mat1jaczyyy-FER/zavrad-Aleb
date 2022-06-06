@@ -89,7 +89,7 @@ namespace Aleb.Server {
                         user.EncodeMatchHistory()
                     }.ToStr()));
                     
-                } else Client.Send(new Message("UserProfileFailure"));
+                } else Client.Send(new Message("UserProfileFailed"));
 
             } else if (State == UserState.Idle) {
                 if (msg.Command == "GetRoomList") {

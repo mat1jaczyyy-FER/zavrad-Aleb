@@ -115,7 +115,7 @@ namespace Aleb.Client {
             name = name ?? "";
             if (!Validation.ValidateUsername(name)) return null;
 
-            Message response = await Network.Ask(new Message("UserProfile", name), "UserProfileSuccess", "UserProfileFail");
+            Message response = await Network.Ask(new Message("UserProfile", name), "UserProfileSuccess", "UserProfileFailed");
 
             if (response.Command != "UserProfileSuccess") return null;
 

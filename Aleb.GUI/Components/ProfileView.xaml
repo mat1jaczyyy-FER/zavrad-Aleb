@@ -59,7 +59,7 @@
         </Grid>
 
         <StackPanel IsVisible="False" HorizontalAlignment="Stretch" x:Name="HistoryRoot">
-          <TextBlock Text="Igrač nema dovršenih mečeva." HorizontalAlignment="Center" />
+          <TextBlock Text="Igrač nema dovršenih igara." HorizontalAlignment="Center" />
         </StackPanel>
       </StackPanel>
     </ScrollViewer>
