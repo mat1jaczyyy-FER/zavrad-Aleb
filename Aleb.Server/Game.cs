@@ -206,8 +206,8 @@ namespace Aleb.Server {
                     current.Finish(last);
                     
                     foreach (Player i in Players) {
-                        i.User.PointsScored += current.Played[player.Team];
-                        i.User.MaxPointsRound = Math.Max(i.User.MaxPointsRound, current.Played[player.Team]);
+                        i.User.PointsScored += current.Played[i.Team];
+                        i.User.MaxPointsRound = Math.Max(i.User.MaxPointsRound, current.Played[i.Team]);
                     }
 
                     if (current.Fail) {
