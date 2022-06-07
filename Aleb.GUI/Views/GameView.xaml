@@ -6,11 +6,11 @@
 
   <Grid>
     <DockPanel x:Name="Root">
-      <Components:UserInGame DockPanel.Dock="Bottom" HorizontalAlignment="Center" PointerEnter="FinalCardsEnter" PointerLeave="FinalCardsLeave" />
-      <Components:UserInGame DockPanel.Dock="Top" HorizontalAlignment="Center" PointerEnter="FinalCardsEnter" PointerLeave="FinalCardsLeave" />
-      <Components:UserInGame DockPanel.Dock="Right" VerticalAlignment="Center" PointerEnter="FinalCardsEnter" PointerLeave="FinalCardsLeave" VerticalText="True" />
-      <Components:UserInGame DockPanel.Dock="Left" VerticalAlignment="Center" PointerEnter="FinalCardsEnter" PointerLeave="FinalCardsLeave" VerticalText="True" />
-
+      <Components:UserInGame DockPanel.Dock="Bottom" HorizontalAlignment="Center" PointerReleased="FinalCardsClick" PointerLeave="FinalCardsLeave" />
+      <Components:UserInGame DockPanel.Dock="Top" HorizontalAlignment="Center" PointerReleased="FinalCardsClick" PointerLeave="FinalCardsLeave" />
+      <Components:UserInGame DockPanel.Dock="Right" VerticalAlignment="Center" PointerReleased="FinalCardsClick" PointerLeave="FinalCardsLeave" VerticalText="True" />
+      <Components:UserInGame DockPanel.Dock="Left" VerticalAlignment="Center" PointerReleased="FinalCardsClick" PointerLeave="FinalCardsLeave" VerticalText="True" />
+      
       <Grid Margin="15" RowDefinitions="*,Auto" x:Name="GameGrid">
         <DockPanel Grid.Row="0" x:Name="SpecCardHolders">
           <Components:SpecCardHolder DockPanel.Dock="Left" VerticalAlignment="Center" MaxWidth="85" Width="85" Margin="0 0 7.5 0" IsVisible="False" Vertical="True" />

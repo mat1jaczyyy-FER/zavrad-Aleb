@@ -9,7 +9,12 @@ namespace Aleb.GUI.Prompts {
     public class BelaPrompt: UserControl {
         void InitializeComponent() {
             AvaloniaXamlLoader.Load(this);
+
+            SkipButton = this.Get<Button>("SkipButton");
+            CallButton = this.Get<Button>("CallButton");
         }
+
+        Button SkipButton, CallButton;
 
         public BelaPrompt() {
             InitializeComponent();
@@ -19,10 +24,14 @@ namespace Aleb.GUI.Prompts {
 
         void Unloaded(object sender, VisualTreeAttachmentEventArgs e) {}
 
-        void Skip(object sender, RoutedEventArgs e) 
-            => Requests.Bela(false);
+        void Skip(object sender, RoutedEventArgs e) {
+            SkipButton.IsEnabled = CallButton.IsEnabled = false;
+            Requests.Bela(false);
+        }
 
-        void Call(object sender, RoutedEventArgs e)
-            => Requests.Bela(true);
+        void Call(object sender, RoutedEventArgs e) {
+            SkipButton.IsEnabled = CallButton.IsEnabled = false;
+            Requests.Bela(true);
+        }
     }
 }

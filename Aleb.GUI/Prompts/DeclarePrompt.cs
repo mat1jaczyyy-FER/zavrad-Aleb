@@ -12,7 +12,12 @@ namespace Aleb.GUI.Prompts {
     public class DeclarePrompt: UserControl {
         void InitializeComponent() {
             AvaloniaXamlLoader.Load(this);
+
+            SkipButton = this.Get<Button>("SkipButton");
+            CallButton = this.Get<Button>("CallButton");
         }
+        
+        Button SkipButton, CallButton;
 
         bool[] Declared;
 
@@ -28,10 +33,16 @@ namespace Aleb.GUI.Prompts {
 
         void Unloaded(object sender, VisualTreeAttachmentEventArgs e) {}
 
-        void Skip(object sender, RoutedEventArgs e) 
-            => Requests.Declare(null);
+        void Skip(object sender, RoutedEventArgs e) {
+            SkipButton.IsEnabled = CallButton.IsEnabled = false;
 
-        void Call(object sender, RoutedEventArgs e)
-            => Requests.Declare(Declared.Select((x, i) => (x, i)).Where(t => t.x).Select(t => t.i).ToList());
+            Requests.Declare(null);
+        }
+
+        void Call(object sender, RoutedEventArgs e) {
+            SkipButton.IsEnabled = CallButton.IsEnabled = false;
+            
+            Requests.Declare(Declared.Select((x, i) => (x, i)).Where(t => t.x).Select(t => t.i).ToList());
+        }
     }
 }
