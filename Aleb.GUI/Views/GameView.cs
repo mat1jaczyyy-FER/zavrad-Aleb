@@ -288,6 +288,13 @@ namespace Aleb.GUI.Views {
         void CardsWonEnter(object sender, PointerEventArgs e) => CardsWon.IsVisible = true;
         void CardsWonLeave(object sender, PointerEventArgs e) => CardsWon.IsVisible = false;
 
+        void FinalCardsClick(object sender, PointerReleasedEventArgs e) {
+            PointerUpdateKind MouseButton = e.GetCurrentPoint(this).Properties.PointerUpdateKind;
+
+            if (MouseButton == PointerUpdateKind.LeftButtonReleased)
+                FinalCardsEnter(sender, e);
+        }
+
         void FinalCardsEnter(object sender, PointerEventArgs e) => FinalCardsUpdate(sender, true);
         void FinalCardsLeave(object sender, PointerEventArgs e) => FinalCardsUpdate(sender, false);
 
