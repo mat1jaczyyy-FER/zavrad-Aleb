@@ -44,5 +44,9 @@ namespace Aleb.GUI.Prompts {
             
             Requests.Declare(Declared.Select((x, i) => (x, i)).Where(t => t.x).Select(t => t.i).ToList());
         }
+
+        public void Reenable() {
+            SkipButton.IsEnabled = CallButton.IsEnabled = true;
+        }
     }
 }

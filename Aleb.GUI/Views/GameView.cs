@@ -619,7 +619,11 @@ namespace Aleb.GUI.Views {
                 DeclareSelected = null;
                 Prompt = null;
 
-            } else Table(You, new TextOverlay("Nevažeće zvanje", 3000));
+            } else {
+                Table(You, new TextOverlay("Nevažeće zvanje", 3000));
+                
+                (Prompt as DeclarePrompt).Reenable();
+            }
         }
 
         void PlayerDeclared(int value) {
