@@ -129,7 +129,7 @@ namespace Aleb.Client {
         static void Received(AlebClient sender, Message msg) {
             foreach (var i in Waiting.ToHashSet()) {
                 if (i.Expected.Contains(msg.Command)) {
-                    Task.Run(() => i.TCS.TrySetResult(msg));
+                    Utilities.FireAndForget(() => i.TCS.TrySetResult(msg));
                     Waiting.Remove(i);
                 }
             }

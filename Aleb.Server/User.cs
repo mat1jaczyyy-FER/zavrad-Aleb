@@ -54,7 +54,7 @@ namespace Aleb.Server {
                 _client = value;
 
                 if (_client != null) {
-                    _client.MessageReceived += (sender, msg) => Task.Run(() => Received(sender, msg));
+                    _client.MessageReceived += (sender, msg) => Utilities.FireAndForget(() => Received(sender, msg));
                     _client.Disconnected += Disconnect;
 
                     _client.Name = Name;
