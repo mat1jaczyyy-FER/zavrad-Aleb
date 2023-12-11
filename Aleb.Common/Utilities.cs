@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Aleb.Common {
     public static class Utilities {
@@ -37,5 +38,11 @@ namespace Aleb.Common {
 
         public static List<int> ToIntList(this string str, char delimiter = Protocol.ListDelimiter)
             => str.ToList(i => Convert.ToInt32(i), delimiter);
+
+        public static Task FireAndForget(Action action)
+            => Task.Run(action).ContinueWith(t => {
+                if (t.IsFaulted)
+                    Console.Error.WriteLine(t.Exception);
+            });
     }
 }

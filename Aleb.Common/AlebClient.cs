@@ -60,7 +60,7 @@ namespace Aleb.Common {
             if (Running) return;
             Running = true;
 
-            Task.Run(() => {
+            Utilities.FireAndForget(() => {
                 while (true) {
                     ResetHeartbeat();
 
